@@ -1,0 +1,80 @@
+{
+    "name": "Evaluation procedure creation, trial #1",
+    "region": {
+        "osm_id": 2157162589,
+        "name": "San Francisco Bay Area",
+    }
+    "start_fmt_date": "2019-05-10"
+    "end_fmt_date": "2019-05-17"
+    "calibration_trips": {
+        "tracking_off": {
+            "mode": "train",
+            "start_loc": {
+                "osm_id": 5019134176,
+                "coordinates": [-122.0773955, 37.3951877],
+                "name": "First clipper Card reader on NB Caltrain platform"
+            }, "end_loc": {
+                "osm_id": 3070596139,
+                "coordinates": [-122.3950372, 37.7766824],
+                "name": "Last clipper card reader before exiting to Townsend Street"
+            }
+        },
+        "low_accuracy": {
+            "mode": "train",
+            "start_loc": {
+                "osm_id": 3070596139,
+                "coordinates": [-122.3950372, 37.7766824],
+                "name": "Last clipper card reader before exiting to Townsend Street"
+            }, "end_loc": {
+                "osm_id": 5019134176,
+                "coordinates": [-122.0773955, 37.3951877],
+                "name": "First clipper Card reader on NB Caltrain platform"
+            }
+        },
+        "medium_accuracy": {
+            "mode": "train",
+            "start_loc": {
+                "osm_id": 5019134176,
+                "coordinates": [-122.0773955, 37.3951877],
+                "name": "First clipper Card reader on NB Caltrain platform"
+            }, "end_loc": {
+                "osm_id": 3070596139,
+                "coordinates": [-122.3950372, 37.7766824],
+                "name": "Last clipper card reader before exiting to Townsend Street"
+            }
+        },
+        "high_accuracy": {
+            "mode": "train",
+            "start_loc": {
+                "osm_id": 3070596139,
+                "coordinates": [-122.3950372, 37.7766824],
+                "name": "Last clipper card reader before exiting to Townsend Street"
+            }, "end_loc": {
+                "osm_id": 5019134176,
+                "coordinates": [-122.0773955, 37.3951877],
+                "name": "First clipper Card reader on NB Caltrain platform"
+            }
+        }
+    },
+    "evaluation_trips: {
+        "walk": {
+            "start_loc": {
+                "osm_id": 2630202881,
+                "coordinates": [-122.0864620, 37.3909621],
+                "name": "Last clipper card reader before exiting to Townsend Street"
+            }, "end_loc": {
+                "osm_id": 5019134176,
+                "coordinates": [-122.0698728, 37.3863259],
+                "name": "Entrance to Stevens Creek Trail at Landels School"
+            },
+            "route_waypoints": [
+                "osm_node_ids": [272208711, 343270779, 343270132,
+                    65587153, 147451990, 1735909450],
+            ]
+        },
+        "bike": {},
+        "car": {},
+        "bus": {},
+        "train": {},
+    }
+}
