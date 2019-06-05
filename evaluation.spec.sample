@@ -1,80 +1,162 @@
 {
+    "fmt_version": 1,
+    "id": "sfba_trial_1",
     "name": "Evaluation procedure creation, trial #1",
     "region": {
         "osm_id": 2157162589,
         "name": "San Francisco Bay Area",
-    }
-    "start_fmt_date": "2019-05-10"
-    "end_fmt_date": "2019-05-17"
-    "calibration_trips": {
-        "tracking_off": {
-            "mode": "train",
-            "start_loc": {
-                "osm_id": 5019134176,
-                "coordinates": [-122.0773955, 37.3951877],
-                "name": "First clipper Card reader on NB Caltrain platform"
-            }, "end_loc": {
-                "osm_id": 3070596139,
-                "coordinates": [-122.3950372, 37.7766824],
-                "name": "Last clipper card reader before exiting to Townsend Street"
-            }
+        "timezone": "America/Los_angeles"
+    },
+    "start_fmt_date": "2019-05-10",
+    "end_fmt_date": "2019-05-17",
+    "phones": {
+        "android": {
+          "ucb.sdb.android.1": "accuracy_control",
+          "ucb.sdb.android.2": "evaluation_0",
+          "ucb.sdb.android.3": "evaluation_1",
+          "ucb_sdb_android_4": "power_control"
         },
-        "low_accuracy": {
-            "mode": "train",
-            "start_loc": {
-                "osm_id": 3070596139,
-                "coordinates": [-122.3950372, 37.7766824],
-                "name": "Last clipper card reader before exiting to Townsend Street"
-            }, "end_loc": {
-                "osm_id": 5019134176,
-                "coordinates": [-122.0773955, 37.3951877],
-                "name": "First clipper Card reader on NB Caltrain platform"
-            }
-        },
-        "medium_accuracy": {
-            "mode": "train",
-            "start_loc": {
-                "osm_id": 5019134176,
-                "coordinates": [-122.0773955, 37.3951877],
-                "name": "First clipper Card reader on NB Caltrain platform"
-            }, "end_loc": {
-                "osm_id": 3070596139,
-                "coordinates": [-122.3950372, 37.7766824],
-                "name": "Last clipper card reader before exiting to Townsend Street"
-            }
-        },
-        "high_accuracy": {
-            "mode": "train",
-            "start_loc": {
-                "osm_id": 3070596139,
-                "coordinates": [-122.3950372, 37.7766824],
-                "name": "Last clipper card reader before exiting to Townsend Street"
-            }, "end_loc": {
-                "osm_id": 5019134176,
-                "coordinates": [-122.0773955, 37.3951877],
-                "name": "First clipper Card reader on NB Caltrain platform"
-            }
+        "ios": {
+          "ucb.sdb.ios.1": "accuracy_control",
+          "ucb.sdb.ios.2": "evaluation_0",
+          "ucb.sdb.ios.3": "evaluation_1",
+          "ucb.sdb.ios.4": "power_control"
         }
     },
-    "evaluation_trips: {
-        "walk": {
+    "calibration_tests": [
+        {
+            "id": "tracking_off_stationary",
+            "mode": null,
+            "start_loc": null,
+            "end_loc": null,
+            "config": {"id": "STOP_TRACKING"}
+        },{
+            "id": "low_accuracy_stationary",
+            "mode": null,
+            "start_loc": null,
+            "end_loc": null,
+            "config": {"id": "LAHFAO"}
+        },{
+            "id": "medium_accuracy_stationary",
+            "mode": null,
+            "start_loc": null,
+            "end_loc": null,
+            "config": {"id": "MAHFAO"}
+        },{
+            "id": "high_accuracy",
+            "mode": null,
+            "start_loc": null,
+            "end_loc": null,
+            "config": {"id": "HAHFAO"}
+        },
+        {
+            "id": "tracking_off_train_AO",
+            "mode": "train",
             "start_loc": {
-                "osm_id": 2630202881,
-                "coordinates": [-122.0864620, 37.3909621],
+                "osm_id": 4096800700,
+                "name": "First clipper Card reader on NB Caltrain platform"
+            }, "end_loc": {
+                "osm_id": 3478331127,
+                "name": "Last clipper card reader before exiting to Townsend Street"
+            },
+            "config": {"id": "STOP_TRACKING"}
+        },{
+            "id": "low_accuracy_train_AO",
+            "mode": "train",
+            "start_loc": {
+                "osm_id": 3478331127,
                 "name": "Last clipper card reader before exiting to Townsend Street"
             }, "end_loc": {
-                "osm_id": 5019134176,
-                "coordinates": [-122.0698728, 37.3863259],
+                "osm_id": 4096800700,
+                "name": "First clipper Card reader on NB Caltrain platform"
+            },
+            "config": {"id": "LAHFAO"}
+        },{
+            "id": "medium_accuracy_train_AO",
+            "mode": "train",
+            "start_loc": {
+                "osm_id": 4096800700,
+                "name": "First clipper Card reader on NB Caltrain platform"
+            }, "end_loc": {
+                "osm_id": 3478331127,
+                "name": "Last clipper card reader before exiting to Townsend Street"
+            },
+            "config": {"id": "MAHFAO"}
+        },{
+            "id": "high_accuracy_train_AO",
+            "mode": "train",
+            "start_loc": {
+                "osm_id": 3478331127,
+                "name": "Last clipper card reader before exiting to Townsend Street"
+            }, "end_loc": {
+                "osm_id": 4096800700,
+                "name": "First clipper Card reader on NB Caltrain platform"
+            },
+            "config": {"id": "HAHFAO"}
+        }
+    ],
+    "evaluation_trips": [
+        {
+            "id": "short_walk_suburb",
+            "name": "Walk to Landels",
+            "mode": "WALKING",
+            "start_loc": {
+                "osm_id": 2630202881,
+                "name": "Shoreline and Latham"
+            }, "end_loc": {
+                "osm_id": 1615001118,
                 "name": "Entrance to Stevens Creek Trail at Landels School"
             },
-            "route_waypoints": [
-                "osm_node_ids": [272208711, 343270779, 343270132,
-                    65587153, 147451990, 1735909450],
-            ]
-        },
-        "bike": {},
-        "car": {},
-        "bus": {},
-        "train": {},
-    }
+            "route_waypoints": [272208711, 343270779, 343270132,
+                    65587153, 147451990, 1735909450]
+        },{
+            "id": "short_bike_suburb",
+            "name": "Bike from Landels",
+            "mode": "BICYCLING",
+            "start_loc": {
+                "osm_id": 1615001118,
+                "name": "Entrance to Stevens Creek Trail at Landels School"
+            }, "end_loc": {
+                "osm_id": 2630202881,
+                "name": "Shoreline and Latham"
+            },
+            "route_waypoints": [1735909450, 147451990, 65587153, 343270132,
+                343270779, 272208711]
+        },{
+            "id": "short_car_suburb_city_street",
+            "name": "Drive to Cubberley on City Streets",
+            "mode": "CAR",
+            "start_loc": {
+                "osm_id": 2630202881,
+                "name": "Shoreline and Latham"
+            }, "end_loc": {
+                "osm_id": 6277202430,
+                "name": "Cubberley Parking Lot"
+            },
+            "route_waypoints": [272208711, 194934398, 65433851, 65433845, 6437064774, 65495783, 6277202430]
+        },{
+            "id": "short_car_suburb_freeway",
+            "name": "Drive from Cubberley on Freeway",
+            "mode": "CAR",
+            "start_loc": {
+                "osm_id": 6277202430,
+                "name": "Cubberley Parking Lot"
+            }, "end_loc": {
+                "osm_id": 2630202881,
+                "name": "Shoreline and Latham"
+            },
+            "route_waypoints": [6277202430, 65495783, 6437064769, 6135440013, 1631837943, 699180298, 283240171]
+        }
+    ],
+    "sensing_settings": [
+        {"name": "emission: HAHFDC v/s HAMFDC"},
+        {"name": "emission: HAMFDC v/s HALFDC"},
+        {"name": "emission: MAHFDC v/s MAMFDC"},
+        {"name": "emission: MAMFDC v/s LAHFDC"},
+        {"name": "emission: MALFDC v/s LALFDC"},
+        {"name": "emission: HAHFAO v/s HAMFAO"},
+        {"name": "emission: HAMFAO v/s HALFAO"},
+        {"name": "emission: HAMFAO v/s MAHFAO"},
+        {"name": "emission: HALFAO v/s LAHFAO"}
+    ]
 }
