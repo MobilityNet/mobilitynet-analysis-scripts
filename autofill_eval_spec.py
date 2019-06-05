@@ -70,13 +70,10 @@ def validate_and_fill_eval_trips(curr_spec):
 
 def validate_and_fill_sensing_settings(curr_spec):
     modified_spec = copy.copy(curr_spec)
-    name_re = re.compile(r"emission: (?P<id_a>\w+) v/s (?P<id_b>\w+)")
     for ss in modified_spec["sensing_settings"]:
-        m = name_re.match(ss["name"])
-        id_a = m.group("id_a")
-        id_b = m.group("id_b")
-        ss["sensing_config_a"] = sensing_configs[id_a]["sensing_config"]
-        ss["sensing_config_b"] = sensing_configs[id_b]["sensing_config"]
+        compare_list = ss["compare"]
+        ss["name"] = " v/s ".join(compare_list)
+        ss["sensing_configs"] = [sensing_configs[cr] for cr in compare_list]
     return modified_spec
 
 if __name__ == '__main__':

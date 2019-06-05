@@ -95,6 +95,17 @@
             "config": {"id": "HAHFAO"}
         }
     ],
+    "sensing_settings": [
+        {"compare": ["HAHFDC", "HAMFDC"]},
+        {"compare": ["HAMFDC", "HALFDC"]},
+        {"compare": ["MAHFDC", "MAMFDC"]},
+        {"compare": ["MAMFDC", "LAHFDC"]},
+        {"compare": ["MALFDC", "LALFDC"]},
+        {"compare": ["HAHFAO", "HAMFAO"]},
+        {"compare": ["HAMFAO", "HALFAO"]},
+        {"compare": ["HAMFAO", "MAHFAO"]},
+        {"compare": ["HALFAO", "LAHFAO"]}
+    ],
     "evaluation_trips": [
         {
             "id": "short_walk_suburb",
@@ -147,16 +158,5 @@
             },
             "route_waypoints": [6277202430, 65495783, 6437064769, 6135440013, 1631837943, 699180298, 283240171]
         }
-    ],
-    "sensing_settings": [
-        {"name": "emission: HAHFDC v/s HAMFDC"},
-        {"name": "emission: HAMFDC v/s HALFDC"},
-        {"name": "emission: MAHFDC v/s MAMFDC"},
-        {"name": "emission: MAMFDC v/s LAHFDC"},
-        {"name": "emission: MALFDC v/s LALFDC"},
-        {"name": "emission: HAHFAO v/s HAMFAO"},
-        {"name": "emission: HAMFAO v/s HALFAO"},
-        {"name": "emission: HAMFAO v/s MAHFAO"},
-        {"name": "emission: HALFAO v/s LAHFAO"}
     ]
 }
