@@ -16,7 +16,7 @@ def validate_and_fill_datetime(current_spec):
     ret_spec = copy.copy(current_spec)
     timezone = current_spec["region"]["timezone"]
     ret_spec["start_ts"] = arrow.get(current_spec["start_fmt_date"], tzinfo=timezone).timestamp
-    ret_spec["end_ts"] = arrow.get(current_spec["start_fmt_date"], tzinfo=timezone).timestamp
+    ret_spec["end_ts"] = arrow.get(current_spec["end_fmt_date"], tzinfo=timezone).timestamp
     return ret_spec
 
 def node_to_geojson_coords(node_id):
