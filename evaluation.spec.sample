@@ -1,26 +1,26 @@
 {
     "fmt_version": 1,
-    "id": "sfba_trial_1",
-    "name": "Evaluation procedure creation, trial #1",
+    "id": "sfba_trial_2",
+    "name": "Evaluation procedure creation, trial #2",
     "region": {
         "osm_id": 2157162589,
         "name": "San Francisco Bay Area",
         "timezone": "America/Los_angeles"
     },
-    "start_fmt_date": "2019-06-04",
-    "end_fmt_date": "2019-06-09",
+    "start_fmt_date": "2019-06-10",
+    "end_fmt_date": "2019-06-13",
     "phones": {
         "android": {
-          "ucb.sdb.android.1": "accuracy_control",
-          "ucb.sdb.android.2": "evaluation_0",
-          "ucb.sdb.android.3": "evaluation_1",
-          "ucb_sdb_android_4": "power_control"
+          "ucb-sdb-android-1": "accuracy_control",
+          "ucb-sdb-android-2": "evaluation_0",
+          "ucb-sdb-android-3": "evaluation_1",
+          "ucb-sdb-android-4": "power_control"
         },
         "ios": {
-          "ucb.sdb.ios.1": "accuracy_control",
-          "ucb.sdb.ios.2": "evaluation_0",
-          "ucb.sdb.ios.3": "evaluation_1",
-          "ucb.sdb.ios.4": "power_control"
+          "ucb-sdb-ios-1": "accuracy_control",
+          "ucb-sdb-ios-2": "evaluation_0",
+          "ucb-sdb-ios-3": "evaluation_1",
+          "ucb-sdb-ios-4": "power_control"
         }
     },
     "calibration_tests": [
@@ -158,5 +158,37 @@
             },
             "route_waypoints": [6277202430, 65495783, 6437064769, 6135440013, 1631837943, 699180298, 283240171]
         }
-    ]
+    ],
+    "setup_notes": {
+        "ios": [
+            "Initial iOS versions: ucb.sdb.ios.1: 9.3; ucb.sdb.ios.2: 11.2.1; ucb.sdb.ios.3: 9.3; ucb.sdb.ios.4: 10.3.2",
+            "iOS does not support incremental updates, so will need to update everything to the most recent iOS 12",
+            "update to 12.3.1",
+            "Erase all data and settings",
+            "English, United States",
+            "Set up manually",
+            "Connect to WiFi",
+            "Disabled: Touch ID, Automatic updates, Wallet, iCloud Keychain, Siri, Screen Time, Analytics",
+            "Enabled: Location services",
+            "Sign in with Apple ID",
+            "Turn off updates from the app store",
+            "Login to gmail through the mail app",
+            "phone #2 turned out to have 50% battery health. Replaced battery"
+        ],
+        "android": [
+            "factory data reset (still at version 6.0.1)",
+            "English, United States",
+            "Connect to WiFi",
+            "Sign in with google account",
+            "Don't back up data, enable google location service, improve location accuracy, don't send diagnostic data",
+            "Not setting up: payment info, other email",
+            "Don't restore; set up password",
+            "Don't enable Google Now",
+            "Don't accept update to 7",
+            "If prompted, add number",
+            "Turn off app auto-updates; 35 apps can be updated.; Update only the _Android System Webview_ manually",
+            "phone #3 is persistently stuck at an older version of google play services, although I follow the same procedure. and the older version is too old for the app.  So one-time update of all 35 apps.",
+            "even after the update, phone #3 has a different UI than the others. A/B testing?"
+        ]
+    }
 }
