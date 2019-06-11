@@ -7,8 +7,7 @@ import requests
 import osmapi
 import re
 
-import emission.core.wrapper.modeprediction as ecwp
-import emission.net.ext_service.routing.osrm as osrm
+import osrm as osrm
 
 sensing_configs = json.load(open("sensing_regimes.all.specs.json"))
 
@@ -25,9 +24,9 @@ def node_to_geojson_coords(node_id):
     return [node_details["lon"], node_details["lat"]]
 
 def get_route_coords(mode, waypoint_coords):
-    if mode == ecwp.PredictedModeTypes.CAR \
-      or mode == ecwp.PredictedModeTypes.WALKING \
-      or mode == ecwp.PredictedModeTypes.BICYCLING:
+    if mode == "CAR" \
+      or mode == "WALKING" \
+      or mode == "BICYCLING":
         # Use OSRM
         overview_geometry_params = {"overview": "full",
             "geometries": "polyline", "steps": "false"}
@@ -63,7 +62,7 @@ def validate_and_fill_eval_trips(curr_spec):
         waypoints = t["route_waypoints"]
         waypoint_coords = [node_to_geojson_coords(node_id) for node_id in waypoints]
         logging.debug("waypoint_coords = %s..." % waypoint_coords[0:3])
-        route_coords = get_route_coords(ecwp.PredictedModeTypes[t["mode"]],
+        route_coords = get_route_coords(t["mode"],
             [start_coords] + waypoint_coords + [end_coords])
         t["route_coords"] = [coords_swap(rc) for rc in route_coords]
     return modified_spec
