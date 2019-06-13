@@ -1,14 +1,14 @@
 {
     "fmt_version": 1,
-    "id": "sfba_trial_2",
-    "name": "Evaluation procedure creation, trial #2",
+    "id": "sfba_trial_3",
+    "name": "Evaluation procedure creation, trial #3",
     "region": {
         "osm_id": 2157162589,
         "name": "San Francisco Bay Area",
         "timezone": "America/Los_angeles"
     },
-    "start_fmt_date": "2019-06-10",
-    "end_fmt_date": "2019-06-13",
+    "start_fmt_date": "2019-06-11",
+    "end_fmt_date": "2019-06-15",
     "phones": {
         "android": {
           "ucb-sdb-android-1": "accuracy_control",
@@ -173,7 +173,8 @@
             "Sign in with Apple ID",
             "Turn off updates from the app store",
             "Login to gmail through the mail app",
-            "phone #2 turned out to have 50% battery health. Replaced battery"
+            "phone #2 turned out to have 50% battery health. Replaced battery",
+            "turned on _do not disturb_ for consistency with android"
         ],
         "android": [
             "factory data reset (still at version 6.0.1)",
@@ -188,7 +189,8 @@
             "If prompted, add number",
             "Turn off app auto-updates; 35 apps can be updated.; Update only the _Android System Webview_ manually",
             "phone #3 is persistently stuck at an older version of google play services, although I follow the same procedure. and the older version is too old for the app.  So one-time update of all 35 apps.",
-            "even after the update, phone #3 has a different UI than the others. A/B testing?"
+            "even after the update, phone #3 has a different UI than the others. A/B testing?",
+            "got phone call on android 4, which turned on the screen and got the phone out of doze mode, turned on _do not disturb_"
         ]
     }
 }
