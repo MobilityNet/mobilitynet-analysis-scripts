@@ -1,4 +1,4 @@
-# Reproducible evaluation of data collection based on public datasets #
+# Reproducible evaluation of data collection using public data #
 
 This repository contains juypter notebooks for the evaluation of smartphone
 app-based data collection. It is designed to be launched with binder
