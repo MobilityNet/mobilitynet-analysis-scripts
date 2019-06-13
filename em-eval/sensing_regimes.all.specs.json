@@ -1,0 +1,173 @@
+{
+    "HAHFDC": {
+        "id": "HAHFDC",
+        "name": "High accuracy High Frequency Duty Cycling",
+        "sensing_config": {
+            "is_duty_cycling": true,
+            "accuracy": ["PRIORITY_HIGH_ACCURACY","kCLLocationAccuracyBest"],
+            "filter": 1
+        }
+    },
+    "HAMFDC": {
+        "id": "HAMFDC",
+        "name": "High accuracy Medium Frequency Duty Cycling",
+        "sensing_config": {
+            "is_duty_cycling": true,
+            "accuracy": ["PRIORITY_HIGH_ACCURACY","kCLLocationAccuracyBest"],
+            "filter": 30
+        }
+    },
+    "HALFDC": {
+        "id": "HALFDC",
+        "name": "High accuracy Low Frequency Duty Cycling",
+        "sensing_config": {
+            "is_duty_cycling": true,
+            "accuracy": ["PRIORITY_HIGH_ACCURACY","kCLLocationAccuracyBest"],
+            "filter": 120
+        }
+    },
+    "MAHFDC": {
+        "id": "MAHFDC",
+        "name": "Medium accuracy High Frequency Duty Cycling",
+        "sensing_config": {
+            "is_duty_cycling": true,
+            "accuracy": ["PRIORITY_BALANCED_POWER_ACCURACY","kCLLocationAccuracyNearestTenMeters"],
+            "filter": 1
+        }
+    },
+    "MAMFDC": {
+        "id": "MAMFDC",
+        "name": "Medium accuracy Medium Frequency Duty Cycling",
+        "sensing_config": {
+            "is_duty_cycling": true,
+            "accuracy": ["PRIORITY_BALANCED_POWER_ACCURACY","kCLLocationAccuracyNearestTenMeters"],
+            "filter": 30
+        }
+    },
+    "MALFDC": {
+        "id": "MALFDC",
+        "name": "Medium accuracy Low Frequency Duty Cycling",
+        "sensing_config": {
+            "is_duty_cycling": true,
+            "accuracy": ["PRIORITY_BALANCED_POWER_ACCURACY","kCLLocationAccuracyNearestTenMeters"],
+            "filter": 120
+        }
+    },
+    "LAHFDC": {
+        "id": "LAHFDC",
+        "name": "Low accuracy High Frequency Duty Cycling",
+        "sensing_config": {
+            "is_duty_cycling": true,
+            "accuracy": ["PRIORITY_LOW_POWER","kCLLocationAccuracyHundredMeters"],
+            "filter": 1
+        }
+    },
+    "LAMFDC": {
+        "id": "LAMFDC",
+        "name": "Low accuracy Medium Frequency Duty Cycling",
+        "sensing_config": {
+            "is_duty_cycling": true,
+            "accuracy": ["PRIORITY_LOW_POWER","kCLLocationAccuracyHundredMeters"],
+            "filter": 30
+        }
+    },
+    "LALFDC": {
+        "id": "LALFDC",
+        "name": "Low accuracy Low Frequency Duty Cycling",
+        "sensing_config": {
+            "is_duty_cycling": true,
+            "accuracy": ["PRIORITY_LOW_POWER","kCLLocationAccuracyHundredMeters"],
+            "filter": 120
+        }
+    },
+    "HAHFAO": {
+        "id": "HAHFAO",
+        "name": "High accuracy High Frequency Always On",
+        "sensing_config": {
+            "is_duty_cycling": false,
+            "accuracy": ["PRIORITY_HIGH_ACCURACY","kCLLocationAccuracyBest"],
+            "filter": 1
+        }
+    },
+    "HAMFAO": {
+        "id": "HAMFAO",
+        "name": "High accuracy Medium Frequency Always On",
+        "sensing_config": {
+            "is_duty_cycling": false,
+            "accuracy": ["PRIORITY_HIGH_ACCURACY","kCLLocationAccuracyBest"],
+            "filter": 30
+        }
+    },
+    "HALFAO": {
+        "id": "HALFAO",
+        "name": "High accuracy Low Frequency Always On",
+        "sensing_config": {
+            "is_duty_cycling": false,
+            "accuracy": ["PRIORITY_HIGH_ACCURACY","kCLLocationAccuracyBest"],
+            "filter": 120
+        }
+    },
+    "MAHFAO": {
+        "id": "MAHFAO",
+        "name": "Medium accuracy High Frequency Always On",
+        "sensing_config": {
+            "is_duty_cycling": false,
+            "accuracy": ["PRIORITY_BALANCED_POWER_ACCURACY","kCLLocationAccuracyNearestTenMeters"],
+            "filter": 1
+        }
+    },
+    "MAMFAO": {
+        "id": "MAMFAO",
+        "name": "Medium accuracy Medium Frequency Always On",
+        "sensing_config": {
+            "is_duty_cycling": false,
+            "accuracy": ["PRIORITY_BALANCED_POWER_ACCURACY","kCLLocationAccuracyNearestTenMeters"],
+            "filter": 30
+        }
+    },
+    "MALFAO": {
+        "id": "MALFAO",
+        "name": "Medium accuracy Low Frequency Always On",
+        "sensing_config": {
+            "is_duty_cycling": false,
+            "accuracy": ["PRIORITY_BALANCED_POWER_ACCURACY","kCLLocationAccuracyNearestTenMeters"],
+            "filter": 120
+        }
+    },
+    "LAHFAO": {
+        "id": "LAHFAO",
+        "name": "Low accuracy High Frequency Always On",
+        "sensing_config": {
+            "is_duty_cycling": false,
+            "accuracy": ["PRIORITY_LOW_POWER","kCLLocationAccuracyHundredMeters"],
+            "filter": 1
+        }
+    },
+    "LAMFAO": {
+        "id": "LAMFAO",
+        "name": "Low accuracy Medium Frequency Always On",
+        "sensing_config": {
+            "is_duty_cycling": false,
+            "accuracy": ["PRIORITY_LOW_POWER","kCLLocationAccuracyHundredMeters"],
+            "filter": 30
+        }
+    },
+    "LALFAO": {
+        "id": "LALFAO",
+        "name": "Low accuracy Low Frequency Always On",
+        "sensing_config": {
+            "is_duty_cycling": false,
+            "accuracy": ["PRIORITY_LOW_POWER","kCLLocationAccuracyHundredMeters"],
+            "filter": 120
+        }
+    },
+    "STOP_TRACKING": {
+        "id": "STOP_TRACKING",
+        "name": "Tracking turned off as a control",
+        "sensing_config": {
+            "is_duty_cycling": false,
+            "accuracy": ["PRIORITY_NO_POWER","kCLLocationAccuracyThreeKilometers"],
+            "filter": 1200
+        }
+    }
+}
