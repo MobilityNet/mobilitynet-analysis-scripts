@@ -1,5 +1,5 @@
 pushd ..
-source setup/setup.sh
+source setup.sh
 popd
 
 # Since we need only one file from e-mission server, let's do a hacky modularization rn

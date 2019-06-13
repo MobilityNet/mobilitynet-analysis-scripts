@@ -1,5 +1,5 @@
 pushd ..
-source setup/teardown.sh
+source teardown.sh
 popd
 
 rm osrm.py
