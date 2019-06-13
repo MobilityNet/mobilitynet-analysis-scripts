@@ -5,6 +5,8 @@ app-based data collection. It is designed to be launched with binder
 https://mybinder.org/ so that other community members can run their own
 analyses without any additional setup.
 
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/e-mission/e-mission-eval-public-data.git/master)
+
 If you do find anything interesting, please consider contributing your notebook
 so that others can build on it!
 
