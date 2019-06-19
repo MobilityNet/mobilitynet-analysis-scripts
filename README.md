@@ -40,4 +40,4 @@ Restart & Clear Output).
     1. Push and generate pull request 
 
 ### Contributing additonal data and experiments ###
-Please see the detailed instructions in the docs.
+Please see the detailed instructions in [the docs](https://github.com/e-mission/e-mission-docs/tree/master/docs/em-benchmark).
