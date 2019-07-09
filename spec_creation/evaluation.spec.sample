@@ -8,7 +8,7 @@
         "timezone": "America/Los_angeles"
     },
     "start_fmt_date": "2019-06-11",
-    "end_fmt_date": "2019-06-15",
+    "end_fmt_date": "2019-06-22",
     "phones": {
         "android": {
           "ucb-sdb-android-1": "accuracy_control",
@@ -75,22 +75,24 @@
             "id": "medium_accuracy_train_AO",
             "mode": "train",
             "start_loc": {
-                "osm_id": 4096800700,
-                "name": "First clipper Card reader on NB Caltrain platform"
-            }, "end_loc": {
-                "osm_id": 3478331127,
-                "name": "Last clipper card reader before exiting to Townsend Street"
+                "osm_id": 3478331121,
+                "name": "Last clipper card reader before exiting to King Street"
+            },
+            "end_loc": {
+                "osm_id": 5994838201,
+                "name": "Map outside Berkeley BART"
             },
             "config": {"id": "MAHFAO"}
         },{
             "id": "high_accuracy_train_AO",
             "mode": "train",
             "start_loc": {
-                "osm_id": 3478331127,
-                "name": "Last clipper card reader before exiting to Townsend Street"
-            }, "end_loc": {
                 "osm_id": 4096800700,
                 "name": "First clipper Card reader on NB Caltrain platform"
+            },
+            "end_loc": {
+                "osm_id": 3478331127,
+                "name": "Last clipper card reader before exiting to Townsend Street"
             },
             "config": {"id": "HAHFAO"}
         }
@@ -156,7 +158,7 @@
                 "osm_id": 2630202881,
                 "name": "Shoreline and Latham"
             },
-            "route_waypoints": [6277202430, 65495783, 6437064769, 6135440013, 1631837943, 699180298, 283240171]
+            "route_waypoints": [6277202430, 65495783, 6142971394, 6528664989, 699180658, 26031411, 6481192957, 4880766596, 6486460721]
         }
     ],
     "setup_notes": {
