@@ -61,6 +61,7 @@ def validate_and_fill_eval_trips(curr_spec):
         end_coords = _fill_coords_from_id(t["end_loc"])
         waypoints = t["route_waypoints"]
         waypoint_coords = [node_to_geojson_coords(node_id) for node_id in waypoints]
+        t["waypoint_coords"] = waypoint_coords
         logging.debug("waypoint_coords = %s..." % waypoint_coords[0:3])
         route_coords = get_route_coords(t["mode"],
             [start_coords] + waypoint_coords + [end_coords])
