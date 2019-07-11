@@ -16,7 +16,7 @@ There are many potential ways to interact with the notebooks here. At one extrem
 
 ## Running existing notebooks ##
 
-1. **View only:** Notebooks with outputs embedded are in the `examples_with_outputs` folder and can be statically viewed directly in github.
+1. **View only:** Notebooks with outputs embedded are in the [`examples_with_outputs`](examples_with_outputs) folder and can be statically viewed directly in github.
 1. **Interactive, UI-only:** Launch the repo in binder and clone one of the example notebooks
 1. **Interactive, CLI only:**
     1. Fork + clone the repo
