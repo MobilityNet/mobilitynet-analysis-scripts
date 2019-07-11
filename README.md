@@ -16,8 +16,9 @@ There are many potential ways to interact with the notebooks here. At one extrem
 
 ## Running existing notebooks ##
 
-1. **UI-only:** Launch the repo in binder and clone one of the example notebooks
-1. **CLI only:**
+1. **View only:** Notebooks with outputs embedded are in the `examples_with_outputs` folder and can be statically viewed directly in github.
+1. **Interactive, UI-only:** Launch the repo in binder and clone one of the example notebooks
+1. **Interactive, CLI only:**
     1. Fork + clone the repo
     1. Run `setup.sh` to set up the local environment
     1. Start a local notebook server (`juypter notebook`)
