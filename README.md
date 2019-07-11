@@ -7,6 +7,8 @@ analyses without any additional setup.
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/e-mission/e-mission-eval-public-data.git/master)
 
+**WARNING** Launching the binder is V..E..R..Y slow. I am not quite sure why, since the [list of packages](environment.yml) is pretty short. I always look at the build logs to track the current progress. Sometimes, if the build succeeds in creating the image, but gets stuck in the "Launching server" step, I reload the binder page which seems to speed things up.
+
 If you do find anything interesting, please consider contributing your notebook
 so that others can build on it!
 
