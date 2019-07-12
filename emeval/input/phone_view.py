@@ -38,21 +38,35 @@ class PhoneView:
         self.phone_view_map = {}
         self.spec_details = spec_details
 
-        print(20 * "-", "About to read calibration transitions from server", 20 * "-")
+        print(20 * "-", "About to read transitions from server", 20 * "-")
         self.fill_transitions()
         print(20 * "-", "About to fill calibration ranges", 20 * "-")
         self.fill_calibration_ranges()
+        print(20 * "-", "About to fill evaluation ranges", 20 * "-")
+        self.fill_evaluation_ranges()
+        print(20 * "-", "About to fill evaluation trips", 20 * "-")
+        self.fill_eval_role_maps()
+        self.fill_accuracy_control_trip_ranges()
+        self.copy_trip_ranges_to_eval_power_maps()
         print(20 * "-", "About to fill in battery information", 20 * "-")
-        self.fill_battery_df()
+        self.fill_battery_df("calibration")
+        self.fill_battery_df("evaluation")
         print(20 * "-", "About to fill in location information", 20 * "-")
-        self.fill_location_df()
-        print(20 * "-", "Done populating calibration information", 20 * "-")
+        self.fill_location_df("calibration")
+        self.fill_location_df("evaluation")
+        print(20 * "-", "About to select trip specific ranges", 20 * "-")
+        self.fill_trip_specific_battery_and_locations()
+        print(20 * "-", "Done populating information from server", 20 * "-")
 
     def validate(self):
-        print(20 * "-", "About to validate config settings", 20 * "-")
-        evpv.validate_config_settings(self)
-        print(20 * "-", "About to validate range durations", 20 * "-")
-        evpv.validate_range_durations(self)
+        print(20 * "-", "About to validate calibration settings", 20 * "-")
+        evpv.validate_calibration_settings(self)
+        print(20 * "-", "About to validate evaluation settings", 20 * "-")
+        evpv.validate_evaluation_settings(self)
+        print(20 * "-", "About to validate calibration range durations", 20 * "-")
+        evpv.validate_range_durations_for_calibration(self)
+        print(20 * "-", "About to validate evaluation range durations", 20 * "-")
+        evpv.validate_range_durations_for_evaluation(self)
 
     def map(self):
         return self.phone_view_map
@@ -157,11 +171,56 @@ class PhoneView:
                 print("Found %d ranges for phone %s" % (len(curr_calibration_ranges), phone_label))
                 phone_map[phone_label]["calibration_ranges"] = curr_calibration_ranges
 
-    def fill_battery_df(self):
+    ## Link evaluation ranges to each other
+    # Since the evaluation ranges have separate IDs, it is hard to link them
+    # the way we link the calibration ranges.  So let's add a common field
+    # (`eval_common_trip_id`) to each of the matching
+    # ranges for easy checking
+
+    def link_common_eval_ranges(self):
+        for phoneOS, phone_map in self.phone_view_map.items(): # android, ios
+            print("Processing data for %s phones" % phoneOS)
+            all_eval_ranges = [m["evaluation_ranges"] for m in phone_map.values()]
+            # all the lengths are equal - i.e. the set of lengths has one entr
+            assert len(set([len(a) for a in all_eval_ranges])) == 1
+            for ctuple in zip(*all_eval_ranges):
+                eval_cols = ctuple[1:-1]
+                # print([ct["trip_id"] for ct in ctuple], [ct["trip_id"] for ct in eval_cols])
+                get_common_name = lambda r: r["trip_id"].split(":")[0]
+                get_separate_role = lambda r: r["trip_id"].split(":")[1]
+                common_names = set([get_common_name(r) for r in eval_cols])
+                separate_roles = [get_separate_role(r) for r in eval_cols]
+                # print(separate_roles)
+                assert len(common_names) == 1
+                common_name = list(common_names)[0]
+                # print(common_name)
+                for r in ctuple:
+                    r["eval_common_trip_id"] = common_name
+                ctuple[0]["eval_role"] = "accuracy_control"
+                for r, sr in zip(eval_cols, separate_roles):
+                    r["eval_role"] = sr
+                ctuple[-1]["eval_role"] = "power_control"
+
+    def fill_evaluation_ranges(self):
+        self.filter_transitions(
+            "START_EVALUATION_PERIOD", "STOP_EVALUATION_PERIOD", 2, 3,
+            "evaluation")
         for phoneOS, phone_map in self.phone_view_map.items():
             print("Processing data for %s phones" % phoneOS)
             for phone_label in phone_map:
-                curr_calibration_ranges = phone_map[phone_label]["calibration_ranges"]
+                curr_evaluation_ranges = PhoneView.transitions_to_ranges(
+                    phone_map[phone_label]["evaluation_transitions"],
+                    "START_EVALUATION_PERIOD", "STOP_EVALUATION_PERIOD", 2, 3,
+                    phone_map[phone_label]["transitions"][-1], self.spec_details.eval_end_ts)
+                print("Found %d ranges for phone %s" % (len(curr_evaluation_ranges), phone_label))
+                phone_map[phone_label]["evaluation_ranges"] = curr_evaluation_ranges
+        self.link_common_eval_ranges()
+
+    def fill_battery_df(self, storage_key):
+        for phoneOS, phone_map in self.phone_view_map.items():
+            print("Processing data for %s phones" % phoneOS)
+            for phone_label in phone_map:
+                curr_calibration_ranges = phone_map[phone_label]["{}_ranges".format(storage_key)]
                 for r in curr_calibration_ranges:
                     battery_entries = self.spec_details.retrieve_data_from_server(phone_label, ["background/battery"], r["start_ts"], r["end_ts"])
                     # ios entries before running the pipeline are marked with battery_level_ratio, which is a float from 0 ->1
@@ -176,11 +235,11 @@ class PhoneView:
                     r["battery_df"] = battery_df
 
 
-    def fill_location_df(self):
+    def fill_location_df(self, storage_key):
         for phoneOS, phone_map in self.phone_view_map.items():
             print("Processing data for %s phones" % phoneOS)
             for phone_label in phone_map:
-                curr_calibration_ranges = phone_map[phone_label]["calibration_ranges"]
+                curr_calibration_ranges = phone_map[phone_label]["{}_ranges".format(storage_key)]
                 for r in curr_calibration_ranges:
                     all_done = False
                     location_entries = []
@@ -200,6 +259,98 @@ class PhoneView:
                     location_df = pd.DataFrame([e["data"] for e in location_entries])
                     location_df["hr"] = (location_df.ts-r["start_ts"])/3600.0
                     r["location_df"] = location_df
+
+    def fill_eval_role_maps(self):
+        self.accuracy_control_maps = {}
+        self.power_control_maps = {}
+        self.eval_phone_maps = {}
+
+        for phoneOS, phone_map in self.phone_view_map.items():
+            print("Processing data for %s phones" % phoneOS)
+            self.eval_phone_maps[phoneOS] = {}
+            for phone_label in phone_map:
+                curr_role = phone_map[phone_label]["role"]
+                if curr_role == "accuracy_control":
+                    self.accuracy_control_maps[phoneOS] = phone_map[phone_label]
+                elif curr_role == "power_control":
+                    self.power_control_maps[phoneOS] = phone_map[phone_label]
+                else:
+                    assert curr_role.startswith("evaluation")
+                    self.eval_phone_maps[phoneOS][phone_label] = phone_map[phone_label]
+
+        print("Lengths (accuracy, power, eval) = (%d, %d, %d)" %
+            (len(self.accuracy_control_maps),
+            len(self.power_control_maps),
+            len(self.eval_phone_maps)))
+        print("keys (accuracy, power, eval) = (%s, %s, %s)" %
+            (self.accuracy_control_maps.keys(),
+            self.power_control_maps.keys(),
+            self.eval_phone_maps.keys()))
+        print("eval_phone_keys (android, ios) = (%s, %s)" %
+            (self.eval_phone_maps["android"].keys(), self.eval_phone_maps["ios"].keys()))
+
+    def fill_accuracy_control_trip_ranges(self):
+        for phoneOS, phone_map in self.accuracy_control_maps.items():
+            curr_control_transitions = [t["data"] for t in phone_map["transitions"]] # from control phone
+            curr_evaluation_ranges = phone_map["evaluation_ranges"] # from this phone
+            trip_type_check = lambda t: t["transition"] in ["START_EVALUATION_TRIP", "STOP_EVALUATION_TRIP", 4, 5]
+            trip_time_check = lambda t, r: t["ts"] >= r["start_ts"] and t["ts"] <= r["end_ts"]
+            for i, r in enumerate(curr_evaluation_ranges):
+                # We have to get the evaluation details from one of the evaluation phones
+                curr_eval_trips_transitions = [t for t in curr_control_transitions if trip_type_check(t) and trip_time_check(t, r)]
+                # print("\n".join([str((t["transition"], t["trip_id"], t["ts"], arrow.get(t["ts"]).to(eval_tz))) for t in curr_eval_trips_transitions]))
+                # print(len(curr_eval_trips_transitions))
+                curr_eval_trips_ranges = PhoneView.transitions_to_ranges(
+                    curr_eval_trips_transitions,
+                    "START_EVALUATION_TRIP", "STOP_EVALUATION_TRIP", 4, 5,
+                    curr_control_transitions[-1], self.spec_details.eval_end_ts)
+                print("%s: Found %s trips for evaluation %s" % (phoneOS, len(curr_eval_trips_ranges), r["trip_id"]))
+                # print(curr_eval_trips_ranges)
+                print("\n".join([str((tr["trip_id"], tr["duration"],
+                    arrow.get(tr["start_ts"]).to(self.spec_details.eval_tz),
+                    arrow.get(tr["end_ts"]).to(self.spec_details.eval_tz)))
+                    for tr in curr_eval_trips_ranges]))
+                r["evaluation_trip_ranges"] = curr_eval_trips_ranges
+
+    def copy_trip_ranges_to_eval_power_maps(self):
+        for phoneOS in self.accuracy_control_maps.keys():
+            matching_accuracy_control_map = self.accuracy_control_maps[phoneOS]
+            matching_eval_power_maps = self.phone_view_map[phoneOS]
+            print(matching_eval_power_maps.keys())
+            for phone_label, phone_map in matching_eval_power_maps.items():
+                if phone_map == matching_accuracy_control_map:
+                    print("Found accuracy control, skipping copy")
+                    continue
+                curr_eval_evaluation_ranges = phone_map["evaluation_ranges"]
+                curr_accuracy_evaluation_ranges = matching_accuracy_control_map["evaluation_ranges"]
+                assert len(curr_eval_evaluation_ranges) == len(curr_accuracy_evaluation_ranges)
+                for i, (re, ra) in enumerate(zip(curr_eval_evaluation_ranges, curr_accuracy_evaluation_ranges)):
+                    accuracy_eval_trips_ranges = ra["evaluation_trip_ranges"] # from this phone
+                    print("%s: Copying %s accuracy trips to %s, before = %s" % (phoneOS, phone_label, len(accuracy_eval_trips_ranges),
+                        len(re["evaluation_trip_ranges"]) if "evaluation_trip_ranges" in re else 0))
+                    re["evaluation_trip_ranges"] = copy.deepcopy(accuracy_eval_trips_ranges)
+                    # print(curr_eval_trips_ranges)
+                    print("\n".join([str((tr["trip_id"], tr["duration"],
+                        arrow.get(tr["start_ts"]).to(self.spec_details.eval_tz),
+                        arrow.get(tr["end_ts"]).to(self.spec_details.eval_tz)))
+                        for tr in re["evaluation_trip_ranges"]]))
+
+    def fill_trip_specific_battery_and_locations(self):
+        for phoneOS, phone_map in self.phone_view_map.items(): # android, ios
+            for phone_label in phone_map:
+                print("Filling label %s for OS %s" % (phone_label, phoneOS))
+                for r in phone_map[phone_label]["evaluation_ranges"]:
+                    # print(r["battery_df"].head())
+                    for tr in r["evaluation_trip_ranges"]:
+                        query = "ts > %s & ts <= %s" % (tr["start_ts"], tr["end_ts"])
+                        # print("%s %s %s" % (phone_label, tr["trip_id"], query))
+                        # print(r["battery_df"].query(query).head())
+                        tr["battery_df"] = r["battery_df"].query(query)
+                        # print(80 * '~')
+                        # print(tr["battery_df"])
+                        tr["location_df"] = r["location_df"].query(query)
+                        # print(80 * "-")
+
     #
     # END: Imported from Validate_calibration_*.ipynb
     #

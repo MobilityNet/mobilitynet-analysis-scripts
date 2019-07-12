@@ -3,10 +3,29 @@ import pandas as pd
 
 MAX_DURATION_VARIATION = 5 * 60 # seconds
 
-def get_expected_config_map(sd):
+def get_expected_config_map_for_calibration(sd):
     expected_config_map = {}
     for ct in sd.curr_spec["calibration_tests"]:
         expected_config_map[ct["id"]] = ct["config"]["sensing_config"]
+    return expected_config_map
+
+def get_expected_config_map_for_evaluation(sd):
+    expected_config_map = {
+        "fixed:ACCURACY_CONTROL": {
+            "is_duty_cycling": False,
+            "accuracy": ["PRIORITY_HIGH_ACCURACY","kCLLocationAccuracyBest"],
+            "filter": 1,
+        },
+        "fixed:POWER_CONTROL": {
+            "is_duty_cycling": False,
+            "accuracy": ["PRIORITY_NO_POWER","kCLLocationAccuracyThreeKilometers"],
+            "filter": 1200,
+        }
+    }
+    for ct in sd.curr_spec["sensing_settings"]:
+        for s in ct["sensing_configs"]:
+            expected_config_map["%s:%s" % (ct["name"], s["id"])] = s["sensing_config"]
+    # print(expected_config_map)
     return expected_config_map
 
 # Current accuracy constants
@@ -63,8 +82,8 @@ def _validate_accuracy(phoneOS, config_during_test, expected_config):
     assert config_during_test["accuracy"] == ev, "Field accuracy mismatch! %s != %s" % (config_during_test[accuracy], ev)
 
 
-def validate_config_settings(phone_view):
-    expected_config_map = get_expected_config_map(phone_view.spec_details)
+def validate_calibration_settings(phone_view):
+    expected_config_map = get_expected_config_map_for_calibration(phone_view.spec_details)
     # print(expected_config_map)
     for phoneOS, phone_map in phone_view.map().items():
         print("Processing data for %s phones" % phoneOS)
@@ -90,15 +109,47 @@ def validate_config_settings(phone_view):
                             "Field %s mismatch! %s != %s" % \
                                 (f, config_during_test[f], expected_config[f])
 
-def validate_range_durations(phone_view):
+def validate_evaluation_settings(phone_view):
+    expected_config_map = get_expected_config_map_for_evaluation(phone_view.spec_details)
+    for phoneOS, phone_map in phone_view.map().items():
+        # print("Processing data for %s phones, next level keys = %s" % (phoneOS, phone_map.keys()))
+        for phone_label in phone_map:
+            curr_evaluation_ranges = phone_map[phone_label]["evaluation_ranges"]
+            unique_test_ids = set(filter(lambda id: id != "fixed", [r["trip_id"].split(":")[0] for r in curr_evaluation_ranges]))
+            # This is a tricky check since, unlike in the calibration case, we will have different ids for the different evaluation
+            # ranges. For now, let us just assert that the evaluation range is valid
+            # print("Unique test ids = %s" % unique_test_ids)
+            spec_test_ids = set([ct["name"] for ct in phone_view.spec_details.curr_spec["sensing_settings"]])
+            # print(spec_test_ids)
+            # <= represents subset for set objects
+            assert unique_test_ids <= spec_test_ids, "Invalid evaluation test while comparing %s, %s" % (unique_test_ids, spec_test_ids)
+            for r in curr_evaluation_ranges:
+                config_during_test_entries = phone_view.spec_details.retrieve_data_from_server(phone_label, ["config/sensor_config"], r["start_ts"], r["end_ts"])
+                print("%s -> %s" % (r["trip_id"], [c["data"]["accuracy"] for c in config_during_test_entries]))
+                # assert len(config_during_test_entries) == 1, "Out of band configuration? Found %d config changes" % len(config_during_test_entries)
+                config_during_test = config_during_test_entries[0]["data"]
+                expected_config = expected_config_map[r["trip_id"]]
+                # print(config_during_test.keys(), expected_config.keys())
+                validate_filter(phoneOS, config_during_test, expected_config)
+                validate_accuracy(phoneOS, config_during_test, expected_config)
+                for f in expected_config:
+                    if f != "accuracy" and f != "filter":
+                        assert config_during_test[f] == expected_config[f], "Field %s mismatch! %s != %s" % (f, config_during_test[f], expected_config[f])
+
+"""
+range_key: the key in each range that links the ranges for an experiment together
+"trip_id" for calibration and "eval_common_trip_id" for evaluation
+"""
+
+def validate_range_durations(phone_view, range_key, range_entry_id):
     duration_map = {}
     for phoneOS, phone_map in phone_view.map().items():
         print("Processing data for %s phones" % phoneOS)
         for phone_label in phone_map:
             curr_phone_duration_map = {}
-            curr_calibration_ranges = phone_map[phone_label]["calibration_ranges"]
+            curr_calibration_ranges = phone_map[phone_label]["{}_ranges".format(range_key)]
             for r in curr_calibration_ranges:
-                curr_phone_duration_map[r["trip_id"]] = r["duration"]
+                curr_phone_duration_map[r[range_entry_id]] = r["duration"]
             duration_map[phoneOS+"_"+phone_label] = curr_phone_duration_map
             
     duration_df = pd.DataFrame(duration_map).transpose()
@@ -109,3 +160,10 @@ def validate_range_durations(phone_view):
             "INVALID: for %s, duration_variation.abs().max() %d > threshold %d" % \
                 (col, duration_variation.abs().max(), MAX_DURATION_VARIATION)
 
+def validate_range_durations_for_calibration(phone_view):
+    validate_range_durations(phone_view, "calibration", "trip_id")
+
+# This is slightly different from the calibration validation because the
+# matching durations don't have the same IDs
+def validate_range_durations_for_evaluation(phone_view):
+    validate_range_durations(phone_view, "evaluation", "eval_common_trip_id")
