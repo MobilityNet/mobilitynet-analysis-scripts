@@ -49,7 +49,7 @@ def plot_separate_power_drain_single_run(fig, ncols, eval_map, trip_id_pattern):
 def get_map_list_multiple_runs(eval_view, range_key, trip_id_pattern):
     map_list = []
     color_list = ['blue', 'red', 'purple', 'orange']
-    for phoneOS, phone_map in eval_view.map().items():
+    for phoneOS, phone_map in eval_view.map("calibration").items():
         print("Processing data for %s phones" % phoneOS)
         for curr_calibrate, curr_calibrate_trip_map in phone_map.items():
             curr_map = folium.Map()
@@ -88,7 +88,7 @@ def get_map_list_multiple_runs(eval_view, range_key, trip_id_pattern):
 def get_map_list_single_run(eval_view, range_key, trip_id_pattern):
     map_list = []
     color_list = ['blue', 'red', 'purple', 'orange']
-    for phoneOS, phone_map in eval_view.map().items():
+    for phoneOS, phone_map in eval_view.map("calibration").items():
         print("Processing data for %s phones" % phoneOS)
         for curr_calibrate, curr_calibrate_trip_map in phone_map.items():
             if trip_id_pattern not in curr_calibrate:
@@ -125,4 +125,46 @@ def get_map_list_single_run(eval_view, range_key, trip_id_pattern):
             ).add_to(curr_map)
             curr_map.fit_bounds(pl.get_bounds())
             map_list.append(curr_map)
+    return map_list
+
+def get_map_list_eval_trips(eval_view, range_key, trip_id_pattern):
+    map_list = []
+    color_list = ['blue', 'red', 'purple', 'orange']
+    for phoneOS, phone_map in eval_view.map("evaluation").items():
+        print("Processing data for %s phones" % phoneOS)
+        for curr_eval, curr_eval_trip_map in phone_map.items():
+            for curr_eval_trip_id, eval_trip_compare_map in curr_eval_trip_map.items():
+                curr_map = folium.Map()
+                all_points = []
+                for i, (compare_id, compare_tr) in enumerate(eval_trip_compare_map.items()):
+                    if i == len(eval_trip_compare_map) - 1:
+                        print("Skipping the last item (power_control)")
+                        continue
+                    location_df = compare_tr["location_df"]
+                    latlng_route_coords = list(zip(location_df.latitude, location_df.longitude))
+                    all_points.extend(latlng_route_coords)
+                    # print(latlng_route_coords[0:10])
+                    if len(latlng_route_coords) > 0:
+                        print("Processing %s, %s, %s, found %d locations, adding to map" %
+                          (curr_eval, curr_eval_trip_id, compare_id, len(latlng_route_coords)))
+                        pl = folium.PolyLine(latlng_route_coords,
+                            popup="%s" % (compare_id), color=color_list[i])
+                        pl.add_to(curr_map)
+                    else:
+                        print("Processing %s, %s, %s, found %d locations, skipping" %
+                          (curr_eval, curr_eval_trip_id, compare_id, len(latlng_route_coords)))
+                curr_bounds = ful.get_bounds(all_points)
+                print(curr_bounds)
+                top_lat = curr_bounds[0][0]
+                mid_lng = (curr_bounds[0][1] + curr_bounds[1][1])/2
+                print("for trip %s with %d points, midpoint = %s, %s, plotting at %s, %s" %
+                      (curr_eval_trip_id, len(all_points), top_lat,mid_lng, top_lat, mid_lng))
+                folium.map.Marker(
+                    [top_lat, mid_lng],
+                    icon=fof.DivIcon(
+                        icon_size=(200,36),
+                        html='<div style="font-size: 12pt; color: green;">%s: %s</div>' % (phoneOS, curr_eval_trip_id))
+                ).add_to(curr_map)
+                curr_map.fit_bounds(pl.get_bounds())
+                map_list.append(curr_map)
     return map_list
