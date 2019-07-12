@@ -31,7 +31,7 @@
         "name": "Medium accuracy High Frequency Duty Cycling",
         "sensing_config": {
             "is_duty_cycling": true,
-            "accuracy": ["PRIORITY_BALANCED_POWER_ACCURACY","kCLLocationAccuracyNearestTenMeters"],
+            "accuracy": ["PRIORITY_BALANCED_POWER_ACCURACY","kCLLocationAccuracyHundredMeters"],
             "filter": 1
         }
     },
@@ -40,7 +40,7 @@
         "name": "Medium accuracy Medium Frequency Duty Cycling",
         "sensing_config": {
             "is_duty_cycling": true,
-            "accuracy": ["PRIORITY_BALANCED_POWER_ACCURACY","kCLLocationAccuracyNearestTenMeters"],
+            "accuracy": ["PRIORITY_BALANCED_POWER_ACCURACY","kCLLocationAccuracyHundredMeters"],
             "filter": 30
         }
     },
@@ -49,7 +49,7 @@
         "name": "Medium accuracy Low Frequency Duty Cycling",
         "sensing_config": {
             "is_duty_cycling": true,
-            "accuracy": ["PRIORITY_BALANCED_POWER_ACCURACY","kCLLocationAccuracyNearestTenMeters"],
+            "accuracy": ["PRIORITY_BALANCED_POWER_ACCURACY","kCLLocationAccuracyHundredMeters"],
             "filter": 120
         }
     },
@@ -58,7 +58,7 @@
         "name": "Low accuracy High Frequency Duty Cycling",
         "sensing_config": {
             "is_duty_cycling": true,
-            "accuracy": ["PRIORITY_LOW_POWER","kCLLocationAccuracyHundredMeters"],
+            "accuracy": ["PRIORITY_LOW_POWER","kCLLocationAccuracyKilometer"],
             "filter": 1
         }
     },
@@ -67,7 +67,7 @@
         "name": "Low accuracy Medium Frequency Duty Cycling",
         "sensing_config": {
             "is_duty_cycling": true,
-            "accuracy": ["PRIORITY_LOW_POWER","kCLLocationAccuracyHundredMeters"],
+            "accuracy": ["PRIORITY_LOW_POWER","kCLLocationAccuracyKilometer"],
             "filter": 30
         }
     },
@@ -76,7 +76,7 @@
         "name": "Low accuracy Low Frequency Duty Cycling",
         "sensing_config": {
             "is_duty_cycling": true,
-            "accuracy": ["PRIORITY_LOW_POWER","kCLLocationAccuracyHundredMeters"],
+            "accuracy": ["PRIORITY_LOW_POWER","kCLLocationAccuracyKilometer"],
             "filter": 120
         }
     },
@@ -112,7 +112,7 @@
         "name": "Medium accuracy High Frequency Always On",
         "sensing_config": {
             "is_duty_cycling": false,
-            "accuracy": ["PRIORITY_BALANCED_POWER_ACCURACY","kCLLocationAccuracyNearestTenMeters"],
+            "accuracy": ["PRIORITY_BALANCED_POWER_ACCURACY","kCLLocationAccuracyHundredMeters"],
             "filter": 1
         }
     },
@@ -121,7 +121,7 @@
         "name": "Medium accuracy Medium Frequency Always On",
         "sensing_config": {
             "is_duty_cycling": false,
-            "accuracy": ["PRIORITY_BALANCED_POWER_ACCURACY","kCLLocationAccuracyNearestTenMeters"],
+            "accuracy": ["PRIORITY_BALANCED_POWER_ACCURACY","kCLLocationAccuracyHundredMeters"],
             "filter": 30
         }
     },
@@ -130,7 +130,7 @@
         "name": "Medium accuracy Low Frequency Always On",
         "sensing_config": {
             "is_duty_cycling": false,
-            "accuracy": ["PRIORITY_BALANCED_POWER_ACCURACY","kCLLocationAccuracyNearestTenMeters"],
+            "accuracy": ["PRIORITY_BALANCED_POWER_ACCURACY","kCLLocationAccuracyHundredMeters"],
             "filter": 120
         }
     },
@@ -139,7 +139,7 @@
         "name": "Low accuracy High Frequency Always On",
         "sensing_config": {
             "is_duty_cycling": false,
-            "accuracy": ["PRIORITY_LOW_POWER","kCLLocationAccuracyHundredMeters"],
+            "accuracy": ["PRIORITY_LOW_POWER","kCLLocationAccuracyKilometer"],
             "filter": 1
         }
     },
@@ -148,7 +148,7 @@
         "name": "Low accuracy Medium Frequency Always On",
         "sensing_config": {
             "is_duty_cycling": false,
-            "accuracy": ["PRIORITY_LOW_POWER","kCLLocationAccuracyHundredMeters"],
+            "accuracy": ["PRIORITY_LOW_POWER","kCLLocationAccuracyKilometer"],
             "filter": 30
         }
     },
@@ -157,7 +157,7 @@
         "name": "Low accuracy Low Frequency Always On",
         "sensing_config": {
             "is_duty_cycling": false,
-            "accuracy": ["PRIORITY_LOW_POWER","kCLLocationAccuracyHundredMeters"],
+            "accuracy": ["PRIORITY_LOW_POWER","kCLLocationAccuracyKilometer"],
             "filter": 120
         }
     },
