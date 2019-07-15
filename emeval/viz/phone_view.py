@@ -1,5 +1,7 @@
 import pandas as pd
 
+import arrow
+
 import folium
 import folium
 import folium.features as fof
@@ -113,4 +115,54 @@ def get_map_list(phone_view, range_key, trip_id_pattern):
                 curr_map.fit_bounds(pl.get_bounds())
                 map_list.append(curr_map)
     return map_list
+
+def display_map_detail_from_df(sel_location_df):
+    curr_map = folium.Map()
+    latlng_route_coords = list(zip(sel_location_df.latitude, sel_location_df.longitude))
+    # print(latlng_route_coords)
+    pl = folium.PolyLine(latlng_route_coords)
+    pl.add_to(curr_map)
+    for i, c in enumerate(latlng_route_coords):
+        sl = sel_location_df.iloc[i]
+        folium.CircleMarker(c, radius=5, popup="%d: index: %s" % (i, sl[["fmt_time"]])).add_to(curr_map)
+    curr_map.fit_bounds(pl.get_bounds())
+    return curr_map
+
+def print_entry(e, metadata_field_list, data_field_list, tz):
+    entry_display = []
+    for mf in metadata_field_list:
+        if mf == "fmt_time":
+            entry_display.append(arrow.get(e["metadata"]["write_ts"]).to(tz))
+        else:
+            entry_display.append(e["metadata"][mf])
+    for df in data_field_list:
+        if df == "fmt_time":
+            entry_display.append(arrow.get(e["data"]["ts"]).to(tz))
+        else:
+            entry_display.append(e["data"][df])
+    return entry_display
+
+def display_unprocessed_android_activity_transitions(phone_view, ax, range_key, trip_id_pattern):
+    for phone_label, phone_map in phone_view.map()["android"].items():
+        for r in phone_map["{}_ranges".format(range_key)]:
+            if trip_id_pattern not in r["trip_id"]:
+                # print("%s does not match pattern %s, skipping" % (r["trip_id"], trip_id_pattern))
+                continue
+            # print(20 * "-", phone_label, r["trip_id"], 20 * "-")
+            ma_valid_motion = r["motion_activity_df"].query("zzbhB not in [3,4,5]")
+            # print("For %s, %s, filtered %d -> %d" % (phone_label, r["trip_id"], len(r["motion_activity_df"]), len(ma_valid_motion)))
+            # ma_changes = ma_valid_motion.zzbhB.diff() != 0;
+            # ma_transitions = ma_valid_motion[ma_changes]
+            ma_valid_motion.plot(x="hr", y="zzbhB", ax=ax, label="%s_%s" % (phone_label, r["trip_id"]))
+
+def display_unprocessed_ios_activity_transitions(phone_view, ax, range_key, trip_id_pattern):
+    for phone_label, phone_map in phone_view.map()["ios"].items():
+        for r in phone_map["{}_ranges".format(range_key)]:
+            if trip_id_pattern not in r["trip_id"]:
+                # print("%s does not match pattern %s, skipping" % (r["trip_id"], trip_id_pattern))
+                continue
+            # print(20 * "-", phone_label, r["trip_id"], 20 * "-")
+            ma_valid_motion = r["motion_activity_df"].query("automotive == True | cycling == True | running == True | walking == True")
+            # print("For %s, %s, filtered %d -> %d" % (phone_label, r["trip_id"], len(r["motion_activity_df"]), len(ma_valid_motion)))
+            ma_valid_motion.plot(x="hr", y="automotive", ax=ax, label="%s_%s" % (phone_label, r["trip_id"]))
 

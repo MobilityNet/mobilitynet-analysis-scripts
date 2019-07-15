@@ -117,7 +117,6 @@ class EvaluationView:
                     if r["trip_id"] not in self.calib_eval_view_map[phoneOS]:
                         self.calib_eval_view_map[phoneOS][r["trip_id"]] = {}
                     self.calib_eval_view_map[phoneOS][r["trip_id"]][phone_label] = r
-        return self.calib_eval_view_map
 
     def from_view_eval_trips(self, phone_view, match_eval_range_pattern, match_trip_id_pattern):
         for phoneOS, phone_map in phone_view.map().items(): # android, ios
