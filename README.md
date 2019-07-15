@@ -18,7 +18,7 @@ There are many potential ways to interact with the notebooks here. At one extrem
 
 ## Running existing notebooks ##
 
-1. **View only:** Notebooks with outputs embedded are in the [`examples_with_outputs`](examples_with_outputs) folder and can be statically viewed directly in github.
+1. **View only:** Notebooks with outputs embedded are in the [`examples_with_outputs`](examples_with_outputs) folder and can be statically viewed directly in nbviewer (e.g. https://nbviewer.jupyter.org/github/e-mission/e-mission-eval-public-data/blob/master/examples_with_outputs/example_visualization_SFBA_first_failed_experiment.ipynb). There are a lot of logs related to data loading and preprocessing at the beginning, so you want to scroll ahead to the results (e.g. https://nbviewer.jupyter.org/github/e-mission/e-mission-eval-public-data/blob/master/examples_with_outputs/example_visualization_SFBA_first_failed_experiment.ipynb#Now-for-the-results-(calibration,-phone-view)!)
 1. **Interactive, UI-only:** Launch the repo in binder and clone one of the example notebooks
 1. **Interactive, CLI only:**
     1. Fork + clone the repo
