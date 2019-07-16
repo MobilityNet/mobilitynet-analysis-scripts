@@ -67,10 +67,13 @@ def _validate_filter(phoneOS, config_during_test, expected_config):
         
     if phoneOS == "android":
         cvf = "filter_time"
+        ev = ev * 1000 # milliseconds in the config, specified in secs
     elif phoneOS == "ios":
         cvf = "filter_distance"
         
-    assert config_during_test[cvf] == ev, "Field filter mismatch! %s != %s" % (config_during_test, expected_config)
+    assert config_during_test[cvf] == ev,\
+            "Field filter mismatch! %s (from %s) != %s (from %s)" %\
+            (config_during_test[cvf], config_during_test, ev, expected_config)
     
 """
 Internal method to validate the filter settings

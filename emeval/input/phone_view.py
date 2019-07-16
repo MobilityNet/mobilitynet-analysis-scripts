@@ -198,6 +198,7 @@ class PhoneView:
         for phoneOS, phone_map in self.phone_view_map.items(): # android, ios
             print("Processing data for %s phones" % phoneOS)
             all_eval_ranges = [m["evaluation_ranges"] for m in phone_map.values()]
+            # print(all_eval_ranges, [len(a) for a in all_eval_ranges], set([len(a) for a in all_eval_ranges]))
             # all the lengths are equal - i.e. the set of lengths has one entr
             assert len(set([len(a) for a in all_eval_ranges])) == 1
             for ctuple in zip(*all_eval_ranges):
@@ -276,7 +277,8 @@ class PhoneView:
                             prev_retrieved_count = len(curr_location_entries)
                     r["location_entries"] = location_entries
                     location_df = pd.DataFrame([e["data"] for e in location_entries])
-                    location_df["hr"] = (location_df.ts-r["start_ts"])/3600.0
+                    if len(location_entries) > 0:
+                        location_df["hr"] = (location_df.ts-r["start_ts"])/3600.0
                     r["location_df"] = location_df
 
     def fill_motion_activity_df(self, storage_key):
