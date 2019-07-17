@@ -133,8 +133,8 @@ def validate_evaluation_settings(phone_view):
                 config_during_test = config_during_test_entries[0]["data"]
                 expected_config = expected_config_map[r["trip_id"]]
                 # print(config_during_test.keys(), expected_config.keys())
-                validate_filter(phoneOS, config_during_test, expected_config)
-                validate_accuracy(phoneOS, config_during_test, expected_config)
+                _validate_filter(phoneOS, config_during_test, expected_config)
+                _validate_accuracy(phoneOS, config_during_test, expected_config)
                 for f in expected_config:
                     if f != "accuracy" and f != "filter":
                         assert config_during_test[f] == expected_config[f], "Field %s mismatch! %s != %s" % (f, config_during_test[f], expected_config[f])
