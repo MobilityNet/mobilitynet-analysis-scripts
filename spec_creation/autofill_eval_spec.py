@@ -53,18 +53,103 @@ def validate_and_fill_calibration_tests(curr_spec):
 def coords_swap(lon_lat):
     return list(reversed(lon_lat))
 
+def get_route_from_osrm(t, start_coords, end_coords):
+    if "route_waypoints" in t:
+        waypoints = t["route_waypoints"]
+        waypoint_coords = [node_to_geojson_coords(node_id) for node_id in waypoints]
+        t["waypoint_coords"] = waypoint_coords
+    elif "waypoint_coords" in t:
+        waypoint_coords = t["waypoint_coords"]
+    logging.debug("waypoint_coords = %s..." % waypoint_coords[0:3])
+    route_coords = get_route_coords(t["mode"],
+        [start_coords] + waypoint_coords + [end_coords])
+    return route_coords
+
+# Porting the perl script at
+# https://wiki.openstreetmap.org/wiki/Relations/Relations_to_GPX to python
+
+def get_way_list(relation_details):
+    wl = []
+    for member in relation_details["member"]:
+        # print(member["ref"], member["type"])
+        assert member["type"] != "relation", "This is a parent relation for child %d, expecting only child relations" % member["ref"]
+        if member["type"] == "way" and member["role"] != "platform":
+            wl.append(member["ref"])
+    return wl
+
+# way details is an array of n-1 node entries followed by a way entry
+# the way entry has an "nd" field which is an array of node ids in the correct
+# order the n-1 node entries are not necessarily in the correct order but
+# provide the id -> lat,lng mapping
+# Note also that the way can sometimes have the nodes in the reversed order
+# e.g. way 367132251 in relation 9605483 is reversed compared to ways 
+# 368345083 and 27422567 before it
+# this function automatically detects that and reverses the node array
+def get_coords_for_way(wid, prev_last_node=-1):
+    osm = osmapi.OsmApi()
+    lat = {}
+    lon = {}
+    coords_list = []
+    way_details = osm.WayFull(wid)
+    # print("Processing way %d with %d nodes" % (wid, len(way_details) - 1))
+    for e in way_details:
+        if e["type"] == "node":
+            lat[e["data"]["id"]] = e["data"]["lat"]
+            lon[e["data"]["id"]] = e["data"]["lon"]
+        if e["type"] == "way":
+            assert e["data"]["id"] == wid, "Way id mismatch! %d != %d" % (e["data"]["id"], wl[0])
+            ordered_node_array = e["data"]["nd"]
+            if prev_last_node != -1 and ordered_node_array[-1] == prev_last_node:
+                print("LAST entry %d matches prev_last_node %d, REVERSING order for %d" %
+                      (ordered_node_array[-1], prev_last_node, wid))
+                ordered_node_array = list(reversed(ordered_node_array))
+            for on in ordered_node_array:
+                # Returning lat,lon instead of lon,lat to be consistent with
+                # the returned values from OSRM. Since we manually swap the
+                # values later
+                coords_list.append([lat[on], lon[on]])
+    return ordered_node_array, coords_list
+
+def get_coords_for_relation(rid, start_node, end_node):
+    osm = osmapi.OsmApi()
+    relation_details = osm.RelationGet(rid)
+    wl = get_way_list(relation_details)
+    print("Relation %d mapped to %d ways" % (rid, len(wl)))
+    coords_list = []
+    on_list = []
+    prev_last_node = -1
+    for wid in wl:
+        w_on_list, w_coords_list = get_coords_for_way(wid, prev_last_node)
+        on_list.extend(w_on_list)
+        coords_list.extend(w_coords_list)
+        prev_last_node = w_on_list[-1]
+        print("After adding %d entries from wid %d, curr count = %d" % (len(w_on_list), wid, len(coords_list)))
+    start_index = on_list.index(start_node)
+    end_index = on_list.index(end_node)
+    assert start_index <= end_index, "Start index %d is before end %d" % (start_index, end_index)
+    return coords_list[start_index:end_index+1]
+
+def get_route_from_relation(t):
+    return get_coords_for_relation(t["relation"],
+        t["start_loc"]["osm_id"], t["end_loc"]["osm_id"])
+
 def validate_and_fill_eval_trips(curr_spec):
     modified_spec = copy.copy(curr_spec)
     eval_trips = modified_spec["evaluation_trips"]
     for t in eval_trips:
         start_coords = _fill_coords_from_id(t["start_loc"])
         end_coords = _fill_coords_from_id(t["end_loc"])
-        waypoints = t["route_waypoints"]
-        waypoint_coords = [node_to_geojson_coords(node_id) for node_id in waypoints]
-        t["waypoint_coords"] = waypoint_coords
-        logging.debug("waypoint_coords = %s..." % waypoint_coords[0:3])
-        route_coords = get_route_coords(t["mode"],
-            [start_coords] + waypoint_coords + [end_coords])
+        # there are three possible ways in which users can specify routes
+        # - waypoints from OSM, which we will map into coordinates and then
+        # move to step 2
+        # - list of coordinates, which we will use to find route coordinates
+        # using OSRM
+        # - a relation with start and end nodes, used only for public transit trips
+        if "route_waypoints" in t or "waypoint_coords" in t:
+            route_coords = get_route_from_osrm(t, start_coords, end_coords)
+        elif "relation" in t:
+            route_coords = get_route_from_relation(t)
+
         t["route_coords"] = [coords_swap(rc) for rc in route_coords]
     return modified_spec
 

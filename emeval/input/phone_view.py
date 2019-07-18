@@ -198,16 +198,21 @@ class PhoneView:
         for phoneOS, phone_map in self.phone_view_map.items(): # android, ios
             print("Processing data for %s phones" % phoneOS)
             all_eval_ranges = [m["evaluation_ranges"] for m in phone_map.values()]
+            # print(all_eval_ranges, [len(a) for a in all_eval_ranges], set([len(a) for a in all_eval_ranges]))
             # all the lengths are equal - i.e. the set of lengths has one entr
             assert len(set([len(a) for a in all_eval_ranges])) == 1
             for ctuple in zip(*all_eval_ranges):
-                eval_cols = ctuple[1:-1]
+                if len(ctuple) > 2:
+                    eval_cols = ctuple[1:-1]
+                else:
+                    # if we only have two phones, maybe because we are repeating trips
+                    eval_cols = ctuple
                 # print([ct["trip_id"] for ct in ctuple], [ct["trip_id"] for ct in eval_cols])
                 get_common_name = lambda r: r["trip_id"].split(":")[0]
                 get_separate_role = lambda r: r["trip_id"].split(":")[1]
                 common_names = set([get_common_name(r) for r in eval_cols])
                 separate_roles = [get_separate_role(r) for r in eval_cols]
-                # print(separate_roles)
+                # print(common_names, separate_roles)
                 assert len(common_names) == 1
                 common_name = list(common_names)[0]
                 # print(common_name)
@@ -276,7 +281,8 @@ class PhoneView:
                             prev_retrieved_count = len(curr_location_entries)
                     r["location_entries"] = location_entries
                     location_df = pd.DataFrame([e["data"] for e in location_entries])
-                    location_df["hr"] = (location_df.ts-r["start_ts"])/3600.0
+                    if len(location_entries) > 0:
+                        location_df["hr"] = (location_df.ts-r["start_ts"])/3600.0
                     r["location_df"] = location_df
 
     def fill_motion_activity_df(self, storage_key):
@@ -384,6 +390,15 @@ class PhoneView:
                         arrow.get(tr["end_ts"]).to(self.spec_details.eval_tz)))
                         for tr in re["evaluation_trip_ranges"]]))
 
+    # copy the subset of r[key] that matches the query to tr[key]
+    @staticmethod
+    def _copy_subset(r, tr, key, query):
+        if len(r[key]) > 0:
+            tr[key] = r[key].query(query)
+        else:
+            # since there is no data, we don't need to select a subset
+            tr[key] = r[key]
+
     def fill_trip_specific_battery_and_locations(self):
         for phoneOS, phone_map in self.phone_view_map.items(): # android, ios
             for phone_label in phone_map:
@@ -394,12 +409,12 @@ class PhoneView:
                         query = "ts > %s & ts <= %s" % (tr["start_ts"], tr["end_ts"])
                         # print("%s %s %s" % (phone_label, tr["trip_id"], query))
                         # print(r["battery_df"].query(query).head())
-                        tr["battery_df"] = r["battery_df"].query(query)
+                        PhoneView._copy_subset(r, tr, "battery_df", query)
                         # print(80 * '~')
                         # print(tr["battery_df"])
-                        tr["location_df"] = r["location_df"].query(query)
                         # print(80 * "-")
-                        tr["motion_activity"] = r["motion_activity_df"].query(query)
+                        PhoneView._copy_subset(r, tr, "location_df", query)
+                        PhoneView._copy_subset(r, tr, "motion_activity_df", query)
 
     #
     # END: Imported from Validate_calibration_*.ipynb

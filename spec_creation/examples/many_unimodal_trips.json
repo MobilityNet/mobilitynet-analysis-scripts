@@ -1,0 +1,210 @@
+{
+    "fmt_version": 1,
+    "id": "many_unimodal_trips",
+    "name": "Many unimodal trips before supporting multi-modal",
+    "region": {
+        "osm_id": 2157162589,
+        "name": "San Francisco Bay Area",
+        "timezone": "America/Los_Angeles"
+    },
+    "start_fmt_date": "2019-07-16",
+    "end_fmt_date": "2019-07-18",
+    "phones": {
+        "android": {
+          "ucb-sdb-android-1": "accuracy_control",
+          "ucb-sdb-android-2": "evaluation_0",
+          "ucb-sdb-android-3": "evaluation_1",
+          "ucb-sdb-android-4": "power_control"
+        },
+        "ios": {
+          "ucb-sdb-ios-1": "accuracy_control",
+          "ucb-sdb-ios-2": "evaluation_0",
+          "ucb-sdb-ios-3": "evaluation_1",
+          "ucb-sdb-ios-4": "power_control"
+        }
+    },
+    "calibration_tests": [
+    ],
+    "sensing_settings": [
+        {"compare": ["HAHFDC", "HAMFDC"]},
+        {"compare": ["HAMFDC", "HALFDC"]},
+        {"compare": ["HAHFDC", "MAHFDC"]},
+        {"compare": ["MAHFDC", "MAMFDC"]},
+        {"compare": ["HALFAO", "HAMFDC"]}
+    ],
+    "evaluation_trips": [
+        {
+            "id": "commuter_rail_aboveground",
+            "name": "Caltrain from Mountain View to Millbrae",
+            "mode": "TRAIN",
+            "start_loc": {
+                "osm_id": 6138188701,
+                "name": "Mountain View Caltrain"
+            }, "end_loc": {
+                "osm_id": 1342778583,
+                "name": "Millbrae Caltrain"
+            },
+            "relation": 9605484
+        }, {
+            "id": "subway_underground",
+            "name": "BART from Millbrae to Berkeley",
+            "mode": "SUBWAY",
+            "start_loc": {
+                "osm_id": 5317898424,
+                "name": "Millbrae Caltrain"
+            }, "end_loc": {
+                "osm_id": 2239764355,
+                "name": "Downtown Berkeley BART"
+            },
+            "relation": 2851613
+        }, {
+            "id": "city_bus_short",
+            "name": "52 bus from downtown to cory",
+            "mode": "BUS",
+            "start_loc": {
+                "osm_id": 6561896548,
+                "name": "Oxford Street & University Avenue"
+            }, "end_loc": {
+                "osm_id": 6561896571,
+                "name": "Hearst and Le Roy Avenue"
+            },
+            "relation": 2630160
+        }, {
+            "id": "walk_urban_university",
+            "name": "Soda to HFA-B with some detours",
+            "mode": "WALKING",
+            "start_loc": {
+                "osm_id": 4188788156,
+                "name": "Hearst and LeRoy"
+            }, "end_loc": {
+                "osm_id": 3207712840,
+                "name": "HFA-B"
+            },
+            "waypoint_coords": [
+              [ -122.25832164287567, 37.875323412955524 ],
+              [ -122.25817143917084, 37.87533188174649 ],
+              [ -122.25799977779388, 37.87481104928957 ],
+              [ -122.25801318883896, 37.87472847795213 ],
+              [ -122.25774228572844, 37.873957807672916 ],
+              [ -122.25757867097853, 37.873860414701156 ],
+              [ -122.25743651390076, 37.873492014034746 ],
+              [ -122.25727826356888, 37.87323582627839 ],
+              [ -122.25686252117156, 37.87334380635043 ],
+              [ -122.25664258003235, 37.87277849715986 ],
+              [ -122.2564360499382, 37.872302109642526 ],
+              [ -122.2568169236183, 37.87205015233236 ],
+              [ -122.25645214319228, 37.87181724985071 ],
+              [ -122.25697249174117, 37.87132815224266 ],
+              [ -122.25727558135986, 37.87088563256144 ],
+              [ -122.2579675912857, 37.87052780369859 ],
+              [ -122.25756525993347, 37.87032242185034 ],
+              [ -122.257479429245, 37.8699561208442 ],
+              [ -122.25763499736786, 37.869740150611456 ],
+              [ -122.25755184888841, 37.86949877136691 ]
+            ]
+        },{
+            "id": "bike_urban_university",
+            "name": "Wurster bikeshare station to Ashby BART",
+            "mode": "BICYCLING",
+            "start_loc": {
+                "osm_id": 3182054808,
+                "name": "Crossing at Bancroft"
+            }, "end_loc": {
+                "osm_id": 4237304293,
+                "name": "Closest node to bikeshare station"
+            },
+            "waypoint_coords": [
+              [ -122.25449413061142, 37.86932938195119 ],
+              [ -122.26786226034166, 37.86759100056764 ],
+              [ -122.26719439029694, 37.85970742391596 ],
+              [ -122.27037817239761, 37.85147778982933 ],
+              [ -122.27066248655319, 37.85120458241245 ],
+              [ -122.27080732584, 37.85242235960931 ],
+              [ -122.27035135030745, 37.85231858459739 ]
+            ]
+        },{ 
+            "id": "express_bus",
+            "name": "Express bus #F to the Transbay Terminal",
+            "mode": "BUS",
+            "start_loc": {
+                "osm_id": 6426880908,
+                "name": "Ashby BART"
+            }, "end_loc": {
+                "osm_id": 2504237931, 
+                "name": "Transbay Terminal"
+            },
+            "relation": 2718359
+        },{ 
+            "id": "walk_downtown_urban_canyon",
+            "name": "Transbay Terminal to Embarcadero station",
+            "mode": "WALKING",
+            "start_loc": {
+                "osm_id": 2504237931,
+                "name": "Transbay Terminal"
+            }, "end_loc": {
+                "osm_id": 5323877769, 
+                "name": "Embarcadero station"
+            },
+            "waypoint_coords": []
+        },{ 
+            "id": "light_rail_below_above_ground",
+            "name": "Muni Metro Line N",
+            "mode": "LIGHT_RAIL",
+            "start_loc": {
+                "osm_id": 5323877769,
+                "name": "Embarcadero station"
+            }, "end_loc": {
+                "osm_id": 1723633970, 
+                "name": "4th and King station"
+            },
+            "relation": 63223
+        }, {
+            "id": "commuter_rail_with_tunnels",
+            "name": "Caltrain from SF to Mountain View",
+            "mode": "TRAIN",
+            "start_loc": {
+                "osm_id": 6138188689, 
+                "name": "San Francisco Caltrain"
+            }, "end_loc": {
+                "osm_id": 6138188702,
+                "name": "Mountain View Caltrain"
+            },
+            "relation": 9605701
+        }
+    ],
+    "setup_notes": {
+        "ios": [
+            "Initial iOS versions: ucb.sdb.ios.1: 9.3; ucb.sdb.ios.2: 11.2.1; ucb.sdb.ios.3: 9.3; ucb.sdb.ios.4: 10.3.2",
+            "iOS does not support incremental updates, so will need to update everything to the most recent iOS 12",
+            "update to 12.3.1",
+            "Erase all data and settings",
+            "English, United States",
+            "Set up manually",
+            "Connect to WiFi",
+            "Disabled: Touch ID, Automatic updates, Wallet, iCloud Keychain, Siri, Screen Time, Analytics",
+            "Enabled: Location services",
+            "Sign in with Apple ID",
+            "Turn off updates from the app store",
+            "Login to gmail through the mail app",
+            "phone #2 turned out to have 50% battery health. Replaced battery",
+            "turned on _do not disturb_ for consistency with android"
+        ],
+        "android": [
+            "factory data reset (still at version 6.0.1)",
+            "English, United States",
+            "Connect to WiFi",
+            "Sign in with google account",
+            "Don't back up data, enable google location service, improve location accuracy, don't send diagnostic data",
+            "Not setting up: payment info, other email",
+            "Don't restore; set up password",
+            "Don't enable Google Now",
+            "Don't accept update to 7",
+            "If prompted, add number",
+            "Turn off app auto-updates; 35 apps can be updated.; Update only the _Android System Webview_ manually",
+            "phone #3 is persistently stuck at an older version of google play services, although I follow the same procedure. and the older version is too old for the app.  So one-time update of all 35 apps.",
+            "even after the update, phone #3 has a different UI than the others. A/B testing?",
+            "got phone call on android 4, which turned on the screen and got the phone out of doze mode, turned on _do not disturb_",
+            "installed custom apk with native changes to better support reading battery level at the start and end of range. Installed OI File Manager + allowed installing apps from unknown sources, but reverted changes before further testing. Had to give Chrome storage permission, and while reverting that, discovered that it also had location permission!! but I didn't change it because it was the default. I am fairly sure I don't recall being asked for location permissions from Chrome, but yeah right, it was already pre-installed, wasn't it."
+        ]
+    }
+}
