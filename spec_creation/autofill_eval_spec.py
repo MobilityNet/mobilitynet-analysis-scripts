@@ -6,6 +6,7 @@ import arrow
 import requests
 import osmapi
 import re
+import polyline as pl
 
 import osrm as osrm
 
@@ -26,14 +27,15 @@ def node_to_geojson_coords(node_id):
 def get_route_coords(mode, waypoint_coords):
     if mode == "CAR" \
       or mode == "WALKING" \
-      or mode == "BICYCLING":
+      or mode == "BICYCLING" \
+      or mode == "BUS":
         # Use OSRM
         overview_geometry_params = {"overview": "full",
             "geometries": "polyline", "steps": "false"}
         route_coords = osrm.get_route_points(mode, waypoint_coords, overview_geometry_params)
         return route_coords
     else:
-        raise NotImplementedError("OSRM does not support transit modes at this time")
+        raise NotImplementedError("OSRM does not support train modes at this time")
 
 def _fill_coords_from_id(loc):
     if loc is None:
@@ -64,6 +66,9 @@ def get_route_from_osrm(t, start_coords, end_coords):
     route_coords = get_route_coords(t["mode"],
         [start_coords] + waypoint_coords + [end_coords])
     return route_coords
+
+def get_route_from_polyline(t):
+    return pl.PolylineCodec().decode(t["polyline"])
 
 # Porting the perl script at
 # https://wiki.openstreetmap.org/wiki/Relations/Relations_to_GPX to python
@@ -133,24 +138,37 @@ def get_route_from_relation(t):
     return get_coords_for_relation(t["relation"],
         t["start_loc"]["osm_id"], t["end_loc"]["osm_id"])
 
+def validate_and_fill_leg(t):
+    start_coords = _fill_coords_from_id(t["start_loc"])
+    end_coords = _fill_coords_from_id(t["end_loc"])
+    # there are three possible ways in which users can specify routes
+    # - waypoints from OSM, which we will map into coordinates and then
+    # move to step 2
+    # - list of coordinates, which we will use to find route coordinates
+    # using OSRM
+    # - a relation with start and end nodes, used only for public transit trips
+    # - a polyline, which we can get from external API calls such as OTP or Google Maps
+    # Right now, we leave the integrations unspecified because there is not
+    # much standardization other than with google maps
+    # For example, the VTA trip planner () clearly uses OTP
+    # () but the path (api/otp/plan?) is different from the one for our OTP
+    # integration (otp/routers/default/plan?)
+    # But once people figure out the underlying call, they can copy-paste the
+    # geometry into the spec.
+    if "route_waypoints" in t or "waypoint_coords" in t:
+        route_coords = get_route_from_osrm(t, start_coords, end_coords)
+    elif "polyline" in t:
+        route_coords = get_route_from_polyline(t)
+    elif "relation" in t:
+        route_coords = get_route_from_relation(t)
+
+    t["route_coords"] = [coords_swap(rc) for rc in route_coords]
+
 def validate_and_fill_eval_trips(curr_spec):
     modified_spec = copy.copy(curr_spec)
     eval_trips = modified_spec["evaluation_trips"]
     for t in eval_trips:
-        start_coords = _fill_coords_from_id(t["start_loc"])
-        end_coords = _fill_coords_from_id(t["end_loc"])
-        # there are three possible ways in which users can specify routes
-        # - waypoints from OSM, which we will map into coordinates and then
-        # move to step 2
-        # - list of coordinates, which we will use to find route coordinates
-        # using OSRM
-        # - a relation with start and end nodes, used only for public transit trips
-        if "route_waypoints" in t or "waypoint_coords" in t:
-            route_coords = get_route_from_osrm(t, start_coords, end_coords)
-        elif "relation" in t:
-            route_coords = get_route_from_relation(t)
-
-        t["route_coords"] = [coords_swap(rc) for rc in route_coords]
+        validate_and_fill_leg(t)
     return modified_spec
 
 def validate_and_fill_sensing_settings(curr_spec):
