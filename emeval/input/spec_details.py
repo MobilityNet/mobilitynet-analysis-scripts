@@ -24,6 +24,16 @@ class SpecDetails:
         print("response = %s" % response)
         response.raise_for_status()
         ret_list = response.json()["phone_data"]
+        # write_ts may not be the same as data.ts, specially in the case of
+        # transitions, where we first generate the data.ts in javascript and
+        # then pass it down to the native code to store
+        # normally, this doesn't matter because it is a microsecond difference, but
+        # it does matter in this case because we store several entries in quick
+        # succession and we want to find the entries within a particular range.
+        # Putting it into the "data" object makes the write_ts accessible in the
+        # subsequent dataframes, etc
+        for e in ret_list:
+            e["data"]["write_ts"] = e["metadata"]["write_ts"]
         print("Found %d entries" % len(ret_list))
         return ret_list
 

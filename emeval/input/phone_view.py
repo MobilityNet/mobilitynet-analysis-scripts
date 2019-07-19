@@ -127,7 +127,7 @@ class PhoneView:
         start_transitions = transition_list[::2]
         end_transitions = transition_list[1::2]
 
-        print("\n".join([str((t["transition"], t["trip_id"], t["ts"])) for t in transition_list]))
+        print("\n".join([str((t["transition"], t["trip_id"], t["ts"], t["write_ts"])) for t in transition_list]))
 
         if len(transition_list) % 2 == 0:
             print("All ranges are complete, nothing to change")
@@ -142,9 +142,10 @@ class PhoneView:
                 fake_end_transition["data"]["ts"] = spec_end_ts
             else:
                 fake_end_transition["data"]["ts"] = curr_ts
+            fake_end_transition["data"]["write_ts"] = fake_end_transition["data"]["ts"]
+            fake_end_transition["metadata"]["write_ts"] = fake_end_transition["data"]["ts"]
             if "fmt_time" in last_start_transition["data"]:
                 fake_end_transition["data"]["fmt_time"] = arrow.get(curr_ts).to(eval_tz)
-            fake_end_transition["metadata"]["write_ts"] = curr_ts
             if "write_fmt_time" in last_start_transition["metadata"]:
                 fake_end_transition["metadata"]["write_fmt_time"] = arrow.get(curr_ts).to(eval_tz)
             fake_end_transition["metadata"]["platform"] = "fake"
@@ -152,8 +153,8 @@ class PhoneView:
                 del fake_end_transition["data"]["local_dt"]
             end_transitions.append(fake_end_transition["data"])
 
-        print("\n".join([str((t["transition"], t["trip_id"], t["ts"])) for t in start_transitions]))
-        print("\n".join([str((t["transition"], t["trip_id"], t["ts"])) for t in end_transitions]))
+        # print("\n".join([str((t["transition"], t["trip_id"], t["ts"])) for t in start_transitions]))
+        # print("\n".join([str((t["transition"], t["trip_id"], t["ts"])) for t in end_transitions]))
 
         range_list = []
         for (s, e) in zip(start_transitions, end_transitions):
@@ -164,7 +165,9 @@ class PhoneView:
             assert e["ts"] > s["ts"], "end %s is before start %s" % (arrow.get(e["ts"]), arrow.get(s["ts"]))
             for f in ["spec_id", "device_manufacturer", "device_model", "device_version"]:
                 assert s[f] == e[f], "Field %s mismatch! %s != %s" % (f, s[f], e[f])
-            curr_range = {"trip_id": s["trip_id"], "start_ts": s["ts"], "end_ts": e["ts"], "duration": (e["ts"] - s["ts"])}
+            curr_range = {"trip_id": s["trip_id"],
+                "start_ts": s["write_ts"], "end_ts": e["write_ts"],
+                "duration": (e["write_ts"] - s["write_ts"])}
             range_list.append(curr_range)
             
         return range_list
