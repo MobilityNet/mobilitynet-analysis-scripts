@@ -1,0 +1,163 @@
+{
+    "fmt_version": 1,
+    "id": "many_unimodal_trips_sb",
+    "name": "Many unimodal trips in the South Bay before supporting multi-modal",
+    "region": {
+        "osm_id": 2157162589,
+        "name": "San Francisco Bay Area",
+        "timezone": "America/Los_Angeles"
+    },
+    "start_fmt_date": "2019-07-17",
+    "end_fmt_date": "2019-07-22",
+    "phones": {
+        "android": {
+          "ucb-sdb-android-1": "accuracy_control",
+          "ucb-sdb-android-2": "evaluation_0",
+          "ucb-sdb-android-3": "evaluation_1",
+          "ucb-sdb-android-4": "power_control"
+        },
+        "ios": {
+          "ucb-sdb-ios-1": "accuracy_control",
+          "ucb-sdb-ios-2": "evaluation_0",
+          "ucb-sdb-ios-3": "evaluation_1",
+          "ucb-sdb-ios-4": "power_control"
+        }
+    },
+    "calibration_tests": [
+    ],
+    "sensing_settings": [
+        {"compare": ["HAHFDC", "HAMFDC"]},
+        {"compare": ["HAMFDC", "HALFDC"]},
+        {"compare": ["HAHFDC", "MAHFDC"]},
+        {"compare": ["MAHFDC", "MAMFDC"]},
+        {"compare": ["HALFAO", "HAMFDC"]}
+    ],
+    "evaluation_trips": [
+        {
+            "id": "walk_to_bus",
+            "name": "Mountain View Library to #52 stop",
+            "mode": "WALKING",
+            "start_loc": {
+                "osm_id": 5019134255,
+                "name": "Mountain View Library"
+            },
+            "end_loc": {
+                "osm_id": 5020708467,
+                "name": "Mountain View City Hall"
+            },
+            "polyline": "ayecF~nchVeB}@z@mC\\qAjAgEBIv@^VN"
+        },{
+            "id": "city_bus",
+            "name": "#52 VTA bus from Mountain View to Los Altos",
+            "mode": "BUS",
+            "start_loc": {
+                "osm_id": 5020708467,
+                "name": "Mountain View City Hall"
+            }, "end_loc": {
+                "osm_id": 5465520388,
+                "name": "#52 stop at El Monte and Hawthorne"
+            },
+            "polyline": "mtecF|`chVlAf@N?nAn@~Az@^T`FjCNH^TlAj@|@`@FNh@\\Ul@e@lAiCpGoBdFaAdCe@lAGLGLOb@Uf@Uj@GNWn@gBvEgBlEk@vAQd@a@`AYp@MZENm@|AKTeAvBa@n@w@dAo@t@_A~@IJMJHPFLl@pAHJ`@BN@NIfAFh@BlDNhBBlCBpA?xDAbA?p@@n@NH@PFNJNLHDRN`@^DD`DrC`CpBp@j@|AtAlAjAnBfB`A~@d@f@zB|BHJJJhAfAbA|@nDdDvBpB`DvCtBtBZZ`@`@"
+        },{
+            "id": "walk_from_bus",
+            "name": "#52 VTA bus stop to Los Altos Library",
+            "mode": "WALKING",
+            "start_loc": {
+                "osm_id": 5465520388,
+                "name": "#52 stop at El Monte and Hawthorne"
+            },
+            "end_loc": {
+                "osm_id": 5994931624,
+                "name": "Los Altos library"
+            },
+            "polyline": "ihccFpoghV]YOO?^?vO?vAQ?iDAuDC?RA~K?NAL?jCAzB?v@?rAc@?]?g@?a@?_@?K@AxBGNUVFT?rC"
+        },{
+            "id": "bike_to_bus",
+            "name": "Los Altos library to #22 stop",
+            "mode": "BICYCLING",
+            "start_loc": {
+                "osm_id": 5994931624,
+                "name": "Los Altos library"         
+            },
+            "end_loc": {
+                "osm_id": 2376852813,
+                "name": "#22 bus stop outside Whole Foods"
+            },
+            "waypoint_coords": [
+              [
+                -122.11425483226776,
+                37.400126236618746
+              ],
+              [
+                -122.11360037326811,
+                37.40114048220961
+              ],
+              [
+                -122.1133106946945,
+                37.40097002172546
+              ]
+            ]
+        },{
+            "id": "arterial_bus_rush_hour",
+            "name": "#22 bus southbound on El Camino",
+            "mode": "BUS",
+            "start_loc": {
+                "osm_id": 2376852813,
+                "name": "#22 bus stop outside Whole Foods"
+            },
+            "end_loc": {
+                "osm_id": 2161940685,
+                "name": "#22 bus stop outside Chase"
+            },
+            "polyline": "aqgcFhthhVVq@Zw@`CeHdD{JvBsGvCyIpBcGdA{ChDyJlAsDPe@n@oB\\_Ah@aA`@o@p@{@h@m@`B{A`AaAPQLKHG|@{@VU|@eAf@w@\\q@|@sBbAeCJWBGFORc@N_@FQHSl@{AHQ`BeEHS`BiEXw@l@wAL[JWDMFMd@mA~@eC|GcQVm@HSBKhAqCVm@"
+        },{
+            "id": "bike_from_bus",
+            "name": "Bike back to the library",
+            "mode": "BUS",
+            "start_loc": {
+                "osm_id": 2161940685,
+                "name": "#22 bus stop outside Chase"
+            },
+            "end_loc": {
+                "osm_id": 5019134255,
+                "name": "Mountain View Library"                
+            },
+            "polyline": "_xdcF~hchV]x@_A~BIPe@GMGuAo@MGi@Wc@UYOGEOIQKQKg@WWOECGCOISKyAw@QKKVi@|AK\\CHM\\cAvCM\\]~@iB_A]SsAq@"
+        }
+    ],
+    "setup_notes": {
+        "ios": [
+            "Initial iOS versions: ucb.sdb.ios.1: 9.3; ucb.sdb.ios.2: 11.2.1; ucb.sdb.ios.3: 9.3; ucb.sdb.ios.4: 10.3.2",
+            "iOS does not support incremental updates, so will need to update everything to the most recent iOS 12",
+            "update to 12.3.1",
+            "Erase all data and settings",
+            "English, United States",
+            "Set up manually",
+            "Connect to WiFi",
+            "Disabled: Touch ID, Automatic updates, Wallet, iCloud Keychain, Siri, Screen Time, Analytics",
+            "Enabled: Location services",
+            "Sign in with Apple ID",
+            "Turn off updates from the app store",
+            "Login to gmail through the mail app",
+            "phone #2 turned out to have 50% battery health. Replaced battery",
+            "turned on _do not disturb_ for consistency with android"
+        ],
+        "android": [
+            "factory data reset (still at version 6.0.1)",
+            "English, United States",
+            "Connect to WiFi",
+            "Sign in with google account",
+            "Don't back up data, enable google location service, improve location accuracy, don't send diagnostic data",
+            "Not setting up: payment info, other email",
+            "Don't restore; set up password",
+            "Don't enable Google Now",
+            "Don't accept update to 7",
+            "If prompted, add number",
+            "Turn off app auto-updates; 35 apps can be updated.; Update only the _Android System Webview_ manually",
+            "phone #3 is persistently stuck at an older version of google play services, although I follow the same procedure. and the older version is too old for the app.  So one-time update of all 35 apps.",
+            "even after the update, phone #3 has a different UI than the others. A/B testing?",
+            "got phone call on android 4, which turned on the screen and got the phone out of doze mode, turned on _do not disturb_",
+            "installed custom apk with native changes to better support reading battery level at the start and end of range. Installed OI File Manager + allowed installing apps from unknown sources. Retained the app, since it was consistent across all phones, but reverted settings changes before further testing. Had to give Chrome storage permission, and while reverting that, discovered that it also had location permission!! but I didn't change it because it was the default. I am fairly sure I don't recall being asked for location permissions from Chrome, but yeah right, it was already pre-installed, wasn't it."
+        ]
+    }
+}
