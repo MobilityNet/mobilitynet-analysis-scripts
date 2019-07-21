@@ -188,7 +188,10 @@ class PhoneView:
                     sorted(phone_map[phone_label]["transitions"],
                         key=lambda t:t["data"]["ts"])[-1],
                     self.spec_details.eval_end_ts)
-                print("Found %d ranges for phone %s" % (len(curr_calibration_ranges), phone_label))
+                print("Found %d ranges of duration %s for phone %s" %
+                    (len(curr_calibration_ranges),
+                    [r["duration"] for r in curr_calibration_ranges],
+                    phone_label))
                 phone_map[phone_label]["calibration_ranges"] = curr_calibration_ranges
 
     ## Link evaluation ranges to each other

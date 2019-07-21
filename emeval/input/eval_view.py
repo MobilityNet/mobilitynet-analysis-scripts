@@ -150,7 +150,8 @@ class EvaluationView:
         print("android keys = %s" % self.eval_eval_view_map["android"].keys())
         print("android first range keys = %s" %
             self.eval_eval_view_map["android"]['HAHFDC v/s HAMFDC'].keys())
+        first_key = list(self.eval_eval_view_map["android"]['HAHFDC v/s HAMFDC'].keys())[0]
         print("android first trip keys = %s" %
-            self.eval_eval_view_map["android"]['HAHFDC v/s HAMFDC']['short_walk_suburb'].keys())
+            self.eval_eval_view_map["android"]['HAHFDC v/s HAMFDC'][first_key].keys())
         print("android first trip first eval keys = %s" %
-            self.eval_eval_view_map["android"]['HAHFDC v/s HAMFDC']['short_walk_suburb']['HAHFDC'].keys())
+            self.eval_eval_view_map["android"]['HAHFDC v/s HAMFDC'][first_key]['HAHFDC'].keys())
