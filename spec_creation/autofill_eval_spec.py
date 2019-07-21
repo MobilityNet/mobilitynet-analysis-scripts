@@ -152,6 +152,7 @@ def get_route_from_relation(t):
         t["start_loc"]["properties"]["osm_id"], t["end_loc"]["properties"]["osm_id"])
 
 def validate_and_fill_leg(t):
+    t["type"] = "TRAVEL"
     start_coords = _fill_coords_from_id(t["start_loc"])
     end_coords = _fill_coords_from_id(t["end_loc"])
     # there are three possible ways in which users can specify routes
@@ -184,6 +185,47 @@ def validate_and_fill_leg(t):
         }
     }
 
+def get_hidden_access_transfer_walk_segments(prev_l, l):
+    if prev_l is None and l["mode"] != "WALKING":
+        # This is the first leg and is a vehicular trip,
+        # need to add an access leg to represent the walk to where the
+        # vehicle will be parked. This is unknown at spec creation time,
+        # so we don't have any ground truth for it
+        return {
+            "id": "walk_start",
+            "type": "ACCESS",
+            "mode": "WALKING",
+            "name": "Walk from the building to your vehicle",
+            "loc": l["start_loc"],
+        }
+
+    if l is None and prev_l["mode"] != "WALKING":
+        # This is the first leg and is a vehicular trip,
+        # need to add an access leg to represent the walk to where the
+        # vehicle will be parked. This is unknown at spec creation time,
+        # so we don't have any ground truth for it
+        return {
+            "id": "walk_start",
+            "type": "ACCESS",
+            "mode": "WALKING",
+            "name": "Walk from your vehicle to the building",
+            "loc": prev_l["end_loc"]
+        }
+
+    if prev_l["mode"] != "WALKING" and l["mode"] != "WALKING":
+        # transferring between vehicles, add a transit transfer
+        # without a ground truthed trajectory
+        return {
+            "id": "tt_%d_%d" % (i-1, i),
+            "type": "TRANSFER",
+            "mode": "WALKING",
+            "name": "Transfer between %s and %s at %s" %\
+                (prev_l["mode"], l["mode"], prev_l["end_loc"]["name"]),
+            "start_loc": prev_l["end_loc"],
+            "end_loc": l["start_loc"]
+        }
+
+
 def validate_and_fill_eval_trips(curr_spec):
     modified_spec = copy.copy(curr_spec)
     eval_trips = modified_spec["evaluation_trips"]
@@ -191,25 +233,37 @@ def validate_and_fill_eval_trips(curr_spec):
         if "legs" in t:
             prev_l = None
             for i, l in enumerate(t["legs"]):
-                # vehicular mode
-                if prev_l is None:
-                    # This is the first trip
-                    pass
-                elif prev_l["mode"] != "WALKING" and l["mode"] != "WALKING":
-                    # transferring between vehicles, add a transit transfer
-                    # without a ground truthed trajectory
-                    tt_leg = {
-                        "id": "tt_%d_%d" % (i-1, i),
-                        "name": "Transfer between %s and %s at %s" %\
-                            (prev_l["mode"], l["mode"], prev_l["end_loc"]["name"]),
-                        "start_loc": prev_l["end_loc"],
-                        "end_loc": l["start_loc"]
-                    }
-                    t["legs"].append(tt_leg)
+                # Add in shim legs like the ones to walk to/from your vehicle
+                # or to transfer between transit modes
+                shim_leg = get_hidden_access_transfer_walk_segments(prev_l, l)
+                if shim_leg is not None:
+                    t["legs"].append(shim_leg)
                 validate_and_fill_leg(l)
+                prev_l = l
+            shim_leg = get_hidden_access_transfer_walk_segments(prev_l, None)
+            if shim_leg is not None:
+                t["legs"].append(shim_leg)
         else:
-            # unimodal trip
-            validate_and_fill_leg(t)
+            # unimodal trip, let's add shims if necessary
+            # the filled spec will always be multimodal
+            # since the only true unimodal trip is walking
+            # and it is easier to assume that there are always legs
+            # specially since we are adding complexity with the type of trips
+            # (ACCESS, TRANSFER, TRAVEL)
+            unmod_trip = copy.deepcopy(t)
+            t.clear()
+            t["id"] = unmod_trip["id"]
+            t["name"] = unmod_trip["name"]
+            t["legs"] = []
+            before_shim_leg = get_hidden_access_transfer_walk_segments(None, unmod_trip)
+            if before_shim_leg is not None:
+                t["legs"].append(before_shim_leg)
+            t["legs"].append(unmod_trip)
+            validate_and_fill_leg(unmod_trip)
+            after_shim_leg = get_hidden_access_transfer_walk_segments(unmod_trip, None)
+            if after_shim_leg is not None:
+                t["legs"].append(after_shim_leg)
+
     return modified_spec
 
 def validate_and_fill_sensing_settings(curr_spec):
