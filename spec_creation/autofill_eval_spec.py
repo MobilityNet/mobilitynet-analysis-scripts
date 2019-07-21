@@ -7,7 +7,6 @@ import requests
 import osmapi
 import re
 import polyline as pl
-
 import osrm as osrm
 
 sensing_configs = json.load(open("sensing_regimes.all.specs.json"))
@@ -40,8 +39,15 @@ def get_route_coords(mode, waypoint_coords):
 def _fill_coords_from_id(loc):
     if loc is None:
         return None
-    loc["coordinates"] = node_to_geojson_coords(loc["osm_id"])
-    return loc["coordinates"]
+    if "osm_id" in loc["properties"]:
+        if loc["geometry"]["type"] == "Point":
+            loc["geometry"]["coordinates"] = node_to_geojson_coords(loc["properties"]["osm_id"])
+        elif loc["geometry"]["type"] == "Polygon":
+            loc["geometry"]["coordinates"] = get_coords_for_way(loc["properties"]["osm_id"])
+    else:
+        assert "coordinates" in loc["geometry"],\
+            "Location %s does not have either an osmid or specified set of coordinates"
+    return loc["geometry"]["coordinates"]
 
 def validate_and_fill_calibration_tests(curr_spec):
     modified_spec = copy.copy(curr_spec)
@@ -135,8 +141,15 @@ def get_coords_for_relation(rid, start_node, end_node):
     return coords_list[start_index:end_index+1]
 
 def get_route_from_relation(t):
+    # get_coords_for_relation assumes that start and end are both nodes
+    assert "osm_id" in t["start_loc"]["properties"] and \
+        t["start_loc"]["geometry"]["type"] == "Point",\
+        "Start location is not an OSM node, cannot find relation from route"
+    assert "osm_id" in t["start_loc"]["properties"] and \
+        t["end_loc"]["geometry"]["type"] == "Point",\
+        "End location is not a node, cannot find relation from route"
     return get_coords_for_relation(t["relation"],
-        t["start_loc"]["osm_id"], t["end_loc"]["osm_id"])
+        t["start_loc"]["properties"]["osm_id"], t["end_loc"]["properties"]["osm_id"])
 
 def validate_and_fill_leg(t):
     start_coords = _fill_coords_from_id(t["start_loc"])
@@ -162,14 +175,37 @@ def validate_and_fill_leg(t):
     elif "relation" in t:
         route_coords = get_route_from_relation(t)
 
-    t["route_coords"] = [coords_swap(rc) for rc in route_coords]
+    t["route_coords"] = {
+        "type": "Feature",
+        "properties": {},
+        "geometry": {
+            "type": "LineString",
+            "coordinates": [coords_swap(rc) for rc in route_coords]
+        }
+    }
 
 def validate_and_fill_eval_trips(curr_spec):
     modified_spec = copy.copy(curr_spec)
     eval_trips = modified_spec["evaluation_trips"]
     for t in eval_trips:
         if "legs" in t:
-            for l in t["legs"]:
+            prev_l = None
+            for i, l in enumerate(t["legs"]):
+                # vehicular mode
+                if prev_l is None:
+                    # This is the first trip
+                    pass
+                elif prev_l["mode"] != "WALKING" and l["mode"] != "WALKING":
+                    # transferring between vehicles, add a transit transfer
+                    # without a ground truthed trajectory
+                    tt_leg = {
+                        "id": "tt_%d_%d" % (i-1, i),
+                        "name": "Transfer between %s and %s at %s" %\
+                            (prev_l["mode"], l["mode"], prev_l["end_loc"]["name"]),
+                        "start_loc": prev_l["end_loc"],
+                        "end_loc": l["start_loc"]
+                    }
+                    t["legs"].append(tt_leg)
                 validate_and_fill_leg(l)
         else:
             # unimodal trip
