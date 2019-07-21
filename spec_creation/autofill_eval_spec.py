@@ -168,7 +168,12 @@ def validate_and_fill_eval_trips(curr_spec):
     modified_spec = copy.copy(curr_spec)
     eval_trips = modified_spec["evaluation_trips"]
     for t in eval_trips:
-        validate_and_fill_leg(t)
+        if "legs" in t:
+            for l in t["legs"]:
+                validate_and_fill_leg(l)
+        else:
+            # unimodal trip
+            validate_and_fill_leg(t)
     return modified_spec
 
 def validate_and_fill_sensing_settings(curr_spec):

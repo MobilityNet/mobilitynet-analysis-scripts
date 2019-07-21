@@ -115,9 +115,10 @@ If the existing spec has a lot of changes, it might be easiest to delete and
 re-create it
 
 ```
+del_spec_id = "many_unimodal_trips"
 edb.get_usercache_db().find({"metadata.key": "config/evaluation_spec",
-    "data.label.id": "sfba_med_freq_calibration_only"}).count()
+    "data.label.id": del_spec_id}).count()
 
 edb.get_usercache_db().delete_one({"metadata.key": "config/evaluation_spec",
-    "data.label.id": "sfba_med_freq_calibration_only"}).raw_result
+    "data.label.id": del_spec_id}).raw_result
 ```
