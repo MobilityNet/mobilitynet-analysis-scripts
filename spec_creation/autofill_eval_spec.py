@@ -269,9 +269,11 @@ def validate_and_fill_eval_trips(curr_spec):
 def validate_and_fill_sensing_settings(curr_spec):
     modified_spec = copy.copy(curr_spec)
     for ss in modified_spec["sensing_settings"]:
-        compare_list = ss["compare"]
-        ss["name"] = " v/s ".join(compare_list)
-        ss["sensing_configs"] = [sensing_configs[cr] for cr in compare_list]
+        for phoneOS, compare_list in ss.items():
+            ss[phoneOS] = {}
+            ss[phoneOS]["compare"] = compare_list
+            ss[phoneOS]["name"] = " v/s ".join(compare_list)
+            ss[phoneOS]["sensing_configs"] = [sensing_configs[cr] for cr in compare_list]
     return modified_spec
 
 if __name__ == '__main__':

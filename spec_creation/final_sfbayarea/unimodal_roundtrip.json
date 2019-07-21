@@ -25,13 +25,10 @@
     },
     "calibration_tests": [
     ],
-    "sensing_settings": [
-        {"compare": ["HAHFDC", "HAMFDC"]},
-        {"compare": ["HAMFDC", "HALFDC"]},
-        {"compare": ["HAHFDC", "MAHFDC"]},
-        {"compare": ["MAHFDC", "MAMFDC"]},
-        {"compare": ["HALFAO", "HAMFDC"]}
-    ],
+    "sensing_settings": [{
+        "android": ["HAHFDC", "HAMFDC"],
+        "ios": ["HAHFDC", "MAHFDC"]
+    }],
     "evaluation_trips": [
         {
             "id": "suburb_city_driving_weekend",
