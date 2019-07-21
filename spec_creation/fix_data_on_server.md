@@ -63,8 +63,8 @@ e.g. the one where I forgot to unplug the phone
 ```
 tz = "America/Los_Angeles"
 
-def delete_trip_data(user_id, trip_id, is_dry_run=True):
-    transitions = list(edb.get_usercache_db().find({"user_id": user_id, "metadata.key": "manual/evaluation_transition", "data.trip_id": trip_id}))
+def delete_trip_data(user_id, spec_id, trip_id, is_dry_run=True):
+    transitions = list(edb.get_usercache_db().find({"user_id": user_id, "metadata.key": "manual/evaluation_transition", "data.trip_id": trip_id, "data.spec_id": spec_id}))
     print("\n".join([str(t["data"].values()) for t in transitions]))
     ts_range_start = transitions[0]["metadata"]["write_ts"]
     if len(transitions) == 2:
@@ -86,12 +86,13 @@ def delete_trip_data(user_id, trip_id, is_dry_run=True):
 
 delete_trip_data(UUID("..."), "high_accuracy_stationary_3")
 
-user_entry_list = list(edb.get_uuid_db().find({"user_email": {"$in": ["ucb-sdb-ios-1", "ucb-sdb-ios-2", "ucb-sdb-ios-3", "ucb-sdb-ios-4", "ucb-sdb-android-1", "ucb-sdb-android-2", "ucb-sdb-android-3", "ucb-sdb-android-4"]}}))
+phone_list = ["ucb-sdb-android-%d" % i for i in range(1,5)] + ["ucb-sdb-ios-%d
+     ...: " % i for i in range(1,5)]
 
-user_entry_list = list(edb.get_uuid_db().find({"user_email": {"$in": ["ucb-sdb-ios-3", "ucb-sdb-ios-4"]}}))
+uuid_list = [ue["uuid"] for ue in list(edb.get_uuid_db().find({"user_email": {"$in": phone_list}}))]
 
-for u in user_entry_list:
-    delete_trip_data(u["uuid"], "high_accuracy_stationary_3")
+for u in uuid_list:
+    delete_trip_data(u["uuid"], "sfba_med_freq_calibration_only", "high_accuracy_stationary_2")
 ```
 
 ### Adjusting transition timestamp slightly
@@ -112,3 +113,12 @@ def adjust_transition_timestamp(user_id, transition, trip_id, delta):
 
 If the existing spec has a lot of changes, it might be easiest to delete and
 re-create it
+
+```
+del_spec_id = "many_unimodal_trips"
+edb.get_usercache_db().find({"metadata.key": "config/evaluation_spec",
+    "data.label.id": del_spec_id}).count()
+
+edb.get_usercache_db().delete_one({"metadata.key": "config/evaluation_spec",
+    "data.label.id": del_spec_id}).raw_result
+```
