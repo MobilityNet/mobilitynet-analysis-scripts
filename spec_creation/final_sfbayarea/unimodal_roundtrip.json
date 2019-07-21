@@ -40,21 +40,44 @@
             "start_loc": {
               "type": "Feature",
               "properties": {
-                "osm_id": 5019134255,
                 "name": "Mountain View Library"
               },
               "geometry": {
-                "type": "Point"
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [ -122.08355963230133, 37.39091642895306 ],
+                    [ -122.08428382873535, 37.38975713188671 ],
+                    [ -122.08383858203888, 37.389573859018185 ],
+                    [ -122.08340406417847, 37.390196132517175 ],
+                    [ -122.08311975002289, 37.39012793841312 ],
+                    [ -122.08280861377716, 37.390656441096894 ],
+                    [ -122.08355426788331, 37.39096757399895 ],
+                    [ -122.08355963230133, 37.39091642895306 ]
+                  ]
+                ]
               }
             },
             "end_loc": {
-             "type": "Feature",
+              "type": "Feature",
               "properties": {
-                "osm_id": 5994931624,
-                "name": "Los Altos library"         
+                "name": "Los Altos Library"
               },
               "geometry": {
-                "type": "Point"
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [ -122.11386322975159, 37.38049489802194 ],
+                    [ -122.11191058158873, 37.37965088242338 ],
+                    [ -122.11124002933502, 37.37964235696482 ],
+                    [ -122.11118102073668, 37.37997911184045 ],
+                    [ -122.11119711399078, 37.38072934511354 ],
+                    [ -122.11176574230194, 37.3807208197776 ],
+                    [ -122.11254358291625, 37.38109167099526 ],
+                    [ -122.11386322975159, 37.38109593364228 ],
+                    [ -122.11386322975159, 37.38049489802194 ]
+                  ]
+                ]
               }
             },
             "polyline": "ayecF~nchVrAp@\\RhB~@}AhEEJ{@~BY^UXSZbB`BpBlArAp@dB|@fAXPF^LRH^Dl@@r@EZ?HH@f@Qh@Ql@ABADST_@Ra@fAzBh@v@P`@H@@d@`@f@FxAAElZJ^FT?rEYAoAB@X^v@RRTTfChCxD~CxAxA~DhDbAbABBb@`@|BzBFFBBbIzHd@b@hAdAfDzClAlAh@j@PP?^?vO?vAQ?iDA?~L?RB~Y}AAcB?cECDm@?oA"
@@ -63,23 +86,46 @@
             "name": "Los Altos Library to Mountain View Library",
             "mode": "BICYCLING",
             "start_loc": {
-             "type": "Feature",
+              "type": "Feature",
               "properties": {
-                "osm_id": 5994931624,
-                "name": "Los Altos library"         
+                "name": "Los Altos Library"
               },
               "geometry": {
-                "type": "Point"
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [ -122.11386322975159, 37.38049489802194 ],
+                    [ -122.11191058158873, 37.37965088242338 ],
+                    [ -122.11124002933502, 37.37964235696482 ],
+                    [ -122.11118102073668, 37.37997911184045 ],
+                    [ -122.11119711399078, 37.38072934511354 ],
+                    [ -122.11176574230194, 37.3807208197776 ],
+                    [ -122.11254358291625, 37.38109167099526 ],
+                    [ -122.11386322975159, 37.38109593364228 ],
+                    [ -122.11386322975159, 37.38049489802194 ]
+                  ]
+                ]
               }
             },
             "end_loc": {
               "type": "Feature",
               "properties": {
-                "osm_id": 5019134255,
                 "name": "Mountain View Library"
               },
               "geometry": {
-                "type": "Point"
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [ -122.08355963230133, 37.39091642895306 ],
+                    [ -122.08428382873535, 37.38975713188671 ],
+                    [ -122.08383858203888, 37.389573859018185 ],
+                    [ -122.08340406417847, 37.390196132517175 ],
+                    [ -122.08311975002289, 37.39012793841312 ],
+                    [ -122.08280861377716, 37.390656441096894 ],
+                    [ -122.08355426788331, 37.39096757399895 ],
+                    [ -122.08355963230133, 37.39091642895306 ]
+                  ]
+                ]
               }
             },
             "polyline": "ayecF~nchVrAp@\\RhB~@}AhEEJ{@~BY^UXSZbB`BpBlArAp@dB|@fAXPF^LRH^Dl@@r@EZ?HH@f@Qh@Ql@TJHPP`@DVBHEXQ@EABh@v@P`@H@@d@`@f@FxAAElZJ^FT?rEYAoAB@X^v@RRTTfChCxD~CxAxA~DhDbAbABBb@`@|BzBFFMRLR?lEFH@nCBnEA|DA~BCxAA~@AxFBVLZCvLAhEGRHJ?t@?dCf@?AnCD@TTNB^ALCHCFT?rC"
