@@ -43,7 +43,8 @@ def _fill_coords_from_id(loc):
         if loc["geometry"]["type"] == "Point":
             loc["geometry"]["coordinates"] = node_to_geojson_coords(loc["properties"]["osm_id"])
         elif loc["geometry"]["type"] == "Polygon":
-            loc["geometry"]["coordinates"] = get_coords_for_way(loc["properties"]["osm_id"])
+            # get coords for way returns a tuple of (nodes, points)
+            loc["geometry"]["coordinates"] = [[coords_swap(c) for c in get_coords_for_way(loc["properties"]["osm_id"])[1]]]
     else:
         assert "coordinates" in loc["geometry"],\
             "Location %s does not have either an osmid or specified set of coordinates"
@@ -151,7 +152,9 @@ def get_route_from_relation(t):
     return get_coords_for_relation(t["relation"],
         t["start_loc"]["properties"]["osm_id"], t["end_loc"]["properties"]["osm_id"])
 
-def validate_and_fill_leg(t):
+def validate_and_fill_leg(orig_leg):
+    # print(t)
+    t = copy.copy(orig_leg)
     t["type"] = "TRAVEL"
     start_coords = _fill_coords_from_id(t["start_loc"])
     end_coords = _fill_coords_from_id(t["end_loc"])
@@ -184,46 +187,68 @@ def validate_and_fill_leg(t):
             "coordinates": [coords_swap(rc) for rc in route_coords]
         }
     }
+    return t
 
 def get_hidden_access_transfer_walk_segments(prev_l, l):
+    # print("prev_l = %s, l = %s" % (prev_l, l))
     if prev_l is None and l["mode"] != "WALKING":
         # This is the first leg and is a vehicular trip,
         # need to add an access leg to represent the walk to where the
         # vehicle will be parked. This is unknown at spec creation time,
         # so we don't have any ground truth for it
-        return {
+        return [{
             "id": "walk_start",
             "type": "ACCESS",
             "mode": "WALKING",
             "name": "Walk from the building to your vehicle",
             "loc": l["start_loc"],
-        }
+        }]
 
     if l is None and prev_l["mode"] != "WALKING":
         # This is the first leg and is a vehicular trip,
         # need to add an access leg to represent the walk to where the
         # vehicle will be parked. This is unknown at spec creation time,
         # so we don't have any ground truth for it
-        return {
+        return [{
             "id": "walk_start",
             "type": "ACCESS",
             "mode": "WALKING",
             "name": "Walk from your vehicle to the building",
             "loc": prev_l["end_loc"]
-        }
+        }]
 
-    if prev_l["mode"] != "WALKING" and l["mode"] != "WALKING":
+    # The order of the checks is important because we want the STOPPED to come
+    # after the WALKING
+    ret_list = []
+
+    if prev_l is not None and l is not None and\
+        prev_l["mode"] != "WALKING" and l["mode"] != "WALKING":
         # transferring between vehicles, add a transit transfer
         # without a ground truthed trajectory
-        return {
-            "id": "tt_%d_%d" % (i-1, i),
+        # NOTE: unlike the first two cases, we are NOT returning here
+        # we will run the next check as well, because for most
+        # transit transfers, there will be both a transfer and a stop
+        ret_list.append({
+            "id": "tt_%s_%s" % (prev_l["mode"], l["mode"]),
             "type": "TRANSFER",
             "mode": "WALKING",
             "name": "Transfer between %s and %s at %s" %\
-                (prev_l["mode"], l["mode"], prev_l["end_loc"]["name"]),
-            "start_loc": prev_l["end_loc"],
-            "end_loc": l["start_loc"]
-        }
+                (prev_l["mode"], l["mode"], prev_l["end_loc"]["properties"]["name"]),
+            "loc": l["start_loc"]
+        })
+
+    if l is not None and "multiple_occupancy" in l and l["multiple_occupancy"] == True:
+        ret_list.append({
+            "id": "wait_for_%s" % (l["mode"]),
+            "type": "WAITING",
+            "mode": "STOPPED",
+            "name": "Wait for %s at %s" %\
+                (l["mode"], l["start_loc"]["properties"]["name"]),
+            "loc": l["start_loc"]
+        })
+
+    # return from the last two checks
+    return ret_list
 
 
 def validate_and_fill_eval_trips(curr_spec):
@@ -231,19 +256,25 @@ def validate_and_fill_eval_trips(curr_spec):
     eval_trips = modified_spec["evaluation_trips"]
     for t in eval_trips:
         if "legs" in t:
+            print("Filling multi-modal trip %s" % t["id"])
             prev_l = None
+            ret_leg_list = []
             for i, l in enumerate(t["legs"]):
+                print("Filling leg %s" % l["id"])
                 # Add in shim legs like the ones to walk to/from your vehicle
                 # or to transfer between transit modes
-                shim_leg = get_hidden_access_transfer_walk_segments(prev_l, l)
-                if shim_leg is not None:
-                    t["legs"].append(shim_leg)
-                validate_and_fill_leg(l)
+                shim_legs = get_hidden_access_transfer_walk_segments(prev_l, l)
+                print("Got shim legs %s, extending" % ([sl["id"] for sl in shim_legs]))
+                ret_leg_list.extend(shim_legs)
+                ret_leg_list.append(validate_and_fill_leg(l))
                 prev_l = l
             shim_leg = get_hidden_access_transfer_walk_segments(prev_l, None)
-            if shim_leg is not None:
-                t["legs"].append(shim_leg)
+            assert len(shim_leg) <= 1, "Last leg should not have a transfer shim"
+            print("Got shim legs %s, extending" % ([sl["id"] for sl in shim_leg]))
+            ret_leg_list.extend(shim_legs)
+            t["legs"] = ret_leg_list
         else:
+            print("Filling unimodal trip %s" % t["id"])
             # unimodal trip, let's add shims if necessary
             # the filled spec will always be multimodal
             # since the only true unimodal trip is walking
@@ -256,13 +287,14 @@ def validate_and_fill_eval_trips(curr_spec):
             t["name"] = unmod_trip["name"]
             t["legs"] = []
             before_shim_leg = get_hidden_access_transfer_walk_segments(None, unmod_trip)
-            if before_shim_leg is not None:
-                t["legs"].append(before_shim_leg)
-            t["legs"].append(unmod_trip)
-            validate_and_fill_leg(unmod_trip)
+            assert len(before_shim_leg) <= 1, "First leg should not have a transfer shim"
+            print("Got shim legs %s, extending" % ([sl["id"] for sl in before_shim_leg]))
+            t["legs"].extend(before_shim_leg)
+            t["legs"].append(validate_and_fill_leg(unmod_trip))
             after_shim_leg = get_hidden_access_transfer_walk_segments(unmod_trip, None)
-            if after_shim_leg is not None:
-                t["legs"].append(after_shim_leg)
+            assert len(after_shim_leg) <= 1, "Last leg should not have a transfer shim"
+            print("Got shim legs %s, extending" % ([sl["id"] for sl in after_shim_leg]))
+            t["legs"].extend(after_shim_leg)
 
     return modified_spec
 
