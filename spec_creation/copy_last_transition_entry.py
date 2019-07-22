@@ -33,6 +33,8 @@ if __name__ == '__main__':
         help="the type of transition that we will copy")
     parser.add_argument("trip_id",
         help="the trip id to copy")
+    parser.add_argument("spec_id",
+        help="the spec_id to match")
     parser.add_argument("-x", "--cross-platform", action="store_true",
         help="whether the transition is across platforms")
     parser.add_argument("-v", "--verbose", action='store_true',
@@ -48,7 +50,8 @@ if __name__ == '__main__':
 
     type_check = lambda t: t["data"]["transition"] == args.transition_type
     trip_check = lambda t: t["data"]["trip_id"] == args.trip_id
-    matching_transitions = [t for t in from_phone_transitions if type_check(t) and trip_check(t)]
+    spec_check = lambda t: t["data"]["spec_id"] == args.spec_id
+    matching_transitions = [t for t in from_phone_transitions if type_check(t) and trip_check(t) and spec_check(t)]
 
     logging.debug("Filtered %d total => %d %s transitions" %
         (len(from_phone_transitions), len(matching_transitions), args.transition_type))
