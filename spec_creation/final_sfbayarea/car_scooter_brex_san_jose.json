@@ -1,0 +1,247 @@
+{
+    "fmt_version": 1,
+    "id": "car_scooter_brex_san_jose",
+    "name": "Multi-modal car scooter BREX trip to San Jose",
+    "region": {
+        "osm_id": 2157162589,
+        "name": "San Francisco Bay Area",
+        "timezone": "America/Los_Angeles"
+    },
+    "start_fmt_date": "2019-07-20",
+    "end_fmt_date": "2019-07-31",
+    "phones": {
+        "android": {
+          "ucb-sdb-android-1": "accuracy_control",
+          "ucb-sdb-android-2": "evaluation_0",
+          "ucb-sdb-android-3": "evaluation_1",
+          "ucb-sdb-android-4": "power_control"
+        },
+        "ios": {
+          "ucb-sdb-ios-1": "accuracy_control",
+          "ucb-sdb-ios-2": "evaluation_0",
+          "ucb-sdb-ios-3": "evaluation_1",
+          "ucb-sdb-ios-4": "power_control"
+        }
+    },
+    "calibration_tests": [
+    ],
+    "sensing_settings": [{
+        "android": ["HAHFDC", "HAMFDC"],
+        "ios": ["HAHFDC", "MAHFDC"]
+    }],
+    "evaluation_trips": [
+        {
+            "id": "freeway_driving_weekday",
+            "name": "Mountain View Library to San Jose King Library",
+            "mode": "CAR",
+            "start_loc": {
+              "type": "Feature",
+              "properties": {
+                "name": "Mountain View Library"
+              },
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [ -122.08355963230133, 37.39091642895306 ],
+                    [ -122.08428382873535, 37.38975713188671 ],
+                    [ -122.08383858203888, 37.389573859018185 ],
+                    [ -122.08340406417847, 37.390196132517175 ],
+                    [ -122.08311975002289, 37.39012793841312 ],
+                    [ -122.08280861377716, 37.390656441096894 ],
+                    [ -122.08355426788331, 37.39096757399895 ],
+                    [ -122.08355963230133, 37.39091642895306 ]
+                  ]
+                ]
+              }
+            },
+            "end_loc": {
+              "type": "Feature",
+              "properties": {
+                "name": "San Jose King Library"
+              },
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [ -121.88688397407532, 37.33674277401349 ],
+                    [ -121.8852210044861, 37.33460162979272 ],
+                    [ -121.88409447669984, 37.33517744150916 ],
+                    [ -121.88620805740356, 37.33704560024162 ],
+                    [ -121.88688397407532, 37.33674277401349 ]
+                  ]
+                ]
+              }
+            },
+            "polyline": "ayecF~nchVeB}@aFkCMGSKOIgCsAyAu@f@gBn@{BqCyA{Aw@MIDKd@aBTu@Lc@FSQKEA]Se@WgAi@GKCCEGGGGGKGy@g@IGIEYQCCSMYSy@c@wBkAQ@a@SKGs@_@u@c@A?UMc@[}@u@MKo@s@MQSYu@kA]g@[a@i@{@CEU]KMIOc@m@cAyACU_@k@]i@OYcBeCS[_@i@i@y@q@aAS[cA}AeEoFKMa@i@iBkBu@w@i@i@k@m@i@c@KG_@Wm@[o@W_Aa@_A]KC@Q@E?UAUCWG[GYK[GUKUKUMUMSMSk@w@IQIQCSESAU?S?UBUDcCvDaY~BgQ\\gC`@iCd@iCrB}Kl@oD^aC\\eCZ}BtBoOrJmt@p@}Ev@aG~CuUhEa\\\\mC`BcMhIan@|D}YJu@fDeWfAaHzCyPxFoZhBoJ~AyHzCaO`@mB~@yEjAmGn@gDdAqFxA_ItEiW|Iie@vCsOhC_NfDaQj@}CP_AnFkYtF{YrCkOjB}JfA{GrBqOpBkPhB{OzCiXFk@bBuNjCaUf@eEX_CZyBj@uDDYh@aBl@_EVkA~@oEh@eBZo@Xi@`AmAj@k@j@_@VMTI^M\\KzCu@pAa@r@S~@c@\\Op@c@d@_@XYf@i@b@g@j@{@NYf@{@jAyBnAaCrFoKr@oAt@mA|@qA`AmAfAoAdAcAtAiAxAgAlA{@vUyOlMyIvEaDnGkE|BwA~CkBzBgAxCsAjIsDl@Yl@[t@g@r@e@hB}AnB_Cd@u@`@s@d@{@b@_A`@eA`AcCdA_Cv@wAv@kAr@}@p@w@r@s@r@o@f@_@d@[`@Wh@[z@a@fBs@bC_A`Bu@`Ae@`@WdGqD^E|CmBj@YdD{AVKZI^Ef@A`@Dr@NRBf@FVBT?^EXGf@STKTI\\QTKdAu@bBoAPUHe@@w@Gy@Co@@]DYfA{@JInBqA^SRMNMDGL[N_@Zu@Te@HKh@m@rCgBt@e@PKSk@EMACsAsDqAmDEMEIcAkCIUKYiA}CCGi@{AEMGOUo@Yu@e@mAAGEIGQe@mAk@}AIUKUmAaDIUMYQe@Qe@"
+        },{
+            "id": "bus trip with e-scooter access",
+            "name": "Return trip with e-scooter -> bus",
+            "legs": [
+             {
+                "id": "city_escooter",
+                "name": "King library to #522 Rapid bus stop",
+                "mode": "ESCOOTER",
+                "start_loc": {
+                  "type": "Feature",
+                  "properties": {
+                    "name": "San Jose King Library"
+                  },
+                  "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [
+                      [
+                        [ -121.88688397407532, 37.33674277401349 ],
+                        [ -121.8852210044861, 37.33460162979272 ],
+                        [ -121.88409447669984, 37.33517744150916 ],
+                        [ -121.88620805740356, 37.33704560024162 ],
+                        [ -121.88688397407532, 37.33674277401349 ]
+                      ]
+                    ]
+                  }
+                },
+                "end_loc": {
+                  "type": "Feature",
+                  "properties": {
+                    "name": "Alameda and Naglee"
+                  },
+                  "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [
+                      [
+                        [ -121.91962301731108, 37.33791568570916 ],
+                        [ -121.91919386386871, 37.337570211803545 ],
+                        [ -121.9190490245819, 37.33771949084662 ],
+                        [ -121.91938161849974, 37.33807775933949 ],
+                        [ -121.91962301731108, 37.33791568570916 ]
+                      ]
+                    ]
+                  }
+                },
+                "polyline": "kd{bF~w|fVTn@QRxHnSaEpCkErC{GzEeLtHnCzGsCnBOHwBzBq@|@e@t@qEvISj@U~@KdA?x@B`@J|@Nv@DTvAnE`@`BxAxHJp@RnBRdEAzCI|BK`B]hC{@vGSz@o@dBU^e@n@qAxAB`@h@~@d@r@fBzClBnCJ~@AP_@t@gBrBnOtVzDbGZ_@"
+            },{
+                "id": "city_bus_rapid_transit",
+                "name": "#522 Rapid from San Jose to Mountain View",
+                "mode": "BUS",
+                "multiple_occupancy": true,
+                "start_loc": {
+                  "type": "Feature",
+                  "properties": {
+                    "name": "Alameda and Naglee"
+                  },
+                  "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [
+                      [
+                        [ -121.91962301731108, 37.33791568570916 ],
+                        [ -121.91919386386871, 37.337570211803545 ],
+                        [ -121.9190490245819, 37.33771949084662 ],
+                        [ -121.91938161849974, 37.33807775933949 ],
+                        [ -121.91962301731108, 37.33791568570916 ]
+                      ]
+                    ]
+                  }
+                },
+                "end_loc": {
+                  "type": "Feature",
+                  "properties": {
+                      "name": "El Camino and Castro"
+                  },
+                  "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [
+                      [
+                        [ -122.08474516868591, 37.386343068379134 ],
+                        [ -122.0838975906372, 37.38591256993299 ],
+                        [ -122.08380103111267, 37.386027653918106 ],
+                        [ -122.08469152450562, 37.38644536467614 ],
+                        [ -122.08474516868591, 37.386343068379134 ]
+                      ]
+                    ]
+                  }         
+                },
+                "polyline": "up{bFzkcgVMNwD|EaEfF{BrCcAnA{@fAMLiAvAe@n@OPkAzAEDGLGJABABEJEN?BMh@K^Kh@I\\EJI`@AFCHGZKl@On@Mh@]bBKb@Qz@Or@]zA}AdHOx@w@`Ec@|Bi@nCCNENYn@OT[\\[XOHSHWFc@@Y?]E]Ke@Se@]qBqAq@c@aAk@[Oy@O_@Aw@DSDYFSD_@Ng@X_@^SRW^Ub@c@bA}@bCuAjD}@|Bk@tA[r@g@~@SV{@|@CBOJYTYTGFe@b@YX_@f@w@lAUb@mAlCgBbE}AxDABkCbGYh@GNSf@KVI`@G\\E^?X?h@BVD\\H^`@rAb@jA`@jAN`@Pf@HZZfADNv@rCn@rCb@tAJ`@dAfEpAlFrAlF^zBX`C@F@ZB^@^@j@ApB?Z?~@?~D@~FAzB?`G?z@AP@zA@hB?tG?bRA`R?|A@R?\\?fB?`DAtB@fFA|G@hA?xD?~KAbC?Z?n@?dA?\\?fG?bF@`KA~CA|A@Z?N?H@rA@fM?t@?hHBdS?vEAtA?v@?bD?\\?b@?p@?|@?NAdB@j@?x@AZ?D?H?bB@rA@fB?VDzBBxA?`@@R?d@@hA?jC?j@@pA?R?XBnEBjHAnB?j@B~D@tD?jE?\\AdC?z@?bA?d@?z@?z@AvACjACNCx@CVGl@UlBIr@_@hBs@zBi@~AM\\Wp@KN_@t@Yd@?@s@lAu@hAo@v@mA|Ay@hA]b@qBfCiCjDyBjC}BrCgAtAsD|Eq@|@k@r@QTGHILORiGdIqA|Aq@z@KNIJOPQTiA~A{@jAgEnFsDnEeArAg@n@yC~DuBfCmClDo@v@]d@GJILSb@EHKRa@jAQd@a@pAWdAG^ET[tBU|AE`@y@zGE`@CVERUzA}@vFiB`L[jBa@|B_B`K_@lCOfAoCdT_AhHkAfIUvAk@~COt@kDdRK^WbAQl@Sr@W|@[hA[bAc@~AM`@Qp@Sl@EPY|@Ux@gA~DwA`F[dAQt@u@jCEPAFITyAxFADK^]nAOj@y@|CW`ACHOh@K^AFM^ETABQn@I`@CDENEPWbAABYjAK\\ADOj@Y`AGLO`@AJIRGT[z@Ut@oApDADOb@g@zAYz@Un@GLIVo@nB{@vBABs@fBoCfHeAjCe@fAc@`AKZSh@_A`CcDfIm@`Bi@tA{@vB]z@aBbEmAbDIRUl@e@lA"
+            },{
+                "id": "walk_back_from_bus",
+                "name": "Walk from bus stop to library",
+                "mode": "WALKING",
+                "start_loc": {
+                  "type": "Feature",
+                  "properties": {
+                      "name": "El Camino and Castro"
+                  },
+                  "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [
+                      [
+                        [ -122.08474516868591, 37.386343068379134 ],
+                        [ -122.0838975906372, 37.38591256993299 ],
+                        [ -122.08380103111267, 37.386027653918106 ],
+                        [ -122.08469152450562, 37.38644536467614 ],
+                        [ -122.08474516868591, 37.386343068379134 ]
+                      ]
+                    ]
+                  }
+                },
+                "end_loc": {
+                  "type": "Feature",
+                  "properties": {
+                    "name": "Mountain View Library"
+                  },
+                  "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [
+                      [
+                        [ -122.08355963230133, 37.39091642895306 ],
+                        [ -122.08428382873535, 37.38975713188671 ],
+                        [ -122.08383858203888, 37.389573859018185 ],
+                        [ -122.08340406417847, 37.390196132517175 ],
+                        [ -122.08311975002289, 37.39012793841312 ],
+                        [ -122.08280861377716, 37.390656441096894 ],
+                        [ -122.08355426788331, 37.39096757399895 ],
+                        [ -122.08355963230133, 37.39091642895306 ]
+                      ]
+                    ]
+                  }
+                },
+                "polyline": "o~dcFfschVr@iBLYMGuAo@MGi@Wc@UYOGEOIQKQKg@WWOECGCOISKyAw@QKKVi@|AK\\CHM\\cAvCM\\]~@iB_A]SsAq@"
+            }
+          ]
+        }
+    ],
+    "setup_notes": {
+        "ios": [
+            "Initial iOS versions: ucb.sdb.ios.1: 9.3; ucb.sdb.ios.2: 11.2.1; ucb.sdb.ios.3: 9.3; ucb.sdb.ios.4: 10.3.2",
+            "iOS does not support incremental updates, so will need to update everything to the most recent iOS 12",
+            "update to 12.3.1",
+            "Erase all data and settings",
+            "English, United States",
+            "Set up manually",
+            "Connect to WiFi",
+            "Disabled: Touch ID, Automatic updates, Wallet, iCloud Keychain, Siri, Screen Time, Analytics",
+            "Enabled: Location services",
+            "Sign in with Apple ID",
+            "Turn off updates from the app store",
+            "Login to gmail through the mail app",
+            "phone #2 turned out to have 50% battery health. Replaced battery",
+            "turned on _do not disturb_ for consistency with android"
+        ],
+        "android": [
+            "factory data reset (still at version 6.0.1)",
+            "English, United States",
+            "Connect to WiFi",
+            "Sign in with google account",
+            "Don't back up data, enable google location service, improve location accuracy, don't send diagnostic data",
+            "Not setting up: payment info, other email",
+            "Don't restore; set up password",
+            "Don't enable Google Now",
+            "Don't accept update to 7",
+            "If prompted, add number",
+            "Turn off app auto-updates; 35 apps can be updated.; Update only the _Android System Webview_ manually",
+            "phone #3 is persistently stuck at an older version of google play services, although I follow the same procedure. and the older version is too old for the app.  So one-time update of all 35 apps.",
+            "even after the update, phone #3 has a different UI than the others. A/B testing?",
+            "got phone call on android 4, which turned on the screen and got the phone out of doze mode, turned on _do not disturb_",
+            "installed custom apk with native changes to better support reading battery level at the start and end of range. Installed OI File Manager + allowed installing apps from unknown sources. Retained the app, since it was consistent across all phones, but reverted settings changes before further testing. Had to give Chrome storage permission, and while reverting that, discovered that it also had location permission!! but I didn't change it because it was the default. I am fairly sure I don't recall being asked for location permissions from Chrome, but yeah right, it was already pre-installed, wasn't it."
+        ]
+    }
+}
