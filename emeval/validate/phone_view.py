@@ -31,7 +31,7 @@ def get_expected_config_map_for_evaluation(sd):
         for phoneOS, phone_map in ct.items():
             for s in phone_map["sensing_configs"]:
                 expected_config_map[phoneOS]["%s:%s" % (phone_map["name"], s["id"])] = s["sensing_config"]
-    print(expected_config_map)
+    # print(expected_config_map)
     return expected_config_map
 
 # Current accuracy constants
@@ -108,7 +108,7 @@ def validate_calibration_settings(phone_view):
                 print("%s -> %s" % (r["trip_id"], [c["data"]["accuracy"] for c in config_during_test_entries]))
                 # assert len(config_during_test_entries) == 1, "Out of band configuration? Found %d config changes" % len(config_during_test_entries)
                 config_during_test = config_during_test_entries[0]["data"]
-                expected_config = expected_config_map[r["trip_id"]][phoneOS]
+                expected_config = expected_config_map[r["trip_id"]]
                 # print(config_during_test, expected_config)
                 _validate_filter(phoneOS, config_during_test, expected_config)
                 _validate_accuracy(phoneOS, config_during_test, expected_config)
@@ -163,7 +163,7 @@ def validate_range_durations(phone_view, range_key, range_entry_id):
                 curr_phone_duration_map[r[range_entry_id]] = r["duration"]
             duration_map[phoneOS+"_"+phone_label] = curr_phone_duration_map
 
-    print(duration_map)
+    # print(duration_map)
     duration_df = pd.DataFrame(duration_map).transpose()
     print(duration_df)
     for col in duration_df:
