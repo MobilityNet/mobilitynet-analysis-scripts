@@ -7,7 +7,6 @@ import requests
 import osmapi
 import re
 import polyline as pl
-
 import osrm as osrm
 
 sensing_configs = json.load(open("sensing_regimes.all.specs.json"))
@@ -40,8 +39,15 @@ def get_route_coords(mode, waypoint_coords):
 def _fill_coords_from_id(loc):
     if loc is None:
         return None
-    loc["coordinates"] = node_to_geojson_coords(loc["osm_id"])
-    return loc["coordinates"]
+    if "osm_id" in loc["properties"]:
+        if loc["geometry"]["type"] == "Point":
+            loc["geometry"]["coordinates"] = node_to_geojson_coords(loc["properties"]["osm_id"])
+        elif loc["geometry"]["type"] == "Polygon":
+            loc["geometry"]["coordinates"] = get_coords_for_way(loc["properties"]["osm_id"])
+    else:
+        assert "coordinates" in loc["geometry"],\
+            "Location %s does not have either an osmid or specified set of coordinates"
+    return loc["geometry"]["coordinates"]
 
 def validate_and_fill_calibration_tests(curr_spec):
     modified_spec = copy.copy(curr_spec)
@@ -135,10 +141,18 @@ def get_coords_for_relation(rid, start_node, end_node):
     return coords_list[start_index:end_index+1]
 
 def get_route_from_relation(t):
+    # get_coords_for_relation assumes that start and end are both nodes
+    assert "osm_id" in t["start_loc"]["properties"] and \
+        t["start_loc"]["geometry"]["type"] == "Point",\
+        "Start location is not an OSM node, cannot find relation from route"
+    assert "osm_id" in t["start_loc"]["properties"] and \
+        t["end_loc"]["geometry"]["type"] == "Point",\
+        "End location is not a node, cannot find relation from route"
     return get_coords_for_relation(t["relation"],
-        t["start_loc"]["osm_id"], t["end_loc"]["osm_id"])
+        t["start_loc"]["properties"]["osm_id"], t["end_loc"]["properties"]["osm_id"])
 
 def validate_and_fill_leg(t):
+    t["type"] = "TRAVEL"
     start_coords = _fill_coords_from_id(t["start_loc"])
     end_coords = _fill_coords_from_id(t["end_loc"])
     # there are three possible ways in which users can specify routes
@@ -162,26 +176,104 @@ def validate_and_fill_leg(t):
     elif "relation" in t:
         route_coords = get_route_from_relation(t)
 
-    t["route_coords"] = [coords_swap(rc) for rc in route_coords]
+    t["route_coords"] = {
+        "type": "Feature",
+        "properties": {},
+        "geometry": {
+            "type": "LineString",
+            "coordinates": [coords_swap(rc) for rc in route_coords]
+        }
+    }
+
+def get_hidden_access_transfer_walk_segments(prev_l, l):
+    if prev_l is None and l["mode"] != "WALKING":
+        # This is the first leg and is a vehicular trip,
+        # need to add an access leg to represent the walk to where the
+        # vehicle will be parked. This is unknown at spec creation time,
+        # so we don't have any ground truth for it
+        return {
+            "id": "walk_start",
+            "type": "ACCESS",
+            "mode": "WALKING",
+            "name": "Walk from the building to your vehicle",
+            "loc": l["start_loc"],
+        }
+
+    if l is None and prev_l["mode"] != "WALKING":
+        # This is the first leg and is a vehicular trip,
+        # need to add an access leg to represent the walk to where the
+        # vehicle will be parked. This is unknown at spec creation time,
+        # so we don't have any ground truth for it
+        return {
+            "id": "walk_start",
+            "type": "ACCESS",
+            "mode": "WALKING",
+            "name": "Walk from your vehicle to the building",
+            "loc": prev_l["end_loc"]
+        }
+
+    if prev_l["mode"] != "WALKING" and l["mode"] != "WALKING":
+        # transferring between vehicles, add a transit transfer
+        # without a ground truthed trajectory
+        return {
+            "id": "tt_%d_%d" % (i-1, i),
+            "type": "TRANSFER",
+            "mode": "WALKING",
+            "name": "Transfer between %s and %s at %s" %\
+                (prev_l["mode"], l["mode"], prev_l["end_loc"]["name"]),
+            "start_loc": prev_l["end_loc"],
+            "end_loc": l["start_loc"]
+        }
+
 
 def validate_and_fill_eval_trips(curr_spec):
     modified_spec = copy.copy(curr_spec)
     eval_trips = modified_spec["evaluation_trips"]
     for t in eval_trips:
         if "legs" in t:
-            for l in t["legs"]:
+            prev_l = None
+            for i, l in enumerate(t["legs"]):
+                # Add in shim legs like the ones to walk to/from your vehicle
+                # or to transfer between transit modes
+                shim_leg = get_hidden_access_transfer_walk_segments(prev_l, l)
+                if shim_leg is not None:
+                    t["legs"].append(shim_leg)
                 validate_and_fill_leg(l)
+                prev_l = l
+            shim_leg = get_hidden_access_transfer_walk_segments(prev_l, None)
+            if shim_leg is not None:
+                t["legs"].append(shim_leg)
         else:
-            # unimodal trip
-            validate_and_fill_leg(t)
+            # unimodal trip, let's add shims if necessary
+            # the filled spec will always be multimodal
+            # since the only true unimodal trip is walking
+            # and it is easier to assume that there are always legs
+            # specially since we are adding complexity with the type of trips
+            # (ACCESS, TRANSFER, TRAVEL)
+            unmod_trip = copy.deepcopy(t)
+            t.clear()
+            t["id"] = unmod_trip["id"]
+            t["name"] = unmod_trip["name"]
+            t["legs"] = []
+            before_shim_leg = get_hidden_access_transfer_walk_segments(None, unmod_trip)
+            if before_shim_leg is not None:
+                t["legs"].append(before_shim_leg)
+            t["legs"].append(unmod_trip)
+            validate_and_fill_leg(unmod_trip)
+            after_shim_leg = get_hidden_access_transfer_walk_segments(unmod_trip, None)
+            if after_shim_leg is not None:
+                t["legs"].append(after_shim_leg)
+
     return modified_spec
 
 def validate_and_fill_sensing_settings(curr_spec):
     modified_spec = copy.copy(curr_spec)
     for ss in modified_spec["sensing_settings"]:
-        compare_list = ss["compare"]
-        ss["name"] = " v/s ".join(compare_list)
-        ss["sensing_configs"] = [sensing_configs[cr] for cr in compare_list]
+        for phoneOS, compare_list in ss.items():
+            ss[phoneOS] = {}
+            ss[phoneOS]["compare"] = compare_list
+            ss[phoneOS]["name"] = " v/s ".join(compare_list)
+            ss[phoneOS]["sensing_configs"] = [sensing_configs[cr] for cr in compare_list]
     return modified_spec
 
 if __name__ == '__main__':
