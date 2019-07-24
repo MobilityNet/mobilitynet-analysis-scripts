@@ -123,6 +123,7 @@ class EvaluationView:
             print("Processing data for %s phones" % phoneOS)
             self.eval_eval_view_map[phoneOS] = {}
             all_eval_ranges = [m["evaluation_ranges"] for m in phone_map.values()]
+            # print("all_eval_ranges = %s" % ([r["trip_id"] for r in all_eval_ranges]))
             # all the lengths are equal - i.e. the set of lengths has one entr
             assert len(set([len(a) for a in all_eval_ranges])) == 1
             for ctuple in zip(*all_eval_ranges):
@@ -130,7 +131,8 @@ class EvaluationView:
                 assert len(common_names) == 1
                 common_name = list(common_names)[0]
                 # print(common_name)
-                self.eval_eval_view_map[phoneOS][common_name] = {}
+                if common_name not in self.eval_eval_view_map[phoneOS]:
+                    self.eval_eval_view_map[phoneOS][common_name] = {}
 
                 separate_roles = [r["eval_role"] for r in ctuple]
                 print(separate_roles)
@@ -143,8 +145,9 @@ class EvaluationView:
                     common_trip_ids = set([ctt["trip_id"] for ctt in ctriptuple])
                     assert(len(common_trip_ids)) == 1
                     common_trip_id = list(common_trip_ids)[0]
-                    print(common_trip_id)
-                    self.eval_eval_view_map[phoneOS][common_name][common_trip_id] = {}
+                    print("Common trip id = %s" % common_trip_id)
+                    if common_trip_id not in self.eval_eval_view_map[phoneOS][common_name]:
+                        self.eval_eval_view_map[phoneOS][common_name][common_trip_id] = {}
                     for cr, ctt in zip(separate_roles, ctriptuple):
                         self.eval_eval_view_map[phoneOS][common_name][common_trip_id][cr] = ctt
         print("android keys = %s" % self.eval_eval_view_map["android"].keys())
