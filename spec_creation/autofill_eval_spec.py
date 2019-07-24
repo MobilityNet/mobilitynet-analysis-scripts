@@ -8,6 +8,7 @@ import osmapi
 import re
 import polyline as pl
 import osrm as osrm
+import shapely.geometry as geo
 
 sensing_configs = json.load(open("sensing_regimes.all.specs.json"))
 
@@ -48,7 +49,7 @@ def _fill_coords_from_id(loc):
     else:
         assert "coordinates" in loc["geometry"],\
             "Location %s does not have either an osmid or specified set of coordinates"
-    return loc["geometry"]["coordinates"]
+    return loc
 
 def validate_and_fill_calibration_tests(curr_spec):
     modified_spec = copy.copy(curr_spec)
@@ -66,9 +67,18 @@ def get_route_from_osrm(t, start_coords, end_coords):
     if "route_waypoints" in t:
         waypoints = t["route_waypoints"]
         waypoint_coords = [node_to_geojson_coords(node_id) for node_id in waypoints]
-        t["waypoint_coords"] = waypoint_coords
+        t["waypoint_coords"] = {
+            "type": "Feature",
+            "properties": {},
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": waypoint_coords
+            }
+        }
     elif "waypoint_coords" in t:
-        waypoint_coords = t["waypoint_coords"]
+        waypoint_coords = t["waypoint_coords"]["geometry"]["coordinates"]
+    else:
+        waypoint_coords = []
     logging.debug("waypoint_coords = %s..." % waypoint_coords[0:3])
     route_coords = get_route_coords(t["mode"],
         [start_coords] + waypoint_coords + [end_coords])
@@ -143,21 +153,23 @@ def get_coords_for_relation(rid, start_node, end_node):
 
 def get_route_from_relation(t):
     # get_coords_for_relation assumes that start and end are both nodes
-    assert "osm_id" in t["start_loc"]["properties"] and \
-        t["start_loc"]["geometry"]["type"] == "Point",\
-        "Start location is not an OSM node, cannot find relation from route"
-    assert "osm_id" in t["start_loc"]["properties"] and \
-        t["end_loc"]["geometry"]["type"] == "Point",\
-        "End location is not a node, cannot find relation from route"
-    return get_coords_for_relation(t["relation"],
-        t["start_loc"]["properties"]["osm_id"], t["end_loc"]["properties"]["osm_id"])
+    return get_coords_for_relation(t["relation"]["relation_id"],
+        t["relation"]["start_node"], t["relation"]["end_node"])
 
 def validate_and_fill_leg(orig_leg):
     # print(t)
     t = copy.copy(orig_leg)
     t["type"] = "TRAVEL"
-    start_coords = _fill_coords_from_id(t["start_loc"])
-    end_coords = _fill_coords_from_id(t["end_loc"])
+    # These are now almost certain to be polygons
+    # and probably user-drawn, not looked up from OSM
+    # so what we will get here is an geojson representation of a polygon
+    # TODO: Drop support for single point
+    start_polygon = _fill_coords_from_id(t["start_loc"])
+    end_polygon = _fill_coords_from_id(t["end_loc"])
+    print("Raw polygons: start = %s..., end = %s..." %
+        (start_polygon["geometry"]["coordinates"][0][0:3],
+         end_polygon["geometry"]["coordinates"][0][0:3]))
+
     # there are three possible ways in which users can specify routes
     # - waypoints from OSM, which we will map into coordinates and then
     # move to step 2
@@ -172,12 +184,18 @@ def validate_and_fill_leg(orig_leg):
     # integration (otp/routers/default/plan?)
     # But once people figure out the underlying call, they can copy-paste the
     # geometry into the spec.
-    if "route_waypoints" in t or "waypoint_coords" in t:
-        route_coords = get_route_from_osrm(t, start_coords, end_coords)
-    elif "polyline" in t:
+    if "polyline" in t:
         route_coords = get_route_from_polyline(t)
     elif "relation" in t:
         route_coords = get_route_from_relation(t)
+    else:
+        # We need to find a point within the polygon to pass to the routing engine
+        start_coords_shp = geo.Polygon(start_polygon["geometry"]["coordinates"][0]).representative_point()
+        start_coords = geo.mapping(start_coords_shp)["coordinates"]
+        end_coords_shp = geo.Polygon(end_polygon["geometry"]["coordinates"][0]).representative_point()
+        end_coords = geo.mapping(end_coords_shp)["coordinates"]
+        print("Representative_coords: start = %s, end = %s" % (start_coords, end_coords))
+        route_coords = get_route_from_osrm(t, start_coords, end_coords)
 
     t["route_coords"] = {
         "type": "Feature",
@@ -268,9 +286,9 @@ def validate_and_fill_eval_trips(curr_spec):
                 ret_leg_list.extend(shim_legs)
                 ret_leg_list.append(validate_and_fill_leg(l))
                 prev_l = l
-            shim_leg = get_hidden_access_transfer_walk_segments(prev_l, None)
-            assert len(shim_leg) <= 1, "Last leg should not have a transfer shim"
-            print("Got shim legs %s, extending" % ([sl["id"] for sl in shim_leg]))
+            shim_legs = get_hidden_access_transfer_walk_segments(prev_l, None)
+            assert len(shim_legs) <= 1, "Last leg should not have a transfer shim"
+            print("Got shim legs %s, extending" % ([sl["id"] for sl in shim_legs]))
             ret_leg_list.extend(shim_legs)
             t["legs"] = ret_leg_list
         else:
