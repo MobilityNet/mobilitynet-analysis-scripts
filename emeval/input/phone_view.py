@@ -47,6 +47,7 @@ class PhoneView:
         print(20 * "-", "About to fill evaluation trips", 20 * "-")
         self.fill_eval_role_maps()
         self.fill_accuracy_control_trip_ranges()
+        self.copy_trip_ranges_to_other_accuracy_control()
         self.copy_trip_ranges_to_eval_power_maps()
         print(20 * "-", "About to fill in battery information", 20 * "-")
         self.fill_battery_df("calibration")
@@ -57,6 +58,9 @@ class PhoneView:
         print(20 * "-", "About to fill in motion activity information", 20 * "-")
         self.fill_motion_activity_df("calibration")
         self.fill_motion_activity_df("evaluation")
+        print(20 * "-", "About to fill in transition information", 20 * "-")
+        self.fill_transition_df("calibration")
+        self.fill_transition_df("evaluation")
         print(20 * "-", "About to select trip specific ranges", 20 * "-")
         self.fill_trip_specific_battery_and_locations()
         print(20 * "-", "Done populating information from server", 20 * "-")
@@ -155,8 +159,11 @@ class PhoneView:
 
         # print("\n".join([str((t["transition"], t["trip_id"], t["ts"])) for t in start_transitions]))
         # print("\n".join([str((t["transition"], t["trip_id"], t["ts"])) for t in end_transitions]))
+        unique_trip_ids = set([t["trip_id"] for t in transition_list])
+        print(unique_trip_ids)
 
         range_list = []
+        range_count_map = dict.fromkeys(unique_trip_ids, 0)
         for (s, e) in zip(start_transitions, end_transitions):
             # print("------------------------------------- \n %s -> \n %s" % (s, e))
             assert s["transition"] == start_tt or s["transition"] == start_ti, "Start transition has %s transition" % s["transition"]
@@ -165,7 +172,12 @@ class PhoneView:
             assert e["ts"] > s["ts"], "end %s is before start %s" % (arrow.get(e["ts"]), arrow.get(s["ts"]))
             for f in ["spec_id", "device_manufacturer", "device_model", "device_version"]:
                 assert s[f] == e[f], "Field %s mismatch! %s != %s" % (f, s[f], e[f])
-            curr_range = {"trip_id": s["trip_id"],
+
+            # Handle multiple ranges. for one range, we will have two
+            # transitions: start and stop
+            curr_trip_id = s["trip_id"] + "_"+ str(range_count_map[s["trip_id"]])
+            range_count_map[s["trip_id"]] = range_count_map[s["trip_id"]] + 1
+            curr_range = {"trip_id": curr_trip_id,
                 "start_ts": s["write_ts"], "end_ts": e["write_ts"],
                 "duration": (e["write_ts"] - s["write_ts"])}
             range_list.append(curr_range)
@@ -218,16 +230,19 @@ class PhoneView:
                 get_separate_role = lambda r: r["trip_id"].split(":")[1]
                 common_names = set([get_common_name(r) for r in eval_cols])
                 separate_roles = [get_separate_role(r) for r in eval_cols]
+                curr_run_list = [sr.split("_")[1] for sr in separate_roles]
+                assert len(set(curr_run_list)) == 1
+                curr_run = list(set(curr_run_list))[0]
                 # print(common_names, separate_roles)
                 assert len(common_names) == 1
                 common_name = list(common_names)[0]
                 # print(common_name)
                 for r in ctuple:
                     r["eval_common_trip_id"] = common_name
-                ctuple[0]["eval_role"] = "accuracy_control"
+                ctuple[0]["eval_role"] = "accuracy_control_"+curr_run
                 for r, sr in zip(eval_cols, separate_roles):
                     r["eval_role"] = sr
-                ctuple[-1]["eval_role"] = "power_control"
+                ctuple[-1]["eval_role"] = "power_control_"+curr_run
 
     def fill_evaluation_ranges(self):
         self.filter_transitions(
@@ -262,7 +277,6 @@ class PhoneView:
                     battery_df = pd.DataFrame([e["data"] for e in battery_entries])
                     battery_df["hr"] = (battery_df.ts-r["start_ts"])/3600.0
                     r["battery_df"] = battery_df
-
 
     def fill_location_df(self, storage_key):
         for phoneOS, phone_map in self.phone_view_map.items():
@@ -321,6 +335,24 @@ class PhoneView:
                     motion_activity_df["hr"] = (motion_activity_df.ts-r["start_ts"])/3600.0
                     r["motion_activity_df"] = motion_activity_df
 
+    def fill_transition_df(self, storage_key):
+        for phoneOS, phone_map in self.phone_view_map.items():
+            print("Processing data for %s phones" % phoneOS)
+            for phone_label in phone_map:
+                curr_calibration_ranges = phone_map[phone_label]["{}_ranges".format(storage_key)]
+                for r in curr_calibration_ranges:
+                    transition_entries = self.spec_details.retrieve_data_from_server(phone_label, ["statemachine/transition"], r["start_ts"], r["end_ts"])
+                    # ios entries before running the pipeline are marked with battery_level_ratio, which is a float from 0 ->1
+                    # convert it to % to be consistent with android and easier to understand
+                    r["transition_entries"] = transition_entries
+                    transition_df = pd.DataFrame([e["data"] for e in transition_entries])
+                    if "fmt_time" not in transition_df.columns:
+                        print("transition has not been processed, creating ts -> fmt_time")
+                        transition_df["fmt_time"] = [e["metadata"]["write_ts"] for e in transition_entries]
+                    transition_df["hr"] = (transition_df.ts-r["start_ts"])/3600.0
+                    r["transition_df"] = transition_df
+
+
     def fill_eval_role_maps(self):
         self.accuracy_control_maps = {}
         self.power_control_maps = {}
@@ -373,6 +405,52 @@ class PhoneView:
                     for tr in curr_eval_trips_ranges]))
                 r["evaluation_trip_ranges"] = curr_eval_trips_ranges
 
+    def copy_trip_ranges_to_other_accuracy_control(self):
+        evaluation_ranges_map = {}
+        for phoneOS, phone_map in self.accuracy_control_maps.items():
+            for r in phone_map["evaluation_ranges"]:
+                if r["trip_id"] not in evaluation_ranges_map:
+                    evaluation_ranges_map[r["trip_id"]] = {}
+                evaluation_ranges_map[r["trip_id"]][phoneOS] = r
+
+        # print(evaluation_ranges_map.keys())
+        for range_id, range_phone_map in evaluation_ranges_map.items():
+            trip_counts = [(phoneOS, len(r["evaluation_trip_ranges"]))
+                            for phoneOS, r in range_phone_map.items()]
+            nonzero_trip_counts = [tc for tc in trip_counts if tc[1] != 0]
+            # Either we have one temporal ground truth or we have all
+            print("Before copying found %d/%d phones with ground truth for experiment of size %d" %\
+                (len(nonzero_trip_counts), len(trip_counts), len(evaluation_ranges_map.items())))
+
+            assert len(nonzero_trip_counts) == 1 or\
+                len(nonzero_trip_counts) == len(trip_counts),\
+                "Found %d/%d phones with ground truth in experiment of size %d" %\
+                    (len(nonzero_counts), len(trip_counts), len(evaluation_ranges_map.items()))
+
+            if len(nonzero_trip_counts) == 1:
+                phoneOS_with_ground_truth = nonzero_trip_counts[0][0]
+                ground_truthed_trip_ranges = range_phone_map[phoneOS_with_ground_truth]["evaluation_trip_ranges"]
+                print("Uncopied ground truth of length %d on found on phone %s" %
+                    (len(ground_truthed_trip_ranges), phoneOS_with_ground_truth))
+                print("Ground truthed trip ranges = %s" % ground_truthed_trip_ranges)
+            else:
+                phoneOS_with_ground_truth = None
+                print("No uncopied ground truth found!")
+
+            for phoneOS, r in range_phone_map.items():
+                if phoneOS_with_ground_truth is not None and phoneOS != phoneOS_with_ground_truth:
+                    print("Copying %d ranges to %s, %s" % (len(ground_truthed_trip_ranges), phoneOS, r["trip_id"]))
+                    r["evaluation_trip_ranges"] = ground_truthed_trip_ranges
+
+            trip_counts = [(phoneOS, len(r["evaluation_trip_ranges"]))
+                            for phoneOS, r in range_phone_map.items()]
+            nonzero_trip_counts = [tc for tc in trip_counts if tc[1] != 0]
+            print("After copying found %d/%d phones with ground truth for experiment of size %d" %\
+                (len(nonzero_trip_counts), len(trip_counts), len(evaluation_ranges_map.items())))
+            assert len(nonzero_trip_counts) == len(trip_counts),\
+                "Found %d/%d phones with ground truth even after copy!" %\
+                    (len(nonzero_trip_counts), len(trip_counts))
+
     def copy_trip_ranges_to_eval_power_maps(self):
         for phoneOS in self.accuracy_control_maps.keys():
             matching_accuracy_control_map = self.accuracy_control_maps[phoneOS]
@@ -387,9 +465,11 @@ class PhoneView:
                 assert len(curr_eval_evaluation_ranges) == len(curr_accuracy_evaluation_ranges)
                 for i, (re, ra) in enumerate(zip(curr_eval_evaluation_ranges, curr_accuracy_evaluation_ranges)):
                     accuracy_eval_trips_ranges = ra["evaluation_trip_ranges"] # from this phone
+                    # print(accuracy_eval_trips_ranges)
                     print("%s: Copying %s accuracy trips to %s, before = %s" % (phoneOS, phone_label, len(accuracy_eval_trips_ranges),
                         len(re["evaluation_trip_ranges"]) if "evaluation_trip_ranges" in re else 0))
                     re["evaluation_trip_ranges"] = copy.deepcopy(accuracy_eval_trips_ranges)
+                    # print(re["evaluation_trip_ranges"])
                     # print(curr_eval_trips_ranges)
                     print("\n".join([str((tr["trip_id"], tr["duration"],
                         arrow.get(tr["start_ts"]).to(self.spec_details.eval_tz),
