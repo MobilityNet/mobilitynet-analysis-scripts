@@ -346,10 +346,11 @@ class PhoneView:
                     # convert it to % to be consistent with android and easier to understand
                     r["transition_entries"] = transition_entries
                     transition_df = pd.DataFrame([e["data"] for e in transition_entries])
-                    if "fmt_time" not in transition_df.columns:
-                        print("transition has not been processed, creating ts -> fmt_time")
-                        transition_df["fmt_time"] = [e["metadata"]["write_ts"] for e in transition_entries]
-                    transition_df["hr"] = (transition_df.ts-r["start_ts"])/3600.0
+                    if "ts" in transition_df.columns:
+                        if "fmt_time" not in transition_df.columns:
+                            print("transition has not been processed, creating ts -> fmt_time")
+                            transition_df["fmt_time"] = [e["metadata"]["write_ts"] for e in transition_entries]
+                        transition_df["hr"] = (transition_df.ts-r["start_ts"])/3600.0
                     r["transition_df"] = transition_df
 
 
