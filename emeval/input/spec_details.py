@@ -64,3 +64,8 @@ class SpecDetails:
              arrow.get(self.eval_end_ts).to(self.eval_tz)))
         self.phone_labels = self.curr_spec["phones"]
 
+    def get_ground_truth_trajectory_for_leg(leg_id):
+        for t in sdunp.curr_spec_entry["data"]["label"]["evaluation_trips"]:
+            ll = [l for l in t["legs"] if l["id"] == leg_id]
+            assert len(ll) == 1
+            return ll[0]

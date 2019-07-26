@@ -127,7 +127,7 @@ class PhoneView:
     @staticmethod
     # We expect that transitions occur in pairs
     def transitions_to_ranges(transition_list, start_tt, end_tt, start_ti, end_ti,
-            transition_entry_template, spec_end_ts):
+            spec_end_ts):
         start_transitions = transition_list[::2]
         end_transitions = transition_list[1::2]
 
@@ -137,25 +137,22 @@ class PhoneView:
             print("All ranges are complete, nothing to change")
         else:
             print("Incomplete range, adding fake end transition")
-            last_start_transition = transition_entry_template
+            last_start_transition = start_transitions[-1]
             fake_end_transition = copy.deepcopy(last_start_transition)
-            fake_end_transition["data"]["transition"] = end_tt
+            fake_end_transition["transition"] = end_tt
             print(last_start_transition, fake_end_transition)
             curr_ts = arrow.get().timestamp
             if curr_ts > spec_end_ts:
-                fake_end_transition["data"]["ts"] = spec_end_ts
+                fake_end_transition["ts"] = spec_end_ts
             else:
-                fake_end_transition["data"]["ts"] = curr_ts
-            fake_end_transition["data"]["write_ts"] = fake_end_transition["data"]["ts"]
-            fake_end_transition["metadata"]["write_ts"] = fake_end_transition["data"]["ts"]
-            if "fmt_time" in last_start_transition["data"]:
-                fake_end_transition["data"]["fmt_time"] = arrow.get(curr_ts).to(eval_tz)
-            if "write_fmt_time" in last_start_transition["metadata"]:
-                fake_end_transition["metadata"]["write_fmt_time"] = arrow.get(curr_ts).to(eval_tz)
-            fake_end_transition["metadata"]["platform"] = "fake"
-            if "local_dt" in fake_end_transition["data"]:
-                del fake_end_transition["data"]["local_dt"]
-            end_transitions.append(fake_end_transition["data"])
+                fake_end_transition["ts"] = curr_ts
+            fake_end_transition["write_ts"] = fake_end_transition["ts"]
+
+            if "fmt_time" in last_start_transition:
+                fake_end_transition["fmt_time"] = arrow.get(curr_ts).to(eval_tz)
+            if "local_dt" in fake_end_transition:
+                del fake_end_transition["local_dt"]
+            end_transitions.append(fake_end_transition)
 
         # print("\n".join([str((t["transition"], t["trip_id"], t["ts"])) for t in start_transitions]))
         # print("\n".join([str((t["transition"], t["trip_id"], t["ts"])) for t in end_transitions]))
@@ -197,8 +194,6 @@ class PhoneView:
                 curr_calibration_ranges = PhoneView.transitions_to_ranges(
                     phone_map[phone_label]["calibration_transitions"],
                     "START_CALIBRATION_PERIOD", "STOP_CALIBRATION_PERIOD", 0, 1,
-                    sorted(phone_map[phone_label]["transitions"],
-                        key=lambda t:t["data"]["ts"])[-1],
                     self.spec_details.eval_end_ts)
                 print("Found %d ranges of duration %s for phone %s" %
                     (len(curr_calibration_ranges),
@@ -254,7 +249,7 @@ class PhoneView:
                 curr_evaluation_ranges = PhoneView.transitions_to_ranges(
                     phone_map[phone_label]["evaluation_transitions"],
                     "START_EVALUATION_PERIOD", "STOP_EVALUATION_PERIOD", 2, 3,
-                    phone_map[phone_label]["transitions"][-1], self.spec_details.eval_end_ts)
+                    self.spec_details.eval_end_ts)
                 print("Found %d ranges for phone %s" % (len(curr_evaluation_ranges), phone_label))
                 phone_map[phone_label]["evaluation_ranges"] = curr_evaluation_ranges
         self.link_common_eval_ranges()
@@ -397,7 +392,7 @@ class PhoneView:
                 curr_eval_trips_ranges = PhoneView.transitions_to_ranges(
                     curr_eval_trips_transitions,
                     "START_EVALUATION_TRIP", "STOP_EVALUATION_TRIP", 4, 5,
-                    curr_control_transitions[-1], self.spec_details.eval_end_ts)
+                    self.spec_details.eval_end_ts)
                 print("%s: Found %s trips for evaluation %s" % (phoneOS, len(curr_eval_trips_ranges), r["trip_id"]))
                 # print(curr_eval_trips_ranges)
                 print("\n".join([str((tr["trip_id"], tr["duration"],

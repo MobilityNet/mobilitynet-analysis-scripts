@@ -37,6 +37,8 @@ if __name__ == '__main__':
         help="the spec_id to match")
     parser.add_argument("-x", "--cross-platform", action="store_true",
         help="whether the transition is across platforms")
+    parser.add_argument("--dest_trip_id",
+        help="specify the destination trip id if different from the src")
     parser.add_argument("-v", "--verbose", action='store_true',
         help="whether we should use verbose logging or not.")
 
@@ -66,6 +68,9 @@ if __name__ == '__main__':
     del last_matching_transition["_id"]
     del last_matching_transition["user_id"]
     print("After trimming, entry is %s" % last_matching_transition)
+
+    if args.dest_trip_id is not None:
+        last_matching_transition["data"]["trip_id"] = args.dest_trip_id
 
     if args.cross_platform:
         to_phone_transitions = retrieve_data_from_server(args.server_url,
