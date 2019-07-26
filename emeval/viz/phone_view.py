@@ -59,13 +59,14 @@ def get_count_df(phone_view):
     count_df = pd.DataFrame(count_map).transpose()
     return count_df
 
-def get_location_density_df(phone_map):
+def get_location_density_df(phone_map, range_key):
     density_map = {}
     for phone_label in phone_map:
         curr_phone_density_map = {}
-        curr_calibration_ranges = phone_map[phone_label]["calibration_ranges"]
+        curr_calibration_ranges = phone_map[phone_label]["{}_ranges".format(range_key)]
         for r in curr_calibration_ranges:
-            density_map[phone_label+"_"+r["trip_id"]] = r["location_df"].hr
+            if "hr" in r["location_df"]:
+                density_map[phone_label+"_"+r["trip_id"]] = r["location_df"].hr
         
     density_df = pd.DataFrame(density_map)
     return density_df
