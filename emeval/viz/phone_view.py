@@ -69,7 +69,8 @@ def get_location_density_df(phone_map, range_key):
                 density_map[phone_label+"_"+r["trip_id"]] = r["location_df"].hr
         
     density_df = pd.DataFrame(density_map)
-    return density_df
+    filtered_density_df = density_df.loc[:,~density_df.columns.str.contains("POWER_CONTROL")]
+    return filtered_density_df
 
 def plot_separate_density_curves(fig, phone_map, ncols, range_key, trip_id_pattern):
     nRows = get_row_count(len(phone_map.keys()), ncols)
