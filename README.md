@@ -1,11 +1,10 @@
 # Reproducible evaluation of data collection using public data #
 
 This repository contains juypter notebooks for the evaluation of smartphone
-app-based data collection. It is designed to be launched with binder
+app-based data collection. ~It is designed to be launched with binder
 https://mybinder.org/ so that other community members can run their own
-analyses without any additional setup.
+analyses without any additional setup.~ https://github.com/jupyterhub/binder/issues/166
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/e-mission/e-mission-eval-public-data.git/master)
 
 **WARNING** Launching the binder is V..E..R..Y slow. I am not quite sure why, since the [list of packages](environment.yml) is pretty short. I always look at the build logs to track the current progress. Sometimes, if the build succeeds in creating the image, but gets stuck in the "Launching server" step, I reload the binder page which seems to speed things up.
 
