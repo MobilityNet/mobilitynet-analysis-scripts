@@ -137,7 +137,7 @@ def get_map_list_eval_trips(eval_view, os_pattern, trip_id_pattern, compare_patt
     compare_pattern_re = re.compile("("+compare_pattern + ")|accuracy_control")
     print(compare_pattern_re)
     map_list = []
-    color_list = ['blue', 'red', 'purple', 'orange', "green", "magenta", "gray", "yellow"]
+    color_list = ['blue', 'red', 'purple', 'orange', "green", "magenta", "gray", "yellow", "brown", "cyan", "turquoise"]
     for phoneOS, phone_map in eval_view.map("evaluation").items():
         print("Processing data for %s phones" % phoneOS)
         if os_pattern not in phoneOS:

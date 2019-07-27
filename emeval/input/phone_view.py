@@ -270,7 +270,8 @@ class PhoneView:
                                 del e["data"]["battery_level_ratio"]
                     r["battery_entries"] = battery_entries
                     battery_df = pd.DataFrame([e["data"] for e in battery_entries])
-                    battery_df["hr"] = (battery_df.ts-r["start_ts"])/3600.0
+                    if len(battery_df) > 0:
+                        battery_df["hr"] = (battery_df.ts-r["start_ts"])/3600.0
                     r["battery_df"] = battery_df
 
     def fill_location_df(self, storage_key):
