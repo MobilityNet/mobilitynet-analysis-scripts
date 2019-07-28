@@ -82,7 +82,7 @@ def delete_trip_data(user_id, spec_id, trip_id, is_dry_run=True):
     else:
         print([v["data"]["battery_level_pct"] for v in battery_list])
     if not is_dry_run:
-        print(edb.get_usercache_db().delete_many({"user_id": user_id, 'metadata.write_ts': {'$lte': ts_range_end, '$gte': ts_range_start}}))
+        print(edb.get_usercache_db().delete_many({"user_id": user_id, 'metadata.write_ts': {'$lte': ts_range_end, '$gte': ts_range_start}}).raw_result)
 
 delete_trip_data(UUID("..."), "high_accuracy_stationary_3")
 
