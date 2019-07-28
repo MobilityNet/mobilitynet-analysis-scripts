@@ -1,14 +1,14 @@
 {
     "fmt_version": 1,
-    "id": "sfba_hf_calibration_stationary_only",
-    "name": "Calibration for high frequencies only",
+    "id": "sfba_med_freq_calibration_stationary_only_pilot",
+    "name": "Pilot for calibration for medium frequencies only",
     "region": {
         "osm_id": 2157162589,
         "name": "San Francisco Bay Area",
         "timezone": "America/Los_Angeles"
     },
-    "start_fmt_date": "2019-06-13",
-    "end_fmt_date": "2019-07-31",
+    "start_fmt_date": "2019-07-18",
+    "end_fmt_date": "2019-07-29",
     "phones": {
         "android": {
           "ucb-sdb-android-1": "accuracy_control",
@@ -25,23 +25,17 @@
     },
     "calibration_tests": [
         {
-            "id": "100m_lowpwr_accuracy_high_frequency_stationary",
+            "id": "100m_balanced_accuracy_medium_freq_stationary",
             "mode": null,
             "start_loc": null,
             "end_loc": null,
-            "config": {"id": "HLPAHFAO"}
+            "config": {"id": "MAMFAO"}
         },{
-            "id": "ten_meter_balanced_accuracy_high_frequency_stationary",
+            "id": "best_high_accuracy_medium_freq_stationary",
             "mode": null,
             "start_loc": null,
             "end_loc": null,
-            "config": {"id": "TMBAHFAO"}
-        },{
-            "id": "best_high_accuracy_high_frequency_stationary",
-            "mode": null,
-            "start_loc": null,
-            "end_loc": null,
-            "config": {"id": "HAHFAO"}
+            "config": {"id": "HAMFAO"}
         }
     ],
     "sensing_settings": [
@@ -79,7 +73,8 @@
             "Turn off app auto-updates; 35 apps can be updated.; Update only the _Android System Webview_ manually",
             "phone #3 is persistently stuck at an older version of google play services, although I follow the same procedure. and the older version is too old for the app.  So one-time update of all 35 apps.",
             "even after the update, phone #3 has a different UI than the others. A/B testing?",
-            "got phone call on android 4, which turned on the screen and got the phone out of doze mode, turned on _do not disturb_"
+            "got phone call on android 4, which turned on the screen and got the phone out of doze mode, turned on _do not disturb_",
+            "installed custom apk with native changes to better support reading battery level at the start and end of range. Installed OI File Manager + allowed installing apps from unknown sources. Retained the app, since it was consistent across all phones, but reverted settings changes before further testing. Had to give Chrome storage permission, and while reverting that, discovered that it also had location permission!! but I didn't change it because it was the default. I am fairly sure I don't recall being asked for location permissions from Chrome, but yeah right, it was already pre-installed, wasn't it."
         ]
     }
 }

@@ -173,10 +173,12 @@ class PhoneView:
             # Handle multiple ranges. for one range, we will have two
             # transitions: start and stop
             curr_trip_id = s["trip_id"] + "_"+ str(range_count_map[s["trip_id"]])
-            range_count_map[s["trip_id"]] = range_count_map[s["trip_id"]] + 1
             curr_range = {"trip_id": curr_trip_id,
+                "trip_id_base" : s["trip_id"],
+                "trip_run": range_count_map[s["trip_id"]],
                 "start_ts": s["write_ts"], "end_ts": e["write_ts"],
                 "duration": (e["write_ts"] - s["write_ts"])}
+            range_count_map[s["trip_id"]] = range_count_map[s["trip_id"]] + 1
             range_list.append(curr_range)
             
         return range_list

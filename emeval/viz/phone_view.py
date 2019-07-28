@@ -2,6 +2,9 @@ import pandas as pd
 
 import arrow
 
+import matplotlib.cm as mcm
+import matplotlib.pyplot as plt
+
 import folium
 import folium
 import folium.features as fof
@@ -29,6 +32,29 @@ def plot_all_power_drain(ax, phone_map, range_key, trip_id_pattern):
             battery_df = r["battery_df"]
             ret_axes = battery_df.plot(x="hr", y="battery_level_pct", ax=ax, label=phone_label+"_"+r["trip_id"], ylim=(0,100), sharey=True)
 
+def plot_collapsed_all_power_drain(ax, phone_map, range_key, trip_id_pattern,
+    curr_color_map, curr_legend_map):
+    for phone_label in phone_map:
+        curr_calibration_ranges = phone_map[phone_label]["{}_ranges".format(range_key)]
+        sel_calibration_ranges = [cr for cr in curr_calibration_ranges if trip_id_pattern in cr["trip_id"]]
+        for r in sel_calibration_ranges:
+            battery_df = r["battery_df"]
+            tidb = r["trip_id_base"]
+            if tidb not in curr_color_map:
+                # assign to the next color
+                curr_color_map[tidb] = mcm.tab10.colors[len(curr_color_map)]
+                new_type = True
+
+            ret_line = battery_df.plot(x="hr", y="battery_level_pct",
+                ax=ax, legend=False, ylim=(0,100),
+                color=curr_color_map[tidb], sharey=True).lines[-1]
+
+            if tidb not in curr_legend_map:
+                curr_legend_map[tidb] = ret_line
+
+    return (curr_color_map, curr_legend_map)
+
+
 def plot_separate_power_drain(fig, phone_map, ncols, range_key, trip_id_pattern):
     nRows = get_row_count(len(phone_map.keys()), ncols)
     print("Printing %d nRows for %s, pattern %s" % (nRows, range_key, trip_id_pattern))
@@ -42,7 +68,7 @@ def plot_separate_power_drain(fig, phone_map, ncols, range_key, trip_id_pattern)
             battery_df.plot(x="hr", y="battery_level_pct", ax=ax, label=r["trip_id"], ylim=(0,100), sharex=True, sharey=True, legend=False)
     # from https://stackoverflow.com/a/46921590/4040267
     handles, labels = ax.get_legend_handles_labels()
-    fig.legend(handles, labels, loc='lower left', mode="expand", ncol=4, bbox_to_anchor=(0,1.02,1,0.2))
+    fig.legend(handles, labels, loc='lower left', mode="expand", ncol=2, bbox_to_anchor=(0,1.02,1,0.2))
 
 # Get the counts for the various calibration ranges
 def get_count_df(phone_view):
