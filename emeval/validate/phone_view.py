@@ -108,7 +108,7 @@ def validate_calibration_settings(phone_view):
                 print("%s -> %s" % (r["trip_id"], [c["data"]["accuracy"] for c in config_during_test_entries]))
                 # assert len(config_during_test_entries) == 1, "Out of band configuration? Found %d config changes" % len(config_during_test_entries)
                 config_during_test = config_during_test_entries[0]["data"]
-                expected_config = expected_config_map[r["trip_id"]]
+                expected_config = expected_config_map[r["trip_id_base"]]
                 # print(config_during_test, expected_config)
                 _validate_filter(phoneOS, config_during_test, expected_config)
                 _validate_accuracy(phoneOS, config_during_test, expected_config)
@@ -139,9 +139,7 @@ def validate_evaluation_settings(phone_view):
                 print("%s -> %s" % (r["trip_id"], [c["data"]["accuracy"] for c in config_during_test_entries]))
                 # assert len(config_during_test_entries) == 1, "Out of band configuration? Found %d config changes" % len(config_during_test_entries)
                 config_during_test = config_during_test_entries[0]["data"]
-                trip_id_base = "_".join(r["trip_id"].split("_")[:-1])
-                print("Mapped %s -> %s" % (r["trip_id"], trip_id_base))
-                expected_config = expected_config_map[phoneOS][trip_id_base]
+                expected_config = expected_config_map[phoneOS][r["trip_id_base"]]
                 # print(config_during_test.keys(), expected_config.keys())
                 _validate_filter(phoneOS, config_during_test, expected_config)
                 _validate_accuracy(phoneOS, config_during_test, expected_config)

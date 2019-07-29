@@ -22,7 +22,7 @@ def plot_separate_power_drain_multiple_runs(fig, ncols, eval_map, trip_id_patter
         if trip_id_pattern not in curr_calibrate:
             print("curr_calibrate = %s, not matching pattern %s, skipping" % (curr_calibrate, trip_id_pattern))
             continue
-        ax = fig.add_subplot(nRows, ncols, i+1, title=curr_calibrate)
+        ax = fig.add_subplot(nRows, ncols, i+1, title=curr_calibrate, label=curr_calibrate)
         for curr_cal_run, cal_phone_map in curr_calibrate_trip_map.items():
             print("Handling data for run %s" % (curr_cal_run))
             # print("Handling data for run %s, %s" % (curr_cal_run, cal_phone_map))
@@ -30,9 +30,11 @@ def plot_separate_power_drain_multiple_runs(fig, ncols, eval_map, trip_id_patter
                 # print("Extracting data for %s from map with keys %s" % (phone_label, phone_data_map.keys()))
                 battery_df = phone_data_map["battery_df"]
                 if len(battery_df) > 0:
-                    battery_df.plot(x="hr", y="battery_level_pct", ax=ax, label="%s_%s" % (curr_cal_run.split("_")[-1], phone_label), ylim=(0,100), sharex=True, sharey=True)
+                    battery_df.plot(x="hr", y="battery_level_pct", ax=ax, label="%s_%s" % (curr_cal_run.split("_")[-1], phone_label), ylim=(0,100), sharex=True, sharey=True, legend=False)
                 else:
                     print("no battery data found for %s %s, skipping" % (curr_eval, curr_eval_trip_id))
+    handles, labels = ax.get_legend_handles_labels()
+    fig.legend(handles, labels, loc='upper left', mode="expand", ncol=4, bbox_to_anchor=(0,-0.135,0.75,0.2))
 
 def plot_separate_power_drain_single_run(fig, ncols, eval_map, trip_id_pattern):
     nRows = get_row_count(len(eval_map.keys()), ncols)

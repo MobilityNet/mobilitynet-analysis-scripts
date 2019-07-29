@@ -161,6 +161,24 @@
             "filter": 120
         }
     },
+    "TMBAHFAO": {
+        "id": "TMBAHFAO",
+        "name": "Ten Meter/Balanced Power Accuracy High Frequency Always On",
+        "sensing_config": {
+            "is_duty_cycling": false,
+            "accuracy": ["PRIORITY_BALANCED_POWER_ACCURACY","kCLLocationAccuracyNearestTenMeters"],
+            "filter": 1
+        }
+    },
+    "HLPAHFAO": {
+        "id": "HLPAHFAO",
+        "name": "Hundred meter/Low Power Accuracy High Frequency Always On",
+        "sensing_config": {
+            "is_duty_cycling": false,
+            "accuracy": ["PRIORITY_LOW_POWER","kCLLocationAccuracyHundredMeters"],
+            "filter": 1
+        }
+    },
     "STOP_TRACKING": {
         "id": "STOP_TRACKING",
         "name": "Tracking turned off as a control",
