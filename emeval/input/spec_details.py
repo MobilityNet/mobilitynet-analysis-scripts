@@ -3,6 +3,7 @@
 
 import arrow
 import requests
+import geojson as gj
 
 class SpecDetails:
     def __init__(self, datastore_url, author_email, spec_id):
@@ -78,16 +79,8 @@ class SpecDetails:
             if l["type"] == "TRAVEL":
                 coords_list.extend(l["route_coords"]["geometry"]["coordinates"])
                 modes_list.append(l["mode"])
-        return {
-            "type": "Feature",
-            "properties": {
-                "modes": ",".join(modes_list)
-            },
-            "geometry": {
-                "type": "LineString",
-                "coordinates": coords_list
-            }
-        }
+        return gj.Feature(geometry=gj.LineString(coords_list),
+            properties={"modes": modes_list})
 
     def get_ground_truth_for_leg(self, leg_id):
         for t in self.curr_spec_entry["data"]["label"]["evaluation_trips"]:
@@ -95,3 +88,11 @@ class SpecDetails:
             # print(leg_id, len(ll), [l["id"] for l in ll])
             if len(ll) == 1:
                 return ll[0]
+
+    def get_geojson_for_leg(self, gt_leg):
+        gt_leg["route_coords"]["properties"]["style"] = {"color": "green"}
+        gt_leg["start_loc"]["properties"]["style"] = {"color": "LightGreen", "fillColor": "LightGreen"}
+        gt_leg["end_loc"]["properties"]["style"] = {"color": "red", "fillColor": "red"}
+        return gj.FeatureCollection([gt_leg["start_loc"], gt_leg["end_loc"],
+            gt_leg["route_coords"]])
+        
