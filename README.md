@@ -15,6 +15,12 @@ so that others can build on it!
 
 There are many potential ways to interact with the notebooks here. At one extreme, you can do everything using browser UI tools only. At the other, you can use the CLI. And of course, there are tons of other git tools to work with. The instructions here can give you a sense of the options, but feel free to adapt them to your favourite tools.
 
+## Quickstart ##
+
+1. If you want to write your own code, you may want to start with a template that iterates over the existing data model - https://github.com/e-mission/e-mission-eval-public-data/blob/master/Data_exploration_template.ipynb
+1. If you want to run existing analyses, you can use the SF Bay Area experiments as a template:
+  - Visualizations from the SF Bay area experiments are in the `timeline_*` files (e.g. `timeline_car_scooter_brex_san_jose.ipynb`)
+
 ## Running existing notebooks ##
 
 1. **View only:** Notebooks with outputs embedded are in the [`examples_with_outputs`](examples_with_outputs) folder and can be statically viewed directly in nbviewer (e.g. https://nbviewer.jupyter.org/github/e-mission/e-mission-eval-public-data/blob/master/examples_with_outputs/example_visualization_SFBA_first_failed_experiment.ipynb). There are a lot of logs related to data loading and preprocessing at the beginning, so you want to scroll ahead to the results (e.g. https://nbviewer.jupyter.org/github/e-mission/e-mission-eval-public-data/blob/master/examples_with_outputs/example_visualization_SFBA_first_failed_experiment.ipynb#Now-for-the-results-(calibration,-phone-view)!)
