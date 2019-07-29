@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 import arrow
 
@@ -97,6 +98,28 @@ def get_location_density_df(phone_map, range_key):
     density_df = pd.DataFrame(density_map)
     filtered_density_df = density_df.loc[:,~density_df.columns.str.contains("POWER_CONTROL")]
     return filtered_density_df
+
+"""
+Filter out invalid locations that mess up the density dataframe
+Invalid is defined as points way before the related range.
+Returns a filtered density dataframe
+"""
+
+def filter_density_df(density_df, invalid_threshold = 0):
+    invalid_point_mask = np.full(len(density_df), False)
+    for col in density_df:
+        col_series = density_df[col]
+        before_points = col_series < invalid_threshold # 6 minutes
+        if np.count_nonzero(np.array(before_points)) > 0:
+            print(col, col_series[before_points])
+            invalid_point_mask = invalid_point_mask | before_points
+    filtered_df = density_df[np.logical_not(invalid_point_mask)]
+    for col in filtered_df:
+        col_series = filtered_df[col]
+        # print("nonna length for %s = %d" % (col, len(col_series.dropna())))
+        if len(col_series.dropna()) <= 3: # we need at least two points to show density
+            filtered_df = filtered_df.drop(col, axis=1)
+    return filtered_df
 
 def plot_separate_density_curves(fig, phone_map, ncols, range_key, trip_id_pattern):
     nRows = get_row_count(len(phone_map.keys()), ncols)
