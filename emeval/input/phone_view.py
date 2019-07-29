@@ -47,6 +47,9 @@ class PhoneView:
         print(20 * "-", "About to fill evaluation trips", 20 * "-")
         self.fill_eval_role_maps()
         self.fill_accuracy_control_trip_ranges()
+        print(20 * "-", "About to fill in evaluation sections", 20 * "-")
+        self.fill_accuracy_control_section_ranges()
+        print(20 * "-", "About to copy trip and section ranges", 20 * "-")
         self.copy_trip_ranges_to_other_accuracy_control()
         self.copy_trip_ranges_to_eval_power_maps()
         print(20 * "-", "About to fill in battery information", 20 * "-")
@@ -404,6 +407,30 @@ class PhoneView:
                     for tr in curr_eval_trips_ranges]))
                 r["evaluation_trip_ranges"] = curr_eval_trips_ranges
 
+    def fill_accuracy_control_section_ranges(self):
+        for phoneOS, phone_map in self.accuracy_control_maps.items():
+            curr_control_transitions = [t["data"] for t in phone_map["transitions"]] # from control phone
+            curr_evaluation_ranges = phone_map["evaluation_ranges"] # from this phone
+            trip_type_check = lambda t: t["transition"] in ["START_EVALUATION_SECTION", "STOP_EVALUATION_SECTION", 6, 7]
+            trip_time_check = lambda t, r: t["ts"] >= r["start_ts"] and t["ts"] <= r["end_ts"]
+            for i, r in enumerate(curr_evaluation_ranges):
+                # We have to get the evaluation details from one of the evaluation phones
+                for i, tr in enumerate(r["evaluation_trip_ranges"]):
+                    curr_eval_sections_transitions = [t for t in curr_control_transitions if trip_type_check(t) and trip_time_check(t, tr)]
+                    # print("\n".join([str((t["transition"], t["trip_id"], t["ts"], arrow.get(t["ts"]).to(eval_tz))) for t in curr_eval_trips_transitions]))
+                    # print(len(curr_eval_trips_transitions))
+                    curr_eval_sections_ranges = PhoneView.transitions_to_ranges(
+                        curr_eval_sections_transitions,
+                        "START_EVALUATION_SECTION", "STOP_EVALUATION_SECTION", 6, 7,
+                        self.spec_details.eval_end_ts)
+                    print("%s: Found %s sections for evaluation %s" % (phoneOS, len(curr_eval_sections_ranges), tr["trip_id"]))
+                    # print(curr_eval_sections_ranges)
+                    print("\n".join([str((sr["trip_id"], sr["duration"],
+                        arrow.get(sr["start_ts"]).to(self.spec_details.eval_tz),
+                        arrow.get(sr["end_ts"]).to(self.spec_details.eval_tz)))
+                        for sr in curr_eval_sections_ranges]))
+                    tr["evaluation_section_ranges"] = curr_eval_sections_ranges
+
     def copy_trip_ranges_to_other_accuracy_control(self):
         evaluation_ranges_map = {}
         for phoneOS, phone_map in self.accuracy_control_maps.items():
@@ -431,7 +458,7 @@ class PhoneView:
                 ground_truthed_trip_ranges = range_phone_map[phoneOS_with_ground_truth]["evaluation_trip_ranges"]
                 print("Uncopied ground truth of length %d on found on phone %s" %
                     (len(ground_truthed_trip_ranges), phoneOS_with_ground_truth))
-                print("Ground truthed trip ranges = %s" % ground_truthed_trip_ranges)
+                # print("Ground truthed trip ranges = %s" % ground_truthed_trip_ranges)
             else:
                 phoneOS_with_ground_truth = None
                 print("No uncopied ground truth found!")
@@ -500,7 +527,18 @@ class PhoneView:
                         # print(80 * "-")
                         PhoneView._copy_subset(r, tr, "location_df", query)
                         PhoneView._copy_subset(r, tr, "motion_activity_df", query)
-
+                        PhoneView._copy_subset(r, tr, "transition_df", query)
+                        for sr in tr["evaluation_section_ranges"]:
+                            query = "ts > %s & ts <= %s" % (sr["start_ts"], sr["end_ts"])
+                            # print("%s %s %s" % (phone_label, tr["trip_id"], query))
+                            # print(r["battery_df"].query(query).head())
+                            PhoneView._copy_subset(tr, sr, "battery_df", query)
+                            # print(80 * '~')
+                            # print(tr["battery_df"])
+                            # print(80 * "-")
+                            PhoneView._copy_subset(tr, sr, "location_df", query)
+                            PhoneView._copy_subset(tr, sr, "motion_activity_df", query)
+                            PhoneView._copy_subset(tr, sr, "transition_df", query)
     #
     # END: Imported from Validate_calibration_*.ipynb
     #

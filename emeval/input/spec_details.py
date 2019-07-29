@@ -64,8 +64,34 @@ class SpecDetails:
              arrow.get(self.eval_end_ts).to(self.eval_tz)))
         self.phone_labels = self.curr_spec["phones"]
 
-    def get_ground_truth_trajectory_for_leg(leg_id):
-        for t in sdunp.curr_spec_entry["data"]["label"]["evaluation_trips"]:
+    def get_ground_truth_for_trip(self, trip_id):
+        tl = [t for t in self.curr_spec_entry["data"]["label"]["evaluation_trips"] if t["id"] == trip_id]
+        print(trip_id, len(tl), [t["id"] for t in tl])
+        assert len(tl) == 1
+        return tl[0]
+
+    @staticmethod
+    def get_concat_trajectories(trip):
+        coords_list = []
+        modes_list = []
+        for l in trip["legs"]:
+            if l["type"] == "TRAVEL":
+                coords_list.extend(l["route_coords"]["geometry"]["coordinates"])
+                modes_list.append(l["mode"])
+        return {
+            "type": "Feature",
+            "properties": {
+                "modes": ",".join(modes_list)
+            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": coords_list
+            }
+        }
+
+    def get_ground_truth_for_leg(self, leg_id):
+        for t in self.curr_spec_entry["data"]["label"]["evaluation_trips"]:
             ll = [l for l in t["legs"] if l["id"] == leg_id]
-            assert len(ll) == 1
-            return ll[0]
+            # print(leg_id, len(ll), [l["id"] for l in ll])
+            if len(ll) == 1:
+                return ll[0]
