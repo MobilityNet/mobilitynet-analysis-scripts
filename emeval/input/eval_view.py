@@ -85,6 +85,7 @@ class EvaluationView:
     - "" for all trips
     """
     def from_view_multiple_runs(self, phone_view, match_trip_id_pattern):
+        self.spec_details = phone_view.spec_details
         for phoneOS, phone_map in phone_view.map().items(): # android, ios
             print("Processing data for %s phones" % phoneOS)
             self.calib_eval_view_map[phoneOS] = {}
@@ -104,6 +105,7 @@ class EvaluationView:
                     self.calib_eval_view_map[phoneOS][trip_type][r["trip_id"]][phone_label] = r
 
     def from_view_single_run(self, phone_view, match_trip_id_pattern):
+        self.spec_details = phone_view.spec_details
         for phoneOS, phone_map in phone_view.map().items(): # android, ios
             print("Processing data for %s phones" % phoneOS)
             self.calib_eval_view_map[phoneOS] = {}
@@ -119,6 +121,7 @@ class EvaluationView:
                     self.calib_eval_view_map[phoneOS][r["trip_id"]][phone_label] = r
 
     def from_view_eval_trips(self, phone_view, match_eval_range_pattern, match_trip_id_pattern):
+        self.spec_details = phone_view.spec_details
         for phoneOS, phone_map in phone_view.map().items(): # android, ios
             print("Processing data for %s phones" % phoneOS)
             self.eval_eval_view_map[phoneOS] = {}
