@@ -3,6 +3,7 @@
 
 import arrow
 import requests
+import geojson as gj
 
 class SpecDetails:
     def __init__(self, datastore_url, author_email, spec_id):
@@ -64,8 +65,38 @@ class SpecDetails:
              arrow.get(self.eval_end_ts).to(self.eval_tz)))
         self.phone_labels = self.curr_spec["phones"]
 
-    def get_ground_truth_trajectory_for_leg(leg_id):
-        for t in sdunp.curr_spec_entry["data"]["label"]["evaluation_trips"]:
+    def get_ground_truth_for_trip(self, trip_id):
+        tl = [t for t in self.curr_spec_entry["data"]["label"]["evaluation_trips"] if t["id"] == trip_id]
+        print(trip_id, len(tl), [t["id"] for t in tl])
+        assert len(tl) == 1
+        return tl[0]
+
+    @staticmethod
+    def get_concat_trajectories(trip):
+        coords_list = []
+        modes_list = []
+        for l in trip["legs"]:
+            if l["type"] == "TRAVEL":
+                coords_list.extend(l["route_coords"]["geometry"]["coordinates"])
+                modes_list.append(l["mode"])
+        return gj.Feature(geometry=gj.LineString(coords_list),
+            properties={"modes": modes_list})
+
+    def get_ground_truth_for_leg(self, leg_id):
+        for t in self.curr_spec_entry["data"]["label"]["evaluation_trips"]:
             ll = [l for l in t["legs"] if l["id"] == leg_id]
-            assert len(ll) == 1
-            return ll[0]
+            # print(leg_id, len(ll), [l["id"] for l in ll])
+            if len(ll) == 1:
+                return ll[0]
+
+    def get_geojson_for_leg(self, gt_leg):
+        if gt_leg["type"] == "TRAVEL":
+            gt_leg["route_coords"]["properties"]["style"] = {"color": "green"}
+            gt_leg["start_loc"]["properties"]["style"] = {"color": "LightGreen", "fillColor": "LightGreen"}
+            gt_leg["end_loc"]["properties"]["style"] = {"color": "red", "fillColor": "red"}
+            return gj.FeatureCollection([gt_leg["start_loc"], gt_leg["end_loc"],
+                gt_leg["route_coords"]])
+        else:
+            gt_leg["loc"]["properties"]["style"] = {"color": "purple", "fillColor": "purple"}
+            return gt_leg["loc"]
+        

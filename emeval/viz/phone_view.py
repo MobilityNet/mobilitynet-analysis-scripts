@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 
 import arrow
+import geojson as gj
 
 import matplotlib.cm as mcm
 import matplotlib.pyplot as plt
@@ -11,6 +12,9 @@ import folium
 import folium.features as fof
 import folium.plugins as fpl
 import folium.utilities as ful
+
+def lonlat_swap(lon_lat):
+    return list(reversed(lon_lat))
 
 def get_row_count(n_maps, cols):
     rows = int(n_maps / cols)
@@ -178,6 +182,18 @@ def display_map_detail_from_df(sel_location_df):
         folium.CircleMarker(c, radius=5, popup="%d: index: %s" % (i, sl[["fmt_time"]])).add_to(curr_map)
     curr_map.fit_bounds(pl.get_bounds())
     return curr_map
+
+def get_geojson_for_leg(sensed_section, color="red"):
+    location_df = sensed_section["location_df"]
+    lonlat_route_coords = list(zip(location_df.longitude, location_df.latitude))
+    return gj.Feature(geometry=gj.LineString(lonlat_route_coords),
+        properties={"style": {"color": color}})
+
+def get_point_markers(linestring_gj, name="points", **kwargs):
+    fg = folium.FeatureGroup(name)
+    for i, c in enumerate(linestring_gj["geometry"]["coordinates"]):
+        folium.CircleMarker(lonlat_swap(c), radius=5, popup="%d: index: %s" % (i, c), **kwargs).add_to(fg)
+    return fg
 
 def print_entry(e, metadata_field_list, data_field_list, tz):
     entry_display = []

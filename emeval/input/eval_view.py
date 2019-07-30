@@ -150,6 +150,8 @@ class EvaluationView:
                         self.eval_eval_view_map[phoneOS][common_name][common_trip_id] = {}
                     for cr, ctt in zip(separate_roles, ctriptuple):
                         self.eval_eval_view_map[phoneOS][common_name][common_trip_id][cr] = ctt
+                        # print("setting %s, %s, %s, %s = %s" %
+                        #     (phoneOS, common_name, common_trip_id, cr, ctt["location_df"].head()))
         print("android keys = %s" % self.eval_eval_view_map["android"].keys())
 #         print("android first range keys = %s" %
 #             self.eval_eval_view_map["android"]['HAHFDC v/s HAMFDC'].keys())
