@@ -437,6 +437,9 @@ class PhoneView:
             for r in phone_map["evaluation_ranges"]:
                 if r["trip_id"] not in evaluation_ranges_map:
                     evaluation_ranges_map[r["trip_id"]] = {}
+                # Must not copy/deepcopy here because we rely on setting
+                # the trip ranges into here and have that show up in the
+                # overall map
                 evaluation_ranges_map[r["trip_id"]][phoneOS] = r
 
         # print(evaluation_ranges_map.keys())
@@ -466,7 +469,7 @@ class PhoneView:
             for phoneOS, r in range_phone_map.items():
                 if phoneOS_with_ground_truth is not None and phoneOS != phoneOS_with_ground_truth:
                     print("Copying %d ranges to %s, %s" % (len(ground_truthed_trip_ranges), phoneOS, r["trip_id"]))
-                    r["evaluation_trip_ranges"] = ground_truthed_trip_ranges
+                    r["evaluation_trip_ranges"] = copy.deepcopy(ground_truthed_trip_ranges)
 
             trip_counts = [(phoneOS, len(r["evaluation_trip_ranges"]))
                             for phoneOS, r in range_phone_map.items()]

@@ -90,9 +90,13 @@ class SpecDetails:
                 return ll[0]
 
     def get_geojson_for_leg(self, gt_leg):
-        gt_leg["route_coords"]["properties"]["style"] = {"color": "green"}
-        gt_leg["start_loc"]["properties"]["style"] = {"color": "LightGreen", "fillColor": "LightGreen"}
-        gt_leg["end_loc"]["properties"]["style"] = {"color": "red", "fillColor": "red"}
-        return gj.FeatureCollection([gt_leg["start_loc"], gt_leg["end_loc"],
-            gt_leg["route_coords"]])
+        if gt_leg["type"] == "TRAVEL":
+            gt_leg["route_coords"]["properties"]["style"] = {"color": "green"}
+            gt_leg["start_loc"]["properties"]["style"] = {"color": "LightGreen", "fillColor": "LightGreen"}
+            gt_leg["end_loc"]["properties"]["style"] = {"color": "red", "fillColor": "red"}
+            return gj.FeatureCollection([gt_leg["start_loc"], gt_leg["end_loc"],
+                gt_leg["route_coords"]])
+        else:
+            gt_leg["loc"]["properties"]["style"] = {"color": "purple", "fillColor": "purple"}
+            return gt_leg["loc"]
         
