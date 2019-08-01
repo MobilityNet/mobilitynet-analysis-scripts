@@ -240,9 +240,16 @@ class PhoneView:
                 for r in ctuple:
                     r["eval_common_trip_id"] = common_name
                 ctuple[0]["eval_role"] = "accuracy_control_"+curr_run
+                ctuple[0]["eval_role_base"] = "accuracy_control"
+                ctuple[0]["eval_role_run"] = curr_run
                 for r, sr in zip(eval_cols, separate_roles):
                     r["eval_role"] = sr
+                    sr_split = sr.split("_")
+                    r["eval_role_base"] = sr_split[0]
+                    r["eval_role_run"] = sr_split[1]
                 ctuple[-1]["eval_role"] = "power_control_"+curr_run
+                ctuple[-1]["eval_role_base"] = "power_control"
+                ctuple[-1]["eval_role_run"] = curr_run
 
     def fill_evaluation_ranges(self):
         self.filter_transitions(
@@ -342,7 +349,8 @@ class PhoneView:
             for phone_label in phone_map:
                 curr_calibration_ranges = phone_map[phone_label]["{}_ranges".format(storage_key)]
                 for r in curr_calibration_ranges:
-                    transition_entries = self.spec_details.retrieve_data_from_server(phone_label, ["statemachine/transition"], r["start_ts"], r["end_ts"])
+                    transition_entries = self.spec_details.retrieve_data_from_server(
+                        phone_label, ["statemachine/transition"], r["start_ts"], r["end_ts"])
                     # ios entries before running the pipeline are marked with battery_level_ratio, which is a float from 0 ->1
                     # convert it to % to be consistent with android and easier to understand
                     r["transition_entries"] = transition_entries
@@ -350,7 +358,7 @@ class PhoneView:
                     if "ts" in transition_df.columns:
                         if "fmt_time" not in transition_df.columns:
                             print("transition has not been processed, creating ts -> fmt_time")
-                            transition_df["fmt_time"] = [e["metadata"]["write_ts"] for e in transition_entries]
+                            transition_df["fmt_time"] = [arrow.get(e["data"]["ts"]).to(self.spec_details.eval_tz) for e in transition_entries]
                         transition_df["hr"] = (transition_df.ts-r["start_ts"])/3600.0
                     r["transition_df"] = transition_df
 
