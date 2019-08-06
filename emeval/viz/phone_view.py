@@ -171,7 +171,7 @@ def get_map_list(phone_view, range_key, trip_id_pattern):
                 map_list.append(curr_map)
     return map_list
 
-def display_map_detail_from_df(sel_location_df):
+def display_map_detail_from_df(sel_location_df, tz="UTC", sticky_popups=False):
     curr_map = folium.Map()
     latlng_route_coords = list(zip(sel_location_df.latitude, sel_location_df.longitude))
     # print(latlng_route_coords)
@@ -179,7 +179,12 @@ def display_map_detail_from_df(sel_location_df):
     pl.add_to(curr_map)
     for i, c in enumerate(latlng_route_coords):
         sl = sel_location_df.iloc[i]
-        folium.CircleMarker(c, radius=5, popup="%d: index: %s" % (i, sl[["fmt_time"]])).add_to(curr_map)
+        if sticky_popups:
+            cm = folium.CircleMarker(c, radius=5)
+            folium.Popup("%s: %s accuracy: %s" % (sl.name, arrow.get(sl.ts).to(tz).format("YYYY-MMM-DD HH:mm"), sl.accuracy), show=True, sticky=True).add_to(cm)
+        else:
+            cm = folium.CircleMarker(c, radius=5, popup="%d: index: %s" % (i, sl[["fmt_time"]]))
+    cm.add_to(curr_map)
     curr_map.fit_bounds(pl.get_bounds())
     return curr_map
 
