@@ -8,7 +8,7 @@
         "timezone": "America/Los_Angeles"
     },
     "start_fmt_date": "2019-07-20",
-    "end_fmt_date": "2019-07-31",
+    "end_fmt_date": "2019-09-30",
     "phones": {
         "android": {
           "ucb-sdb-android-1": "accuracy_control",
@@ -28,6 +28,9 @@
     "sensing_settings": [{
         "android": ["HAHFDC", "HAMFDC"],
         "ios": ["HAHFDC", "MAHFDC"]
+    },{
+        "android": ["HAHFDC", "MAHFDC"],
+        "ios": ["HAHFDC", "HAMFDC"]
     }],
     "evaluation_trips": [
         {

@@ -86,6 +86,32 @@ def delete_trip_data(user_id, spec_id, trip_id, is_dry_run=True):
 
 delete_trip_data(UUID("..."), "high_accuracy_stationary_3")
 
+def delete_trip_data(user_id, spec_id, trip_id, run, is_dry_run=True):
+    transitions = list(edb.get_usercache_db().find({"user_id": user_id, "metadata.key": "manual/evaluation_transition", "data.trip_id": trip_id, "data.spec_id": spec_id}))
+    print("\n".join([str(t["data"].values()) for t in transitions]))
+    ts_range_start = transitions[2*run]["metadata"]["write_ts"]
+    if len(transitions) % 2 == 0:
+        ts_range_end = transitions[2*run+1]["metadata"]["write_ts"]
+    else:
+        ts_range_end = arrow.now().timestamp
+    print("%s -> %s" % (arrow.get(ts_range_start).to(tz), arrow.get(ts_range_end).to(tz)))
+    print(edb.get_usercache_db().find({"user_id": user_id, 'metadata.write_ts': {'$lte': ts_range_end, '$gte': ts_range_start}}).count())
+    print(edb.get_usercache_db().find({"user_id": user_id, 'metadata.write_ts': {'$lte': ts_range_end, '$gte': ts_range_start}}).distinct("metadata.key"))
+    battery_list = list(edb.get_usercache_db()
+            .find({"user_id": user_id, "metadata.key": "background/battery",
+                'metadata.write_ts': {'$lte': ts_range_end, '$gte': ts_range_start}}))
+    if "battery_level_ratio" in battery_list[0]["data"]:
+        print([v["data"]["battery_level_ratio"] for v in battery_list])
+    else:
+        print([v["data"]["battery_level_pct"] for v in battery_list])
+    if not is_dry_run:
+        print(edb.get_usercache_db().update_many({"user_id": user_id, 'metadata.write_ts': {'$lte': ts_range_end, '$gte': ts_range_start}}, {"$set": {"data.spec_id": spec_id+"_bak"}}).raw_result)
+
+
+print(edb.get_usercache_db().delete_many({"user_id": user_id, 'metadata.write_ts': {'$lte': ts_range_end, '$gte': ts_range_start}}).raw_result)
+
+delete_trip_data(UUID("..."), "high_accuracy_stationary_3")
+
 phone_list = ["ucb-sdb-android-%d" % i for i in range(1,5)] + ["ucb-sdb-ios-%d
      ...: " % i for i in range(1,5)]
 
@@ -122,3 +148,4 @@ edb.get_usercache_db().find({"metadata.key": "config/evaluation_spec",
 edb.get_usercache_db().delete_one({"metadata.key": "config/evaluation_spec",
     "data.label.id": del_spec_id}).raw_result
 ```
+
