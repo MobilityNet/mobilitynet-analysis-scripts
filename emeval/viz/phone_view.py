@@ -184,7 +184,7 @@ def display_map_detail_from_df(sel_location_df, tz="UTC", sticky_popups=False):
             folium.Popup("%s: %s accuracy: %s" % (sl.name, arrow.get(sl.ts).to(tz).format("YYYY-MMM-DD HH:mm"), sl.accuracy), show=True, sticky=True).add_to(cm)
         else:
             cm = folium.CircleMarker(c, radius=5, popup="%d: index: %s" % (i, sl[["fmt_time"]]))
-    cm.add_to(curr_map)
+        cm.add_to(curr_map)
     curr_map.fit_bounds(pl.get_bounds())
     return curr_map
 
