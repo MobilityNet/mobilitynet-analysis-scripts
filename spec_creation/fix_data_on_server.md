@@ -107,6 +107,13 @@ def delete_trip_data(user_id, spec_id, trip_id, run, is_dry_run=True):
     if not is_dry_run:
         print(edb.get_usercache_db().update_many({"user_id": user_id, 'metadata.write_ts': {'$lte': ts_range_end, '$gte': ts_range_start}}, {"$set": {"data.spec_id": spec_id+"_bak"}}).raw_result)
 
+def delete_backed_up_intervals(user_id, bak_spec_id, is_dry_run=True):
+    print("About to remove %s entries" % edb.get_usercache_db().find({"user_id": user_id, 'data.spec_id': bak_spec_id}).count())
+    print("with unique keys %s" % edb.get_usercache_db().find({"user_id": user_id, 'data.spec_id': bak_spec_id}).distinct("metadata.key"))
+    if not is_dry_run:
+        print(edb.get_usercache_db().delete_many({"user_id": user_id, 'data.spec_id': bak_spec_id}).raw_result)
+
+
 
 print(edb.get_usercache_db().delete_many({"user_id": user_id, 'metadata.write_ts': {'$lte': ts_range_end, '$gte': ts_range_start}}).raw_result)
 
