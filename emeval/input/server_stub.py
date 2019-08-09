@@ -36,6 +36,26 @@ def post_entries(server_url, phone_label, entry_list):
     print("response = %s" % response)
     response.raise_for_status()
 
+def store_ground_truth(server_url, phone_label, metadata, data):
+    """
+    Post a `mode_confirm` entry to represent temporal ground truth and
+    classification
+    """
+    entryToPut = {
+        "metadata": metadata,
+        "data": data
+    } 
+
+    post_msg = {
+        "user": phone_label,
+        "the_entry": entryToPut
+    }
+
+    print("About to post messages %s" % (post_msg))
+    response = requests.post(server_url+"/usercache/putone", json=post_msg)
+    print("response = %s" % response)
+    response.raise_for_status()
+
 def _strip_id_user(e):
     ce = copy.copy(e)
     del ce["_id"]

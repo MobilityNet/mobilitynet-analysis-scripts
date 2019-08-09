@@ -26,8 +26,29 @@ def save_to_db(db_url, phone_view):
                 print(8 * ' ',r["trip_id"], r["eval_common_trip_id"], r["eval_role"], len(r["evaluation_trip_ranges"]))
                 all_entries = r["location_entries"]  + r["filtered_location_entries"] + r["motion_activity_entries"] + r["transition_entries"]
                 print("Combining %d locations, %d background locations, %d motion activity, %d transitions -> %d" %
-                    (len(r["location_entries"]), len(r["background_location_entries"]), len(r["motion_activity_entries"]), len(r["transition_entries"]), len(all_entries)))
+                    (len(r["location_entries"]), len(r["filtered_location_entries"]), len(r["motion_activity_entries"]), len(r["transition_entries"]), len(all_entries)))
                 eiss.post_entries(db_url, phone_label, all_entries)
+                for tr in r["evaluation_trip_ranges"]:
+                    print(12 * ' ', 30 * "-")
+                    print(12 * ' ',tr["trip_id"], tr.keys())
+                    for sr in tr["evaluation_section_ranges"]:
+                        print(16 * ' ', 30 * "~")
+                        print(16 * ' ',sr["trip_id"], sr.keys())
+                        gt_leg = phone_view.spec_details.get_ground_truth_for_leg(sr["trip_id_base"])
+                        md = {
+                            "write_ts": sr["end_ts"],
+                            "read_ts": sr["end_ts"],
+                            "time_zone": sd.eval_tz,
+                            "type": "message",
+                            "key": "manual/mode_confirm",
+                            "platform": phone_os
+                        }
+                        data = {
+                            "label": gt_leg["mode"],
+                            "start_ts": sr["start_ts"],
+                            "end_ts": sr["end_ts"]
+                        }
+                        eiss.store_ground_truth(db_url, phone_label, md, data)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -47,3 +68,4 @@ if __name__ == '__main__':
     for pv in pv_list:
         print("Copying data for spec %s" % pv.spec_details.CURR_SPEC_ID)
         save_to_db(args.db_url, pv)
+        
