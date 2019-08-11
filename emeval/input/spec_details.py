@@ -82,12 +82,13 @@ class SpecDetails:
         return gj.Feature(geometry=gj.LineString(coords_list),
             properties={"modes": modes_list})
 
-    def get_ground_truth_for_leg(self, leg_id):
+    def get_ground_truth_for_leg(self, trip_id, leg_id):
         for t in self.curr_spec_entry["data"]["label"]["evaluation_trips"]:
-            ll = [l for l in t["legs"] if l["id"] == leg_id]
-            # print(leg_id, len(ll), [l["id"] for l in ll])
-            if len(ll) == 1:
-                return ll[0]
+            if t["id"] == trip_id:
+                ll = [l for l in t["legs"] if l["id"] == leg_id]
+                # print(leg_id, len(ll), [l["id"] for l in ll])
+                if len(ll) == 1:
+                    return ll[0]
 
     def get_geojson_for_leg(self, gt_leg):
         if gt_leg["type"] == "TRAVEL":

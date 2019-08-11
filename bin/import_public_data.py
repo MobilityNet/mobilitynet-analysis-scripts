@@ -34,7 +34,8 @@ def save_to_db(db_url, phone_view):
                     for sr in tr["evaluation_section_ranges"]:
                         print(16 * ' ', 30 * "~")
                         print(16 * ' ',sr["trip_id"], sr.keys())
-                        gt_leg = phone_view.spec_details.get_ground_truth_for_leg(sr["trip_id_base"])
+                        gt_leg = phone_view.spec_details.get_ground_truth_for_leg(
+                            tr["trip_id_base"], sr["trip_id_base"])
                         md = {
                             "write_ts": sr["end_ts"],
                             "read_ts": sr["end_ts"],
