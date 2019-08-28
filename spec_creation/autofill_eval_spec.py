@@ -228,7 +228,7 @@ def get_hidden_access_transfer_walk_segments(prev_l, l):
         # vehicle will be parked. This is unknown at spec creation time,
         # so we don't have any ground truth for it
         return [{
-            "id": "walk_start",
+            "id": "walk_end",
             "type": "ACCESS",
             "mode": "WALKING",
             "name": "Walk from your vehicle to the building",
@@ -247,7 +247,7 @@ def get_hidden_access_transfer_walk_segments(prev_l, l):
         # we will run the next check as well, because for most
         # transit transfers, there will be both a transfer and a stop
         ret_list.append({
-            "id": "tt_%s_%s" % (prev_l["mode"], l["mode"]),
+            "id": "tt_%s_%s" % (prev_l["id"], l["id"]),
             "type": "TRANSFER",
             "mode": "WALKING",
             "name": "Transfer between %s and %s at %s" %\
@@ -257,7 +257,7 @@ def get_hidden_access_transfer_walk_segments(prev_l, l):
 
     if l is not None and "multiple_occupancy" in l and l["multiple_occupancy"] == True:
         ret_list.append({
-            "id": "wait_for_%s" % (l["mode"]),
+            "id": "wait_for_%s" % (l["id"]),
             "type": "WAITING",
             "mode": "STOPPED",
             "name": "Wait for %s at %s" %\
@@ -268,6 +268,11 @@ def get_hidden_access_transfer_walk_segments(prev_l, l):
     # return from the last two checks
     return ret_list
 
+def has_duplicate_legs(trip):
+    leg_id_list = [l["id"] for l in trip["legs"]]
+    unique_leg_id_list = set(leg_id_list)
+    # If the lengths are different, there are duplicates, so this returns true
+    return len(unique_leg_id_list) != len(leg_id_list)
 
 def validate_and_fill_eval_trips(curr_spec):
     modified_spec = copy.copy(curr_spec)
@@ -275,6 +280,8 @@ def validate_and_fill_eval_trips(curr_spec):
     for t in eval_trips:
         if "legs" in t:
             print("Filling multi-modal trip %s" % t["id"])
+            assert not has_duplicate_legs(t), \
+                "Found duplicate leg ids in trip %s" % t["id"]
             prev_l = None
             ret_leg_list = []
             for i, l in enumerate(t["legs"]):
@@ -291,6 +298,9 @@ def validate_and_fill_eval_trips(curr_spec):
             print("Got shim legs %s, extending" % ([sl["id"] for sl in shim_legs]))
             ret_leg_list.extend(shim_legs)
             t["legs"] = ret_leg_list
+            # Let's check again after we have inserted the shim legs
+            assert not has_duplicate_legs(t), \
+                "Found duplicate leg ids in trip %s" % t["id"]
         else:
             print("Filling unimodal trip %s" % t["id"])
             # unimodal trip, let's add shims if necessary
@@ -313,6 +323,9 @@ def validate_and_fill_eval_trips(curr_spec):
             assert len(after_shim_leg) <= 1, "Last leg should not have a transfer shim"
             print("Got shim legs %s, extending" % ([sl["id"] for sl in after_shim_leg]))
             t["legs"].extend(after_shim_leg)
+            # Let's check again after we have inserted the shim legs
+            assert not has_duplicate_legs(t), \
+                "Found duplicate leg ids in trip %s" % t["id"]
 
     return modified_spec
 

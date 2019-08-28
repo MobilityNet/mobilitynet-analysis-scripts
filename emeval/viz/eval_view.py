@@ -238,7 +238,7 @@ def get_map_list_eval_sections(eval_view, os_pattern, trip_id_pattern, compare_p
                         continue
                     for sr in compare_tr["evaluation_section_ranges"]:
                         # print("Considering section %s" % sr)
-                        gt_leg = eval_view.spec_details.get_ground_truth_for_leg(sr["trip_id_base"])
+                        gt_leg = eval_view.spec_details.get_ground_truth_for_leg(compare_tr["trip_id_base"], sr["trip_id_base"])
                         # print("Found ground truth %s for %s" % (gt_leg, sr["trip_id"]))
                         if gt_leg["type"] != "TRAVEL":
                             print("Found non-travel trip, no spatial ground truth, skipping...")
