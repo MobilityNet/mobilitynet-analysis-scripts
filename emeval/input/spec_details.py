@@ -2,6 +2,7 @@
 # More details in __init__.py
 
 import arrow
+import time
 import requests
 import geojson as gj
 
@@ -21,10 +22,18 @@ class SpecDetails:
             "end_time": end_ts
         }
         print("About to retrieve messages using %s" % post_msg)
-        response = requests.post(self.DATASTORE_URL+"/datastreams/find_entries/timestamp", json=post_msg)
-        print("response = %s" % response)
-        response.raise_for_status()
-        ret_list = response.json()["phone_data"]
+        try:
+            response = requests.post(self.DATASTORE_URL+"/datastreams/find_entries/timestamp", json=post_msg)
+            print("response = %s" % response)
+            response.raise_for_status()
+            ret_list = response.json()["phone_data"]
+        except Exception as e:
+            print("Got %s error %s, retrying" % (type(e).__name__, e))
+            time.sleep(10)
+            response = requests.post(self.DATASTORE_URL+"/datastreams/find_entries/timestamp", json=post_msg)
+            print("response = %s" % response)
+            response.raise_for_status()
+            ret_list = response.json()["phone_data"]
         # write_ts may not be the same as data.ts, specially in the case of
         # transitions, where we first generate the data.ts in javascript and
         # then pass it down to the native code to store
@@ -90,7 +99,8 @@ class SpecDetails:
                 if len(ll) == 1:
                     return ll[0]
 
-    def get_geojson_for_leg(self, gt_leg):
+    @classmethod
+    def get_geojson_for_leg(cls, gt_leg):
         if gt_leg["type"] == "TRAVEL":
             gt_leg["route_coords"]["properties"]["style"] = {"color": "green"}
             gt_leg["start_loc"]["properties"]["style"] = {"color": "LightGreen", "fillColor": "LightGreen"}
