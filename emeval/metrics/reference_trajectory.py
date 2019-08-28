@@ -5,8 +5,9 @@ import random as random
 import math
 import arrow
 import pandas as pd
+import functools
 
-R = 40075017 # circumference of the earth in meters
+C = 40075017 # circumference of the earth in meters
 random.seed(1)
 
 ####
@@ -55,19 +56,19 @@ def get_int_aligned_trajectory(location_df, tz="UTC"):
 ####
 
 def add_gt_error_projection(location_gpdf, gt_linestring):
-    location_gpdf["gt_distance"] = location_gpdf.distance(gt_linestring) * (R/360)
+    location_gpdf["gt_distance"] = location_gpdf.distance(gt_linestring) * (C/360)
     location_gpdf["gt_projection"] = location_gpdf.geometry.apply(
-        lambda p: gt_linestring.project(p) * (R/360))
+        lambda p: gt_linestring.project(p) * (C/360))
 
 def add_t_error(location_gpdf_a, location_gpdf_b):
-    location_gpdf_a["t_distance"] = location_gpdf_a.distance(location_gpdf_b) * (R/360)
+    location_gpdf_a["t_distance"] = location_gpdf_a.distance(location_gpdf_b) * (C/360)
     location_gpdf_b["t_distance"] = location_gpdf_a.t_distance
 
 def add_self_project(location_gpdf_a):
     loc_linestring = shp.geometry.LineString(coordinates=list(zip(
         location_gpdf.longitude, location_gdpf.latitude)))
     location_gpdf["s_projection"] = location_gpdf.geometry.apply(
-        lambda p: loc_linestring.project(p) * (R/360))
+        lambda p: loc_linestring.project(p) * (C/360))
 
 ####
 # END: DISTANCE CALCULATION
@@ -262,19 +263,108 @@ def collapse_outer_join_dist_so_far(loc_row, more_details_fn = None):
 # BEGIN: Combining into actual reference constructions
 ####
 
-def ref_ct_general(location_df_a, location_df_i, b_merge_fn, dist_threshold,
-        tz="UTC"):
-    new_location_df_a = get_int_aligned_trajectory(location_df_a, tz)
-    new_location_df_i = get_int_aligned_trajectory(location_df_i, tz)
-    add_t_error(new_location_df_a, new_location_df_i)
-    filtered_location_df_a = new_location_df_a.query("t_distance < @dist_threshold")
-    filtered_location_df_i = new_location_df_i.query("t_distance < @dist_threshold")
-    merged_df = pd.merge(filtered_location_df_a, filtered_location_df_i, on="ts",
+def ref_ct_general(e, b_merge_fn, dist_threshold, tz="UTC"):
+    new_location_df_a = get_int_aligned_trajectory(e["temporal_control"]["android"]["location_df"], tz)
+    new_location_df_i = get_int_aligned_trajectory(e["temporal_control"]["ios"]["location_df"], tz)
+    merged_df = pd.merge(new_location_df_a, new_location_df_i, on="ts",
         how="inner", suffixes=("_a", "_i")).sort_values(by="ts", axis="index")
-    initial_reference_gpdf = gpd.GeoDataFrame(list(merged_df.apply(b_merge_fn, axis=1)))
-    assert len(initial_reference_gpdf.latitude.notnull()) == 0
-    return initial_reference_gpdf
+    merged_df["t_distance"] = gpd.GeoSeries(merged_df.geometry_a).distance(gpd.GeoSeries(merged_df.geometry_i)) * (C/360)
+    filtered_merged_df = merged_df.query("t_distance < @dist_threshold")
+    print("After filtering, retained %d of %d (%s)" %
+          (len(filtered_merged_df), max(len(new_location_df_a), len(new_location_df_i)),
+            (len(filtered_merged_df)/max(len(new_location_df_a), len(new_location_df_i)))))
+    merge_fn = functools.partial(collapse_inner_join, b_merge_fn=b_merge_fn)
+    initial_reference_gpdf = gpd.GeoDataFrame(list(filtered_merged_df.apply(merge_fn, axis=1)))
+    print(initial_reference_gpdf.columns)
+    if len(initial_reference_gpdf.columns) > 1:
+        initial_reference_gpdf["fmt_time"] = initial_reference_gpdf.ts.apply(lambda ts: arrow.get(ts).to(tz))
+        assert len(initial_reference_gpdf[initial_reference_gpdf.latitude.isnull()]) == 0, "Found %d null entries out of %d total" % (len(initial_reference_gpdf.latitude.isnull()), len(initial_reference_gpdf))
+        return initial_reference_gpdf
+    else:
+        return gpd.GeoDataFrame()
+
+def ref_gt_general(e, b_merge_fn, dist_threshold, tz="UTC"):
+    new_location_df_a = get_int_aligned_trajectory(e["temporal_control"]["android"]["location_df"], tz)
+    new_location_df_i = get_int_aligned_trajectory(e["temporal_control"]["ios"]["location_df"], tz)
+    fill_gt_linestring(e)
+    gt_linestring = e["ground_truth"]["linestring"]
+    add_gt_error_projection(new_location_df_a, gt_linestring)
+    add_gt_error_projection(new_location_df_i, gt_linestring)
+    filtered_location_df_a = new_location_df_a.query("gt_distance < @dist_threshold")
+    filtered_location_df_i = new_location_df_i.query("gt_distance < @dist_threshold")
+    print("After filtering, %d of %d (%s) for android and %d of %d (%s) for ios" %
+          (len(filtered_location_df_a), len(new_location_df_a), (len(filtered_location_df_a)/len(new_location_df_a)),
+           len(filtered_location_df_i), len(new_location_df_i), (len(filtered_location_df_i)/len(new_location_df_i))))
+    merged_df = pd.merge(filtered_location_df_a, filtered_location_df_i, on="ts",
+        how="outer", suffixes=("_a", "_i")).sort_values(by="ts", axis="index")
+    merge_fn = functools.partial(collapse_outer_join_stateless, b_merge_fn=b_merge_fn)
+    initial_reference_gpdf = gpd.GeoDataFrame(list(merged_df.apply(merge_fn, axis=1)))
+    if len(initial_reference_gpdf.columns) > 1:
+        initial_reference_gpdf["fmt_time"] = initial_reference_gpdf.ts.apply(lambda ts: arrow.get(ts).to(tz))
+        print("After merging, found %d of android %d (%s), ios %d (%s)" %
+              (len(initial_reference_gpdf), len(new_location_df_a), (len(initial_reference_gpdf)/len(new_location_df_a)),
+               len(new_location_df_i), (len(initial_reference_gpdf)/len(new_location_df_i))))
+        assert len(initial_reference_gpdf[initial_reference_gpdf.latitude.isnull()]) == 0, "Found %d null entries out of %d total" % (len(initial_reference_gpdf.latitude.isnull()), len(initial_reference_gpdf))
+        return initial_reference_gpdf
+    else:
+        return gpd.GeoDataFrame()
+
+def ref_travel_forward(e, dist_threshold, tz="UTC"):
+    # This function needs a global variable
+    global distance_so_far
+    distance_so_far = 0
+    new_location_df_a = get_int_aligned_trajectory(e["temporal_control"]["android"]["location_df"], tz)
+    new_location_df_i = get_int_aligned_trajectory(e["temporal_control"]["ios"]["location_df"], tz)
+    fill_gt_linestring(e)
+    gt_linestring = e["ground_truth"]["linestring"]
+    add_gt_error_projection(new_location_df_a, gt_linestring)
+    add_gt_error_projection(new_location_df_i, gt_linestring)
+    new_location_df_a["gt_cum_proj"] = new_location_df_a.gt_projection.cumsum()
+    new_location_df_i["gt_cum_proj"] = new_location_df_i.gt_projection.cumsum()
+    filtered_location_df_a = new_location_df_a.query("gt_distance < @dist_threshold")
+    filtered_location_df_i = new_location_df_i.query("gt_distance < @dist_threshold")
+    print("After filtering, %d of %d (%s) for android and %d of %d (%s) for ios" %
+          (len(filtered_location_df_a), len(new_location_df_a), (len(filtered_location_df_a)/len(new_location_df_a)),
+           len(filtered_location_df_i), len(new_location_df_i), (len(filtered_location_df_i)/len(new_location_df_i))))
+    merged_df = pd.merge(filtered_location_df_a, filtered_location_df_i, on="ts",
+        how="outer", suffixes=("_a", "_i")).sort_values(by="ts", axis="index")
+    merge_fn = functools.partial(collapse_outer_join_dist_so_far, more_details_fn = None)
+    initial_reference_gpdf = gpd.GeoDataFrame(list(merged_df.apply(merge_fn, axis=1)))
+    if len(initial_reference_gpdf.columns) > 1:
+        initial_reference_gpdf["fmt_time"] = initial_reference_gpdf.ts.apply(lambda ts: arrow.get(ts).to(tz))
+        reference_gpdf = initial_reference_gpdf[initial_reference_gpdf.latitude.notnull()]
+        print("After merging, found %d / %d of android %d (%s), ios %d (%s)" %
+              (len(reference_gpdf), len(initial_reference_gpdf), len(new_location_df_a), (len(reference_gpdf)/len(new_location_df_a)),
+               len(new_location_df_i), (len(reference_gpdf)/len(new_location_df_i))))
+        assert len(reference_gpdf[reference_gpdf.latitude.isnull()]) == 0, "Found %d null entries out of %d total" % (len(reference_gpdf[reference_gpdf.latitude.isnull()]), len(initial_reference_gpdf))
+        return reference_gpdf
+    else:
+        return gpd.GeoDataFrame()
+
 
 ####
 # END: Combining into actual reference constructions
+####
+
+
+####
+# BEGIN: Final ensemble reference construction that uses ground truth
+# - if the ground truth is simple, use the `travel_forward`
+# - if the ground truth is complex, use trajectory-only with midpoint
+# - we leave the threshold as a parameter, defaulting to 25, which seems to
+# work pretty well in the evaluation
+####
+
+def final_ref_ensemble(e, dist_threshold=25, tz="UTC"):
+    fill_gt_linestring(e)
+    gt_linestring = e["ground_truth"]["linestring"]
+    if gt_linestring.is_simple:
+        return ref_travel_forward(e, dist_threshold, tz)
+    else:
+        print("linestring is complex, ignoring ground_truth")
+        return ref_ct_general(e, b_merge_midpoint, dist_threshold, tz)
+
+
+####
+# END: Final ensemble reference construction that uses ground truth
 ####
