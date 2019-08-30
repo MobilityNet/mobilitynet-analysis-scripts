@@ -355,15 +355,29 @@ def ref_travel_forward(e, dist_threshold, tz="UTC"):
 # work pretty well in the evaluation
 ####
 
+coverage_density = lambda df, sr: len(df)/(sr["end_ts"] - sr["start_ts"])
+coverage_time = lambda df, sr: (df.ts.iloc[-1] - df.ts.iloc[0])/(sr["end_ts"] - sr["start_ts"])
+coverage_max_gap = lambda df, sr: df.ts.diff().max()/(sr["end_ts"] - sr["start_ts"])
+
 def final_ref_ensemble(e, dist_threshold=25, tz="UTC"):
     fill_gt_linestring(e)
     gt_linestring = e["ground_truth"]["linestring"]
-    if gt_linestring.is_simple:
-        return ref_travel_forward(e, dist_threshold, tz)
+    tf_ref_df = ref_travel_forward(e, dist_threshold, tz)
+    ct_ref_df = ref_ct_general(e, b_merge_midpoint, dist_threshold, tz)
+    tf_stats = {
+        "coverage_density": coverage_density(tf_ref_df, e),
+        "coverage_time": coverage_time(tf_ref_df, e),
+        "coverage_max_gap": coverage_max_gap(tf_ref_df, e)
+    }
+    ct_stats = {
+        "coverage_density": coverage_density(ct_ref_df, e),
+        "coverage_time": coverage_time(ct_ref_df, e),
+        "coverage_max_gap": coverage_max_gap(ct_ref_df, e)
+    }
+    if tf_stats["coverage_max_gap"] < ct_stats["coverage_max_gap"]:
+        return ct_ref_df
     else:
-        print("linestring is complex, ignoring ground_truth")
-        return ref_ct_general(e, b_merge_midpoint, dist_threshold, tz)
-
+        return tf_ref_df
 
 ####
 # END: Final ensemble reference construction that uses ground truth
