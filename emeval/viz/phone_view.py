@@ -13,9 +13,6 @@ import folium.features as fof
 import folium.plugins as fpl
 import folium.utilities as ful
 
-def lonlat_swap(lon_lat):
-    return list(reversed(lon_lat))
-
 def get_row_count(n_maps, cols):
     rows = int(n_maps / cols)
     if (n_maps % cols != 0):
@@ -187,26 +184,6 @@ def display_map_detail_from_df(sel_location_df, tz="UTC", sticky_popups=False):
         cm.add_to(curr_map)
     curr_map.fit_bounds(pl.get_bounds())
     return curr_map
-
-def get_geojson_for_leg(sensed_section, color="red"):
-    location_df = sensed_section["location_df"]
-    lonlat_route_coords = list(zip(location_df.longitude, location_df.latitude))
-    return gj.Feature(geometry=gj.LineString(lonlat_route_coords),
-        properties={"style": {"color": color}, "ts": list(location_df.ts)})
-
-def get_point_markers(linestring_gj, name="points", tz="UTC", **kwargs):
-    fg = folium.FeatureGroup(name)
-    if "properties" in linestring_gj and "ts" in linestring_gj["properties"]:
-        ts_list = linestring_gj["properties"]["ts"]
-    else:
-        ts_list = None
-    for i, c in enumerate(linestring_gj["geometry"]["coordinates"]):
-        if ts_list is not None:
-            ts = ts_list[i]
-            folium.CircleMarker(lonlat_swap(c), radius=5, popup="%d: %s, %s" % (i, c, arrow.get(ts).to(tz).format("YYYY-MM-DD HH:mm:ss")), **kwargs).add_to(fg)
-        else:
-            folium.CircleMarker(lonlat_swap(c), radius=5, popup="%d: %s" % (i, c), **kwargs).add_to(fg)
-    return fg
 
 def print_entry(e, metadata_field_list, data_field_list, tz):
     entry_display = []
