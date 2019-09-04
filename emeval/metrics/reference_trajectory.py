@@ -7,7 +7,9 @@ import arrow
 import pandas as pd
 import functools
 
-C = 40075017 # circumference of the earth in meters
+import emeval.metrics.dist_calculations as emd
+import emeval.input.spec_details as eisd
+
 random.seed(1)
 
 ####
@@ -18,9 +20,19 @@ random.seed(1)
 # BEGIN: NORMALIZATION
 ####
 
+# In addition to filtering the sensed values in the polygons, we should also
+# really filter the ground truth values in the polygons, since there is no
+# ground truth within the polygon However, ground truth points are not known to
+# be dense, and in some cases (e.g. commuter_rail_aboveground), there is a
+# small gap between the polygon border and the first point outside it. We
+# currently ignore this distance
+
 def fill_gt_linestring(e):
-    e["ground_truth"]["linestring"] = shp.geometry.LineString(coordinates=
-        e["ground_truth"]["leg"]["route_coords"]["geometry"]["coordinates"])
+    section_gt_shapes = gpd.GeoSeries(eisd.SpecDetails.get_shapes_for_leg(e["ground_truth"]["leg"]))
+    e["ground_truth"]["gt_shapes"] = section_gt_shapes
+    e["ground_truth"]["linestring"] = emd.filter_ground_truth_linestring(e["ground_truth"]["gt_shapes"])
+    e["ground_truth"]["utm_gt_shapes"] = section_gt_shapes.apply(lambda s: shp.ops.transform(emd.to_utm_coords, s))
+    e["ground_truth"]["utm_linestring"] = emd.filter_ground_truth_linestring(e["ground_truth"]["utm_gt_shapes"])
 
 def to_gpdf(location_df):
     return gpd.GeoDataFrame(
@@ -56,19 +68,19 @@ def get_int_aligned_trajectory(location_df, tz="UTC"):
 ####
 
 def add_gt_error_projection(location_gpdf, gt_linestring):
-    location_gpdf["gt_distance"] = location_gpdf.distance(gt_linestring) * (C/360)
+    location_gpdf["gt_distance"] = location_gpdf.distance(gt_linestring)
     location_gpdf["gt_projection"] = location_gpdf.geometry.apply(
-        lambda p: gt_linestring.project(p) * (C/360))
+        lambda p: gt_linestring.project(p))
 
 def add_t_error(location_gpdf_a, location_gpdf_b):
-    location_gpdf_a["t_distance"] = location_gpdf_a.distance(location_gpdf_b) * (C/360)
+    location_gpdf_a["t_distance"] = location_gpdf_a.distance(location_gpdf_b)
     location_gpdf_b["t_distance"] = location_gpdf_a.t_distance
 
 def add_self_project(location_gpdf_a):
     loc_linestring = shp.geometry.LineString(coordinates=list(zip(
         location_gpdf.longitude, location_gdpf.latitude)))
     location_gpdf["s_projection"] = location_gpdf.geometry.apply(
-        lambda p: loc_linestring.project(p) * (C/360))
+        lambda p: loc_linestring.project(p))
 
 ####
 # END: DISTANCE CALCULATION
@@ -264,32 +276,60 @@ def collapse_outer_join_dist_so_far(loc_row, more_details_fn = None):
 ####
 
 def ref_ct_general(e, b_merge_fn, dist_threshold, tz="UTC"):
-    new_location_df_a = get_int_aligned_trajectory(e["temporal_control"]["android"]["location_df"], tz)
-    new_location_df_i = get_int_aligned_trajectory(e["temporal_control"]["ios"]["location_df"], tz)
+    fill_gt_linestring(e)
+    section_gt_shapes = e["ground_truth"]["gt_shapes"]
+    # print("In ref_ct_general, %s" % section_gt_shapes.filter(items=["start_loc","end_loc"]))
+    filtered_loc_df_a = emd.filter_geo_df(
+        emd.to_geo_df(e["temporal_control"]["android"]["location_df"]),
+        section_gt_shapes.filter(["start_loc","end_loc"]))
+    filtered_loc_df_b = emd.filter_geo_df(
+        emd.to_geo_df(e["temporal_control"]["ios"]["location_df"]),
+        section_gt_shapes.filter(["start_loc","end_loc"]))
+    new_location_df_a = get_int_aligned_trajectory(filtered_loc_df_a, tz)
+    new_location_df_i = get_int_aligned_trajectory(filtered_loc_df_b, tz)
     merged_df = pd.merge(new_location_df_a, new_location_df_i, on="ts",
         how="inner", suffixes=("_a", "_i")).sort_values(by="ts", axis="index")
-    merged_df["t_distance"] = gpd.GeoSeries(merged_df.geometry_a).distance(gpd.GeoSeries(merged_df.geometry_i)) * (C/360)
+    merged_df["t_distance"] = emd.to_utm_series(gpd.GeoSeries(merged_df.geometry_a)).distance(emd.to_utm_series(gpd.GeoSeries(merged_df.geometry_i)))
     filtered_merged_df = merged_df.query("t_distance < @dist_threshold")
     print("After filtering, retained %d of %d (%s)" %
           (len(filtered_merged_df), max(len(new_location_df_a), len(new_location_df_i)),
             (len(filtered_merged_df)/max(len(new_location_df_a), len(new_location_df_i)))))
     merge_fn = functools.partial(collapse_inner_join, b_merge_fn=b_merge_fn)
     initial_reference_gpdf = gpd.GeoDataFrame(list(filtered_merged_df.apply(merge_fn, axis=1)))
-    print(initial_reference_gpdf.columns)
+    # print(initial_reference_gpdf.columns)
     if len(initial_reference_gpdf.columns) > 1:
         initial_reference_gpdf["fmt_time"] = initial_reference_gpdf.ts.apply(lambda ts: arrow.get(ts).to(tz))
         assert len(initial_reference_gpdf[initial_reference_gpdf.latitude.isnull()]) == 0, "Found %d null entries out of %d total" % (len(initial_reference_gpdf.latitude.isnull()), len(initial_reference_gpdf))
+        # print(initial_reference_gpdf.head())
         return initial_reference_gpdf
     else:
         return gpd.GeoDataFrame()
 
 def ref_gt_general(e, b_merge_fn, dist_threshold, tz="UTC"):
-    new_location_df_a = get_int_aligned_trajectory(e["temporal_control"]["android"]["location_df"], tz)
-    new_location_df_i = get_int_aligned_trajectory(e["temporal_control"]["ios"]["location_df"], tz)
     fill_gt_linestring(e)
-    gt_linestring = e["ground_truth"]["linestring"]
-    add_gt_error_projection(new_location_df_a, gt_linestring)
-    add_gt_error_projection(new_location_df_i, gt_linestring)
+    utm_gt_linestring = e["ground_truth"]["utm_linestring"]
+    section_gt_shapes = e["ground_truth"]["gt_shapes"]
+    filtered_loc_df_a = emd.filter_geo_df(
+        emd.to_geo_df(e["temporal_control"]["android"]["location_df"]),
+        section_gt_shapes.filter(["start_loc","end_loc"]))
+    filtered_loc_df_b = emd.filter_geo_df(
+        emd.to_geo_df(e["temporal_control"]["ios"]["location_df"]),
+        section_gt_shapes.filter(["start_loc","end_loc"]))
+    new_location_df_a = get_int_aligned_trajectory(filtered_loc_df_a, tz)
+    new_location_df_i = get_int_aligned_trajectory(filtered_loc_df_b, tz)
+
+    new_location_df_ua = emd.to_utm_df(new_location_df_a)
+    new_location_df_ui = emd.to_utm_df(new_location_df_i)
+
+    add_gt_error_projection(new_location_df_ua, utm_gt_linestring)
+    add_gt_error_projection(new_location_df_ui, utm_gt_linestring)
+
+    new_location_df_a["gt_distance"] = new_location_df_ua.gt_distance
+    new_location_df_a["gt_projection"] = new_location_df_ua.gt_projection
+
+    new_location_df_i["gt_distance"] = new_location_df_ui.gt_distance
+    new_location_df_i["gt_projection"] = new_location_df_ui.gt_projection
+
     filtered_location_df_a = new_location_df_a.query("gt_distance < @dist_threshold")
     filtered_location_df_i = new_location_df_i.query("gt_distance < @dist_threshold")
     print("After filtering, %d of %d (%s) for android and %d of %d (%s) for ios" %
@@ -313,14 +353,34 @@ def ref_travel_forward(e, dist_threshold, tz="UTC"):
     # This function needs a global variable
     global distance_so_far
     distance_so_far = 0
-    new_location_df_a = get_int_aligned_trajectory(e["temporal_control"]["android"]["location_df"], tz)
-    new_location_df_i = get_int_aligned_trajectory(e["temporal_control"]["ios"]["location_df"], tz)
     fill_gt_linestring(e)
-    gt_linestring = e["ground_truth"]["linestring"]
-    add_gt_error_projection(new_location_df_a, gt_linestring)
-    add_gt_error_projection(new_location_df_i, gt_linestring)
+    section_gt_shapes = e["ground_truth"]["gt_shapes"]
+    filtered_utm_loc_df_a = emd.filter_geo_df(
+        emd.to_geo_df(e["temporal_control"]["android"]["location_df"]),
+        section_gt_shapes.filter(["start_loc","end_loc"]))
+    filtered_utm_loc_df_b = emd.filter_geo_df(
+        emd.to_geo_df(e["temporal_control"]["ios"]["location_df"]),
+        section_gt_shapes.filter(["start_loc","end_loc"]))
+    new_location_df_a = get_int_aligned_trajectory(filtered_utm_loc_df_a, tz)
+    new_location_df_i = get_int_aligned_trajectory(filtered_utm_loc_df_b, tz)
+
+    utm_gt_linestring = e["ground_truth"]["utm_linestring"]
+
+    new_location_df_ua = emd.to_utm_df(new_location_df_a)
+    new_location_df_ui = emd.to_utm_df(new_location_df_i)
+
+    add_gt_error_projection(new_location_df_ua, utm_gt_linestring)
+    add_gt_error_projection(new_location_df_ui, utm_gt_linestring)
+
+    new_location_df_a["gt_distance"] = new_location_df_ua.gt_distance
+    new_location_df_a["gt_projection"] = new_location_df_ua.gt_projection
+
+    new_location_df_i["gt_distance"] = new_location_df_ui.gt_distance
+    new_location_df_i["gt_projection"] = new_location_df_ui.gt_projection
+
     new_location_df_a["gt_cum_proj"] = new_location_df_a.gt_projection.cumsum()
     new_location_df_i["gt_cum_proj"] = new_location_df_i.gt_projection.cumsum()
+
     filtered_location_df_a = new_location_df_a.query("gt_distance < @dist_threshold")
     filtered_location_df_i = new_location_df_i.query("gt_distance < @dist_threshold")
     print("After filtering, %d of %d (%s) for android and %d of %d (%s) for ios" %

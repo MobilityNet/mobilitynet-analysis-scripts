@@ -30,6 +30,27 @@ def dist_using_crs_change(location_gpdf, gt_linestring):
 to_utm_coords = lambda x, y, z=None: utm.from_latlon(y, x)[0:2]
 nop = lambda x, y, z=None: (x, y)
 
+def to_extended_utm_coords(p):
+    utm_coords = utm.from_latlon(p.y, p.x)
+    pu = shp.geometry.Point(utm_coords[0:2])
+    pu.zno = utm_coords[2]
+    pu.zletter = utm_coords[3]
+    return pu
+
+def to_utm_df_extended(location_gpdf):
+    utm_gpdf = location_gpdf.copy()
+    # Copy the lonlat geometry just in case
+    utm_gpdf["geometry_lonlat"] = utm_gpdf.geometry
+    utm_gpdf.geometry = utm_gpdf.geometry.apply(lambda p: to_extended_utm_coords(p))
+    utm_gpdf.longitude = utm_gpdf.geometry.apply(lambda p: p.x)
+    utm_gpdf.latitude = utm_gpdf.geometry.apply(lambda p: p.y)
+    utm_gpdf.zno = utm_gpdf.geometry.apply(lambda p: p.zno)
+    utm_gpdf.zletter = utm_gpdf.geometry.apply(lambda p: p.zletter)
+    return utm_gpdf
+
+def to_utm_series(location_series):
+    return location_series.apply(lambda p: shp.ops.transform(to_utm_coords, p))
+
 def to_utm_df(location_gpdf):
     utm_gpdf = location_gpdf.copy()
     utm_gpdf.geometry = utm_gpdf.geometry.apply(lambda p: shp.ops.transform(to_utm_coords, p))
@@ -90,5 +111,19 @@ def filter_geo_df(geo_df, polygons):
     prepped_polygons = polygons.apply(lambda p: shp.prepared.prep(p))
     geo_df["outside_polygons"] = geo_df.apply(lambda r: is_point_outside_polygons(r, polygons), axis=1)
     # return a slice instead of setting a column value
+    print("After filtering against polygons %s, %s -> %s" %
+        (len(polygons), len(geo_df), len(geo_df.query("outside_polygons==True"))))
     return geo_df.query("outside_polygons==True")
+
+def filter_ground_truth_linestring(gt_shapes):
+    gt_geo_df = linestring_to_geo_df(gt_shapes.loc["route"])
+    # print("gt_geo_df = %d" % len(gt_geo_df))
+    filtered_gt_geo_df = filter_geo_df(gt_geo_df, gt_shapes.filter(["start_loc","end_loc"]))
+    # print("filtered_gt_geo_df = %d" % len(filtered_gt_geo_df))
+    start_intersection = gt_shapes.loc["route"].intersection(gt_shapes.loc["start_loc"])
+    end_intersection = gt_shapes.loc["route"].intersection(gt_shapes.loc["end_loc"])
+    # print(start_intersection, end_intersection)
+    # final_first_point = shp.geometry.Point(start_intersection.coords[-1])
+    # final_last_point = shp.geometry.Point(end_intersection.coords[0])
+    return geo_df_to_linestring(filtered_gt_geo_df)
 
