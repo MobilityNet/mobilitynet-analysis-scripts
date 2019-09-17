@@ -434,10 +434,19 @@ def final_ref_ensemble(e, dist_threshold=25, tz="UTC"):
         "coverage_time": coverage_time(ct_ref_df, e),
         "coverage_max_gap": coverage_max_gap(ct_ref_df, e)
     }
-    if tf_stats["coverage_max_gap"] < ct_stats["coverage_max_gap"]:
-        return ct_ref_df
+    if tf_stats["coverage_max_gap"] > ct_stats["coverage_max_gap"] and\
+        tf_stats["coverage_density"] < ct_stats["coverage_density"]:
+        print("max_gap for tf = %s > ct = %s and density %s < %s, returning ct len = %d not tf len = %d" %
+            (tf_stats["coverage_max_gap"], ct_stats["coverage_max_gap"],
+             tf_stats["coverage_density"], ct_stats["coverage_density"],
+             len(ct_ref_df), len(tf_ref_df)))
+        return ("ct", ct_ref_df)
     else:
-        return tf_ref_df
+        print("for tf = %s v/s ct = %s, density %s v/s %s, returning tf len = %d not cf len = %d" %
+            (tf_stats["coverage_max_gap"], ct_stats["coverage_max_gap"],
+             tf_stats["coverage_density"], ct_stats["coverage_density"],
+             len(tf_ref_df), len(ct_ref_df)))
+        return ("tf", tf_ref_df)
 
 ####
 # END: Final ensemble reference construction that uses ground truth

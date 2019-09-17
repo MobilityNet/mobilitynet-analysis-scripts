@@ -33,6 +33,8 @@ import arrow
 import pandas as pd
 import emeval.validate.phone_view as evpv
 
+TIME_SYNC_FUZZ = 0 # seconds = 1 minute
+
 class PhoneView:
     def __init__(self, spec_details):
         self.phone_view_map = {}
@@ -539,6 +541,11 @@ class PhoneView:
             # since there is no data, we don't need to select a subset
             tr[key] = r[key]
 
+    @staticmethod
+    def _query_for_seg(segment):
+        return "ts > %s & ts <= %s" % (segment["start_ts"] - TIME_SYNC_FUZZ,
+                                segment["end_ts"] + TIME_SYNC_FUZZ)
+
     def fill_trip_specific_battery_and_locations(self):
         for phoneOS, phone_map in self.phone_view_map.items(): # android, ios
             for phone_label in phone_map:
@@ -546,7 +553,7 @@ class PhoneView:
                 for r in phone_map[phone_label]["evaluation_ranges"]:
                     # print(r["battery_df"].head())
                     for tr in r["evaluation_trip_ranges"]:
-                        query = "ts > %s & ts <= %s" % (tr["start_ts"], tr["end_ts"])
+                        query = PhoneView._query_for_seg(tr)
                         # print("%s %s %s" % (phone_label, tr["trip_id"], query))
                         # print(r["battery_df"].query(query).head())
                         PhoneView._copy_subset(r, tr, "battery_df", query)
@@ -557,7 +564,7 @@ class PhoneView:
                         PhoneView._copy_subset(r, tr, "motion_activity_df", query)
                         PhoneView._copy_subset(r, tr, "transition_df", query)
                         for sr in tr["evaluation_section_ranges"]:
-                            query = "ts > %s & ts <= %s" % (sr["start_ts"], sr["end_ts"])
+                            query = PhoneView._query_for_seg(sr)
                             # print("%s %s %s" % (phone_label, tr["trip_id"], query))
                             # print(r["battery_df"].query(query).head())
                             PhoneView._copy_subset(tr, sr, "battery_df", query)

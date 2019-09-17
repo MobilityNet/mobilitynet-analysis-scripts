@@ -7,6 +7,8 @@ import pandas as pd
 
 C = 40075017
 g = pyproj.Geod(ellps='clrk66')
+llProj = pyproj.Proj(init="epsg:4326")
+xyProj = pyproj.Proj(init="epsg:3395")
 
 def dist_using_circumference(location_gpdf, gt_linestring):
     return location_gpdf.distance(gt_linestring) * (C/360)
@@ -29,44 +31,43 @@ def dist_using_crs_change(location_gpdf, gt_linestring):
 
 to_utm_coords = lambda x, y, z=None: utm.from_latlon(y, x)[0:2]
 nop = lambda x, y, z=None: (x, y)
+to_world_mercator_coords = lambda x, y, z=None: pyproj.transform(llProj, xyProj, x, y)
 
-def to_extended_utm_coords(p):
-    utm_coords = utm.from_latlon(p.y, p.x)
-    pu = shp.geometry.Point(utm_coords[0:2])
-    pu.zno = utm_coords[2]
-    pu.zletter = utm_coords[3]
-    return pu
+def to_xy_series(location_series, transform_fn):
+    return location_series.apply(lambda p: shp.ops.transform(transform_fn, p))
 
-def to_utm_df_extended(location_gpdf):
+def to_xy_df(location_gpdf, transform_fn):
     utm_gpdf = location_gpdf.copy()
-    # Copy the lonlat geometry just in case
-    utm_gpdf["geometry_lonlat"] = utm_gpdf.geometry
-    utm_gpdf.geometry = utm_gpdf.geometry.apply(lambda p: to_extended_utm_coords(p))
+    utm_gpdf.geometry = utm_gpdf.geometry.apply(lambda p: shp.ops.transform(transform_fn, p))
     utm_gpdf.longitude = utm_gpdf.geometry.apply(lambda p: p.x)
     utm_gpdf.latitude = utm_gpdf.geometry.apply(lambda p: p.y)
-    utm_gpdf.zno = utm_gpdf.geometry.apply(lambda p: p.zno)
-    utm_gpdf.zletter = utm_gpdf.geometry.apply(lambda p: p.zletter)
     return utm_gpdf
+
+def to_xy_line(gt_linestring, transform_fn):
+    return shp.ops.transform(transform_fn, gt_linestring)
 
 def to_utm_series(location_series):
-    return location_series.apply(lambda p: shp.ops.transform(to_utm_coords, p))
+    return to_xy_series(location_series, to_utm_coords)
 
 def to_utm_df(location_gpdf):
-    utm_gpdf = location_gpdf.copy()
-    utm_gpdf.geometry = utm_gpdf.geometry.apply(lambda p: shp.ops.transform(to_utm_coords, p))
-    utm_gpdf.longitude = utm_gpdf.geometry.apply(lambda p: p.x)
-    utm_gpdf.latitude = utm_gpdf.geometry.apply(lambda p: p.y)
-    return utm_gpdf
+    return to_xy_df(location_gpdf, to_utm_coords)
 
 def to_utm_line(gt_linestring):
-    return shp.ops.transform(to_utm_coords, gt_linestring)
+    return to_xy_line(gt_linestring, to_utm_coords)
 
 def dist_using_manual_utm_change(location_gpdf, gt_linestring):
-    utm_gpdf = to_utm_df(location_gpdf)
+    utm_gpdf = to_xy_df(location_gpdf, to_utm_coords)
     # print(utm_gpdf.geometry.head())
-    utm_gt_linestring = to_utm_line(gt_linestring)
+    utm_gt_linestring = to_xy_line(gt_linestring, to_utm_coords)
     # print(utm_gt_linestring)
     return utm_gpdf.distance(utm_gt_linestring)
+
+def dist_using_manual_mercator_change(location_gpdf, gt_linestring):
+    wmerc_gpdf = to_xy_df(location_gpdf, to_world_mercator_coords)
+    # print(wmerc_gpdf.geometry.head())
+    wmerc_gt_linestring = to_xy_line(gt_linestring, to_world_mercator_coords)
+    # print(wmerc_gt_linestring)
+    return wmerc_gpdf.distance(wmerc_gt_linestring)
 
 def dist_using_projection(location_gpdf, gt_linestring):
     projections = location_gpdf.geometry.apply(lambda p: gt_linestring.project(p))
@@ -111,8 +112,8 @@ def filter_geo_df(geo_df, polygons):
     prepped_polygons = polygons.apply(lambda p: shp.prepared.prep(p))
     geo_df["outside_polygons"] = geo_df.apply(lambda r: is_point_outside_polygons(r, polygons), axis=1)
     # return a slice instead of setting a column value
-    print("After filtering against polygons %s, %s -> %s" %
-        (len(polygons), len(geo_df), len(geo_df.query("outside_polygons==True"))))
+    # print("After filtering against polygons %s, %s -> %s" %
+    #     (len(polygons), len(geo_df), len(geo_df.query("outside_polygons==True"))))
     return geo_df.query("outside_polygons==True")
 
 def filter_ground_truth_linestring(gt_shapes):
@@ -123,7 +124,25 @@ def filter_ground_truth_linestring(gt_shapes):
     start_intersection = gt_shapes.loc["route"].intersection(gt_shapes.loc["start_loc"])
     end_intersection = gt_shapes.loc["route"].intersection(gt_shapes.loc["end_loc"])
     # print(start_intersection, end_intersection)
-    # final_first_point = shp.geometry.Point(start_intersection.coords[-1])
-    # final_last_point = shp.geometry.Point(end_intersection.coords[0])
-    return geo_df_to_linestring(filtered_gt_geo_df)
+    if start_intersection.type == "MultiLineString":
+        start_intersection = start_intersection.geoms[-1]
+    end_intersection = gt_shapes.loc["route"].intersection(gt_shapes.loc["end_loc"])
+    if end_intersection.type == "MultiLineString":
+        end_intersection = end_intersection.geoms[0]
+    try:
+        final_first_point = shp.geometry.Point(start_intersection.coords[-1])
+    except NotImplementedError as e:
+        final_first_point = filtered_geo_df.geometry.iloc[0]
+        
+    try:
+        final_last_point = shp.geometry.Point(end_intersection.coords[0])
+    except NotImplementedError as e:
+        final_last_point = filtered_gt_geo_df.geometry.iloc[-1]
+    to_single_entry_df = lambda p: pd.DataFrame([{"longitude": p.x, "latitude": p.y, "geometry": p}])
+    df_to_ret = pd.concat([to_single_entry_df(final_first_point),
+                           filtered_gt_geo_df,
+                           to_single_entry_df(final_last_point)],
+                        axis="index").reset_index(drop=True)
+    
+    return geo_df_to_linestring(df_to_ret)
 
