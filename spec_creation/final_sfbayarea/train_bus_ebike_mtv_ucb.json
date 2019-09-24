@@ -8,7 +8,7 @@
         "timezone": "America/Los_Angeles"
     },
     "start_fmt_date": "2019-07-16",
-    "end_fmt_date": "2019-07-18",
+    "end_fmt_date": "2019-08-30",
     "phones": {
         "android": {
           "ucb-sdb-android-1": "accuracy_control",
@@ -77,13 +77,7 @@
                         ]
                       }
                     },
-                    "waypoint_coords": {
-                      "type": "Feature",
-                      "geometry": {
-                        "type": "LineString",
-                        "coordinates": []
-                      }
-                    }
+                    "polyline": "axecF`lchVD@LAXK@I?S@OHUDGDEDKF@H@JAFAJARq@AOMG?K[S[gAIWIUW{@BKH[DK?CFUXy@OE?Ag@UWUOKiAm@Le@Jc@BK@CDO{@a@AAMGMICAq@_@e@WiAm@WOUMIEAAMGFQ@CPo@X_ANi@JY?CDKMIAAaDeBWMMIUMA?KGKGAAg@Yi@Yi@Y_@OAAOIKGCAGEs@`Cs@_@BIGEd@_BHDV}@"
                 },
                 {
                     "id": "commuter_rail_aboveground",
@@ -111,11 +105,19 @@
                     "end_loc": {
                       "type": "Feature",
                       "properties": {
-                        "osm_id": 77411120,
                         "name": "Millbrae Intermodal Terminal"
                       },
                       "geometry": {
-                        "type": "Polygon"
+                        "type": "Polygon",
+                        "coordinates": [
+                          [
+                            [ -122.38777041435242, 37.600819226835206 ],
+                            [ -122.38625496625899, 37.59932104231882 ],
+                            [ -122.38589286804198, 37.59953992789595 ],
+                            [ -122.38743782043457, 37.601008357203966 ],
+                            [ -122.38777041435242, 37.600819226835206 ]
+                          ]
+                        ]
                       }
                     },
                     "relation": {
@@ -131,11 +133,19 @@
                     "start_loc": {
                       "type": "Feature",
                       "properties": {
-                        "osm_id": 77411120,
                         "name": "Millbrae Intermodal Terminal"
                       },
                       "geometry": {
-                        "type": "Polygon"
+                        "type": "Polygon",
+                        "coordinates": [
+                          [
+                            [ -122.38777041435242, 37.600819226835206 ],
+                            [ -122.38625496625899, 37.59932104231882 ],
+                            [ -122.38589286804198, 37.59953992789595 ],
+                            [ -122.38743782043457, 37.601008357203966 ],
+                            [ -122.38777041435242, 37.600819226835206 ]
+                          ]
+                        ]
                       }
                     },
                     "end_loc": {
@@ -158,7 +168,7 @@
                     },
                     "relation": {
                         "relation_id": 2851613,
-                        "start_node": 5317898424,
+                        "start_node": 2208932514,
                         "end_node": 2239764355
                     }
                 },{
@@ -248,12 +258,8 @@
                           ]
                         }
                     },
-                    "relation": {
-                        "relation_id": 9709380,
-                        "start_node": 6410508153,
-                        "end_node": 6561896571
+                    "polyline": "aucfFdlgiVQ?G?M?????AUIgAAU??CW?GAOAECYC_@KiBCYNbCIuAASCYI@mAH??wAHU@??M?k@DcAF??i@BK@??M@Q@m@B??E@]@??WBQN??A[GeA??C[Ew@AGAYM_BC[GWIW??EMAK??EOCK??CMEQ??Bc@O_CYaEe@iHCKG[??AGC]CS??CMGu@Ca@Eq@K{AMiBAO??AOAMCc@"
                     }
-                }
             ]
         },
         {
@@ -288,8 +294,8 @@
                   [
                     [ -122.25775301456453, 37.86966180831176 ],
                     [ -122.25761353969574, 37.86925527395936 ],
-                    [ -122.25752770900726, 37.8692722129355 ],
-                    [ -122.25767254829408, 37.86967027775357 ],
+                    [ -122.25745528936385, 37.86928491716503 ],
+                    [ -122.25760817527771, 37.86969356871358 ],
                     [ -122.25775301456453, 37.86966180831176 ]
                   ]
                 ]
@@ -330,29 +336,32 @@
                           [
                             [ -122.25775301456453, 37.86966180831176 ],
                             [ -122.25761353969574, 37.86925527395936 ],
-                            [ -122.25752770900726, 37.8692722129355 ],
-                            [ -122.25767254829408, 37.86967027775357 ],
+                            [ -122.25745528936385, 37.86928491716503 ],
+                            [ -122.25760817527771, 37.86969356871358 ],
                             [ -122.25775301456453, 37.86966180831176 ]
                           ]
                         ]
                       }
-                    }, "end_loc": {
-                        "type": "Feature",
-                        "properties": {
-                            "name": "Wurster bikeshare station"
-                        },
-                        "geometry": {
-                          "type": "Polygon",
-                          "coordinates": [
-                            [
-                              [ -122.25501716136932, 37.87000058522528 ],
-                              [ -122.2549045085907, 37.8692213959954 ],
-                              [ -122.2539871931076, 37.86933573406131 ],
-                              [ -122.25415349006651, 37.87011492208202 ],
-                              [ -122.25501716136932, 37.87000058522528 ]
-                              ]
+                    },
+                    "end_loc": {
+                      "type": "Feature",
+                      "properties": {
+                          "name": "Wurster bikeshare station"
+                      },
+                      "geometry": {
+                        "type": "Polygon",
+                        "coordinates": [
+                          [
+                            [ -122.25485622882843, 37.86942042881056 ],
+                            [ -122.25495278835297, 37.86824316306784 ],
+                            [ -122.25394427776337, 37.868260102276665 ],
+                            [ -122.25312083959581, 37.868488781214445 ],
+                            [ -122.25333273410797, 37.869447954583094 ],
+                            [ -122.25403547286986, 37.86953476656757 ],
+                            [ -122.25485622882843, 37.86942042881056 ]
                           ]
-                        }
+                        ]
+                      }
                     },
                     "waypoint_coords": {
                       "type": "Feature",
@@ -397,8 +406,8 @@
                           [
                             [ -122.27970957756044, 37.8312979574766 ],
                             [ -122.27974176406859, 37.831124243341165 ],
-                            [ -122.27826654911041, 37.831115769470415 ],
-                            [ -122.27857768535613, 37.83149709268966 ],
+                            [ -122.27827459573746, 37.831115769470415 ],
+                            [ -122.27813512086867, 37.83150556651659 ],
                             [ -122.27970957756044, 37.8312979574766 ]
                           ]
                         ]
@@ -410,18 +419,9 @@
                       "geometry": {
                         "type": "LineString",
                         "coordinates": [
-                          [
-                            -122.27141618728638,
-                            37.848997707091975
-                          ],
-                          [
-                            -122.27179169654846,
-                            37.84719742398725
-                          ],
-                          [
-                            -122.27291822433472,
-                            37.846312092173754
-                          ]
+                          [ -122.27141618728638, 37.848997707091975 ],
+                          [ -122.27179169654846, 37.84719742398725 ],
+                          [ -122.27291822433472, 37.846312092173754 ]
                         ]
                       }
                     }
@@ -441,8 +441,8 @@
                           [
                             [ -122.27970957756044, 37.8312979574766 ],
                             [ -122.27974176406859, 37.831124243341165 ],
-                            [ -122.27826654911041, 37.831115769470415 ],
-                            [ -122.27857768535613, 37.83149709268966 ],
+                            [ -122.27827459573746, 37.831115769470415 ],
+                            [ -122.27813512086867, 37.83150556651659 ],
                             [ -122.27970957756044, 37.8312979574766 ]
                           ]
                         ]
@@ -466,11 +466,7 @@
                         ]
                       }
                     },
-                    "relation": {
-                        "relation_id": 2718359,
-                        "start_node": 6410561636,
-                        "end_node": 2504237931
-                    }
+                    "polyline": "_|{eFvtiiVBL??Fh@DX@R??DX??BTDf@??b@`D??l@zETdB??VvB??l@`FR`B??TdB??j@zEL`A??\\vC??LbAPnA??Fn@??DTFf@??Hj@J^NZ??F^Hd@Fb@n@jFFf@Bf@Af@Ed@Kd@Qd@S^??OTSPSLUJWH??W@UA]@k@B??I?y@@K@??Q@??cDD_@@[@[B[BaAL??_@H[HYHs@TUFYDUDUB??UBSD??[C[CYGWGWMWM??CASM??]OYM??ICEAWG??UCUCWAU?oAF??eCJ??yAF??m@B??kAH??gAH[@u@DM@[BSD??E?_@HODM@??sAV??LpB@R??@R?Z??ARAh@?ZDX??z@S??XE??`AS??J`A??LdAFb@NxAB^??T|B??Ad@ENGJMHk@L??YFi@NUHMDc@Ta@Z??Y@YFSEGIEQ?SBMHMd@Y??tEu@??jDaA??f@K??bCu@l@Wt@Y??dN{Ep@W??jGeBlASfCUjAIhBCR?n@?`AHfAX|@^`Al@n@p@n@v@j@`A^`A`@jA\\`BdA~F??d@rCh@tD??`AlJt@rHXnC??j@vFF~@BdAA`ACbAI~AQpCChA@hAB`AJbAf@rDTpA??BZ??Fn@Ft@Dr@Bt@?t@A`AA|A?hA?~@Bz@Fv@Fx@J`AJ~@d@nDRfAnAfHXtA\\nA^hAfBzE??b@jBR|@l@nCVfBRrBRvBP`CL`Ct@fU??LbDJvCLrCLjCNbCP|CPhCRnCxMteBJfALfALfAPbAP`ANz@Pv@Pt@Pr@Vx@Tt@Rp@Vp@Xt@Xt@Zt@Zp@pRda@??Vf@Vb@Xd@Xb@Z`@V\\^d@^d@^`@\\\\\\Z\\ZtFxE|AfB??vChD??rFdG??pDjD??lyB~aCxKtLv@|@h@x@??x@dB??h@p@JJJPRd@R`@R`@x@`BNVFJFHFDFFHBHBH?H?JCJCFGHIFKDMDO?O?QAMCMEMGKGGmCyC??KMIIIGIGKGMCKCMAKAK@M?KBODKDSJKDIDKBK@w@N??SDIDIBGFKH??SVMP??OROT??w@`A??kA~A??uAdB??i@u@??mAcBMQ??OPs@`AUZ??MQOU??Q?GK??W[??a@i@??W\\??ED??SX??KJ??KLGH??OR??CDAH?H@H@B??LV??DHBB??PT"
                 },{ 
                     "id": "walk_downtown_urban_canyon",
                     "name": "Transbay Terminal to Embarcadero station",
@@ -495,11 +491,19 @@
                     }, "end_loc": {
                       "type": "Feature",
                       "properties": {
-                        "name": "Embarcadero Station",
-                        "osm_id": 551273355
+                        "name": "Embarcadero Station"
                       },
                       "geometry": {
-                        "type": "Polygon"
+                        "type": "Polygon",
+                        "coordinates": [
+                          [
+                            [ -122.39768654108047, 37.79212566643111 ],
+                            [ -122.39597260951994, 37.79348006998847 ],
+                            [ -122.39610403776169, 37.79358604731024 ],
+                            [ -122.39783674478531, 37.792233765279306 ],
+                            [ -122.39768654108047, 37.79212566643111 ]
+                          ]
+                        ]
                       }
                     }
                 },{ 
@@ -510,11 +514,19 @@
                     "start_loc": {
                       "type": "Feature",
                       "properties": {
-                        "name": "Embarcadero Station",
-                        "osm_id": 551273355
+                        "name": "Embarcadero Station"
                       },
                       "geometry": {
-                        "type": "Polygon"
+                        "type": "Polygon",
+                        "coordinates": [
+                          [
+                            [ -122.39768654108047, 37.79212566643111 ],
+                            [ -122.39597260951994, 37.79348006998847 ],
+                            [ -122.39610403776169, 37.79358604731024 ],
+                            [ -122.39783674478531, 37.792233765279306 ],
+                            [ -122.39768654108047, 37.79212566643111 ]
+                          ]
+                        ]
                       }
                     }, "end_loc": {
                       "type": "Feature",
@@ -581,11 +593,7 @@
                         ]
                       }
                     },
-                    "relation": {
-                      "relation_id": 9605701,
-                      "start_node": 6138188689,
-                      "end_node": 6138188702
-                    }
+                    "polyline": "meqeFbh`jVrElGpAfBxC`EvBvC??LPPVx@fAx@fARXPTLP??JLNLPLPJPJPFRFPBVDR@T?RAPC??XETGTKVMTORQPURU??nAgBjBgCNQHMX_@vAmBpCwD|FeIV]RWT[hBeCp@u@t@o@x@e@|@]~@S`AIzCM??`^_B??xAIxAGxACzAAjA?jABjABjADhAF??jEVbKx@??dIh@L@??tAJ??bEZ??h@D??dEVz@HvE\\??v@F??jHh@vNfA??xAL??hIj@~Gh@??bCNpDX??ng@rD??~BRrEZ??p@D|Kv@tAJnALhAJdALnARrAVND??dATnCr@??nHjB??xu@zRzBd@??`AR??nDr@l@Jh@Fp@Hn@Dt@Dp@Bh@@n@@??hEClE@pO?l@?`H?`K?lF@pC?nP?fAAhACnAEtAIpAKnAO`BS~AWfAUlAYlBe@vAc@pAe@lAe@jAg@pAm@`Ae@`Ai@fAq@jAu@pA}@h@c@fRcO`EaD??bAy@??lHgG`OqLjA}@??dAu@lAq@jAk@hAc@rAc@hAWlAQvAOfAGpAAnABhADpALjARjAVjA^nAd@lAj@hAp@bAp@fA|@??pEhExBrBh@h@dB`BdMtL`E|DtElEjEdE`LrK~LnLdA`A?@lBhBfCbCbGzF`C|BbBxAjBbBrBbBnBxAtB~A`FxD??~AjAr@j@|@l@r@d@x@h@|@d@|@f@~@b@dAf@nAd@~@\\hA^bAZlAXdAVbARjAP~@N~@J`AJ~@H`AF`ADl@DfABpA?bNCb@?zKEjOE??nCGdAI|@I??`AQ|@S|@W`A]t@]t@]??dB{@??`Ae@??|CwA??p@_@??b@SlHkDrFkC??b@S??zMsG`Ae@??\\QhB_AfB_Ax@g@x@i@h@]rA_AlDaCpDkC~DsC|PoLfPaLjA{@fAy@bA}@~@y@dAcAxIyItByBlKsKdBgB~QgRrN_O??|GaHb@a@??LObAeApFoFdAiA`AiAbA{A|@wAz@_Br@_Br@eBp@qBhCiItAoE??b@wAdFaPjEaN`EmMnGcStHgVHQj@iBNe@Vy@ZcAFSf@}AlBiGpDaL??H[??BE~DeMrJ{ZTq@vLw_@DIBIDMrAcErAkEd@_BjDsKBIfDkKDSpIcX@GbCuH`@kAb@kADIr@eBl@uAbAsB??Vg@??x@yAz@yAdA_Br@cA??Xa@??l@w@pAaBdBmB??X[??tFkG??TW??^c@b@c@~AcB~@cAhAqAfBoBl@s@zCgDxCgDxCgDxBeCf@k@|KaMj@o@|DqE~AgB~AiBhMqN??|@aAbAcA~@y@z@s@bAs@`Ao@hAq@fAi@~@c@jAe@zBy@jDqAfBq@v@Y`Bo@dAe@pAq@dAk@bAk@bAo@`Aq@x@k@t@k@r@k@rC}B??JI??bG{EhFeErP_N|JcIf@_@b@_@b@_@d@_@d@c@rCgCzGcG\\[LM??t@o@??dFuEh@a@j@k@zA{ApA{ArAaBvAmB~FqIt@gAr@eAhBwC~CkF??xAeC??`CaE|PuYlAoBvAsBvAmBxBsCxAkBZa@Z_@rCqDz@eA??xCkDpA_B~ByC??b@k@V[??n@w@??V]RWX_@\\c@??f@m@l@y@fBcCxB}C|FuH??rAiB??z@qArAuBpE_Ht@iAtAkBrBmCxAiBzIoKdAmAvDoEtDsExBkC??p@w@??rFwGX[|FeHnFuGjFgG|OmR??bAoA??hIwJ??fAoA??vL}N??pEoFlEmFlA_B??NQ??BEpAgBhBqClAoBdAiBrGqL??R_@NYjBkD~C{FdGaLJSLQLWpGqLLUDIDGhBgD|AuCh@aAbDeGZk@??t@uA??z@}AtB{DnBqDdCsErCmFrAcC??x@yAFKh@aAvCqFbAkBd@_AjAsBx@_B|@}ALWdDeG`B{CpJkQlFwJ??vAmC|AqCzDiH|HuNTe@??v@wA??|CyFlDqGnBuDdOqXj@eAdDeGlIoO~Pm[xDiHb@w@~C{F`JoPJSHMnA}BnCcFTc@|AoCJSxFmKfJ{PhKoR~DkHj@eA??lBoD??^o@JSFKxAcCbBaCb@o@r@eAv@iAbA_BfB{CnBqDxAoCjAwBpBwDfAuBbA{BxAgD`A}Bn@yAz@eBv@_BhH{M??d@{@??`AgB|MsVJSpQm\\rFaKbJwPrBuDvAiCl@gA??n@mA??bDcGp@mA`BsCfAmB`AgB|AuCP]R[dAoBdCuE~FsK|FqKnEoIlCgFpJkQ|@aBnQg\\`KcRfE{HpCgFnBoDjAwBhAuB`HeM`B{ClBoDfBeDr@wAl@qAn@_Bt@oBl@gBv@gC`AgDvA}ElGgTHWpHmWtCsJh@gBxFwRhBkGbB{FdCoIrCqJfG}SX}@FSJ]FS|AkFfCuI"
                 },{
                     "id": "inner_suburb_downtown_walk",
                     "name": "Mountain View train station to library",
@@ -628,7 +636,8 @@
                           ]
                         ]
                       }
-                    }
+                    },
+                    "polyline": "spfcFh|ahVW|@IEe@~AFDCHr@^r@aCFDB@JFNH@@^Nh@Xh@Xf@X@@JFJF@?TLLHVL`DdB@@LHEJ?BKXOh@Y~@Qn@ABGPLF@@HDTLVNhAl@d@Vp@^B@LHLF@@z@`@ENABCJKb@Md@hAl@NJVTf@T?@NDYx@GT?BEJIZCJVz@HTHVZfAZR?JLF@NSp@K@G@K@IAGAEJEDEFITAN?RAHYJM@EA"
                 }
             ]
         }

@@ -4,6 +4,7 @@
 import arrow
 import time
 import requests
+import shapely as shp
 import geojson as gj
 
 class SpecDetails:
@@ -74,6 +75,9 @@ class SpecDetails:
              arrow.get(self.eval_end_ts).to(self.eval_tz)))
         self.phone_labels = self.curr_spec["phones"]
 
+    def fmt(self, ts, fmt_string):
+        return arrow.get(ts).to(self.eval_tz).format(fmt_string)
+
     def get_ground_truth_for_trip(self, trip_id):
         tl = [t for t in self.curr_spec_entry["data"]["label"]["evaluation_trips"] if t["id"] == trip_id]
         print(trip_id, len(tl), [t["id"] for t in tl])
@@ -98,6 +102,18 @@ class SpecDetails:
                 # print(leg_id, len(ll), [l["id"] for l in ll])
                 if len(ll) == 1:
                     return ll[0]
+
+    @staticmethod
+    def get_shapes_for_leg(gt_leg):
+        if gt_leg["type"] == "TRAVEL":
+            return {
+                "start_loc": shp.geometry.shape(gt_leg["start_loc"]["geometry"]),
+                "end_loc": shp.geometry.shape(gt_leg["end_loc"]["geometry"]),
+                "route": shp.geometry.shape(gt_leg['route_coords']['geometry'])
+            }
+        else:
+            return {"loc": shp.geometry.shape(gt_leg["loc"]["geometry"])}
+
 
     @classmethod
     def get_geojson_for_leg(cls, gt_leg):
