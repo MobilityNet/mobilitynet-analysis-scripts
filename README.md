@@ -1,5 +1,9 @@
 # Reproducible evaluation of data collection using public data #
 
+## The server hosting this data is currently down due to fire danger ##
+Status updates: https://iris.eecs.berkeley.edu/news/ongoing/potential-campus-power-outage/
+
+
 This repository contains juypter notebooks for the evaluation of smartphone
 app-based data collection. It is designed to be launched with binder
 https://mybinder.org/ so that other community members can run their own
