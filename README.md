@@ -1,7 +1,7 @@
 # Reproducible evaluation of data collection using public data #
 
 ## The server hosting this data is currently down due to fire danger ##
-Status updates: https://iris.eecs.berkeley.edu/news/ongoing/potential-campus-power-outage/
+Status updates: https://news.berkeley.edu/2019/10/25/campus-preparing-for-limited-power-on-saturday/
 
 
 This repository contains juypter notebooks for the evaluation of smartphone
