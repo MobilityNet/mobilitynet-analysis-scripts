@@ -1,9 +1,5 @@
 # Reproducible evaluation of data collection using public data #
 
-## The server hosting this data is currently down due to fire danger ##
-Status updates: https://news.berkeley.edu/2019/10/25/campus-preparing-for-limited-power-on-saturday/
-
-
 This repository contains juypter notebooks for the evaluation of smartphone
 app-based data collection. It is designed to be launched with binder
 https://mybinder.org/ so that other community members can run their own
@@ -11,7 +7,7 @@ analyses without any additional setup.
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/e-mission/e-mission-eval-public-data.git/master)
 
-**WARNING** Launching the binder is V..E..R..Y slow. I am not quite sure why, since the [list of packages](environment.yml) is pretty short. I always look at the build logs to track the current progress. Sometimes, if the build succeeds in creating the image, but gets stuck in the "Launching server" step, I reload the binder page which seems to speed things up.
+**WARNING** Launching the binder is ~V..E..R..Y slow~ pretty fast. ~I am not quite sure why, since the [list of packages](environment.yml) is pretty short.~ I always look at the build logs to track the current progress. Sometimes, the build succeeds in creating the image, but gets stuck in the "Launching server" step. If this happens (and it hasn't happened recently) I reload the binder page which seems to speed things up.
 
 If you do find anything interesting, please consider contributing your notebook
 so that others can build on it!
