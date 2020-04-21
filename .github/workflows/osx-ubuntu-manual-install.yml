@@ -17,7 +17,6 @@ jobs:
   build:
     env: 
       EXP_CONDA_VER: 4.7.12
-      SOURCE_SCRIPT: /Users/runner/miniconda-4.7.12/etc/profile.d/conda.sh
     # The type of runner that the job will run on
     runs-on: ${{ matrix.os }}
     strategy:
@@ -26,12 +25,16 @@ jobs:
         include:
         - os: macos-latest
           PLATFORM: MacOSX-x86_64
+          SOURCE_SCRIPT: /Users/runner/miniconda-4.7.12/etc/profile.d/conda.sh
         - os: ubuntu-16.04
           PLATFORM: Linux-x86_64
+          SOURCE_SCRIPT: /home/runner/miniconda-4.7.12/etc/profile.d/conda.sh
         - os: ubuntu-18.04
           PLATFORM: Linux-x86_64
+          SOURCE_SCRIPT: /home/runner/miniconda-4.7.12/etc/profile.d/conda.sh
         - os: ubuntu-latest
           PLATFORM: Linux-x86_64
+          SOURCE_SCRIPT: /home/runner/miniconda-4.7.12/etc/profile.d/conda.sh
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -54,7 +57,7 @@ jobs:
     - name: Check whether the CI environment variable is set
       shell: bash -l {0}
       run: |
-        source $SOURCE_SCRIPT
+        source ${{ matrix.SOURCE_SCRIPT }}
         echo $CI
 
     - name: Setup the emissioneval environment
@@ -62,7 +65,7 @@ jobs:
       run: |
         conda --version
         which conda
-        source $SOURCE_SCRIPT
+        source ${{ matrix.SOURCE_SCRIPT }}
         conda --version
         source setup/setup.sh
         echo "About to activate environment"
@@ -72,7 +75,7 @@ jobs:
     - name: Teardown the emissioneval environment
       shell: bash -l {0}
       run: |
-        source $SOURCE_SCRIPT
+        source ${{ matrix.SOURCE_SCRIPT }}
         source setup/teardown.sh
 
     - name: Teardown the miniconda install
