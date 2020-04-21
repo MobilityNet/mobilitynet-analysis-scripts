@@ -41,7 +41,7 @@ jobs:
     - name: Install miniconda
       shell: bash -l {0}
       run: |
-        source setup/setup_conda.sh ${{ EXP_CONDA_VER }} ${{ matrix.PLATFORM }}
+        source setup/setup_conda.sh $EXP_CONDA_VER ${{ matrix.PLATFORM }}
         if [ ${{ matrix.PLATFORM }} == "Linux-x86_64" ]; then
             echo "Linux install, going to check conda path"
             which conda
@@ -54,7 +54,7 @@ jobs:
     - name: Check whether the CI environment variable is set
       shell: bash -l {0}
       run: |
-        source ${{ SOURCE_SCRIPT }}
+        source $SOURCE_SCRIPT
         echo $CI
 
     - name: Setup the emission environment
@@ -62,7 +62,7 @@ jobs:
       run: |
         conda --version
         which conda
-        source ${{ SOURCE_SCRIPT }}
+        source $SOURCE_SCRIPT
         conda --version
         source setup/setup.sh
         echo "About to activate environment"
@@ -78,4 +78,4 @@ jobs:
     - name: Teardown the miniconda install
       shell: bash -l {0}
       run: |
-        source setup/teardown_conda.sh ${{ EXP_CONDA_VER }}
+        source setup/teardown_conda.sh $EXP_CONDA_VER
