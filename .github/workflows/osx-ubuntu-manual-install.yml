@@ -17,7 +17,7 @@ jobs:
   build:
     env: 
       EXP_CONDA_VER: 4.7.12
-      SOURCE_SCRIPT: $HOME/miniconda-$EXP_CONDA_VER/etc/profile.d/conda.sh
+      SOURCE_SCRIPT: $HOME/miniconda-4.7.12/etc/profile.d/conda.sh
     # The type of runner that the job will run on
     runs-on: ${{ matrix.os }}
     strategy:
