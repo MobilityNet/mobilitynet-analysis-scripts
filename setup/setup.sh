@@ -9,5 +9,5 @@ set -e
 
 source setup/checks/check_for_conda.sh
 
-conda env update --name emissioneval --file environment.yml
+conda env update --name emissioneval --file setup/environment.yml
 conda activate emissioneval
