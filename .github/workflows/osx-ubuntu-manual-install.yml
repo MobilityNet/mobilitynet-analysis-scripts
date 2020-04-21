@@ -16,8 +16,8 @@ jobs:
   # This workflow contains a single job called "build"
   build:
     env: 
-        EXP_CONDA_VER=4.7.12
-        SOURCE_SCRIPT="$HOME/miniconda-${{ EXP_CONDA_VER }}/etc/profile.d/conda.sh"
+      EXP_CONDA_VER:4.7.12
+      SOURCE_SCRIPT:"$HOME/miniconda-$EXP_CONDA_VER/etc/profile.d/conda.sh"
     # The type of runner that the job will run on
     runs-on: ${{ matrix.os }}
     strategy:
