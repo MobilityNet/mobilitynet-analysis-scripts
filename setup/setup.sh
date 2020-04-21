@@ -5,6 +5,8 @@
 # - on OSX: /Users/<user>/miniconda3/bin/conda
 # - on Windows: C:/Users/<user>/Miniconda3/Scripts/conda
 
+set -e
+
 source setup/checks/check_for_conda.sh
 
 conda env update --name emissioneval --file environment.yml
