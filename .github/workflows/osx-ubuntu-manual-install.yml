@@ -72,7 +72,7 @@ jobs:
     - name: Teardown the emission environment
       shell: bash -l {0}
       run: |
-        source ${{ SOURCE_SCRIPT }}
+        source $SOURCE_SCRIPT
         source setup/teardown.sh
 
     - name: Teardown the miniconda install
