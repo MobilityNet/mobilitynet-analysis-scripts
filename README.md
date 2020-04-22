@@ -1,6 +1,6 @@
 # Reproducible evaluation of data collection using public data #
 
-[![osx-ubuntu-manual-install](https://github.com/MobilityNet/mobilitynet-analysis-scripts/workflows/osx-ubuntu-manual-install/badge.svg)](https://github.com/MobilityNet/mobilitynet-analysis-scripts/actions?query=workflow%3Aosx-ubuntu-manual-install) [![binder-install](https://github.com/MobilityNet/mobilitynet-analysis-scripts/workflows/binder-install/badge.svg)](https://github.com/MobilityNet/mobilitynet-analysis-scripts/actions?query=workflow%3Abinder-install)
+[![osx-ubuntu-manual-install](https://github.com/MobilityNet/mobilitynet-analysis-scripts/workflows/osx-ubuntu-manual-install/badge.svg)](https://github.com/MobilityNet/mobilitynet-analysis-scripts/actions?query=workflow%3Aosx-ubuntu-manual-install) [![binder-install](https://github.com/MobilityNet/mobilitynet-analysis-scripts/workflows/binder-install/badge.svg)](https://github.com/MobilityNet/mobilitynet-analysis-scripts/actions?query=workflow%3Abinder-install) [![Check Markdown links](https://github.com/MobilityNet/mobilitynet-analysis-scripts/workflows/Check%20Markdown%20links/badge.svg)](https://github.com/MobilityNet/mobilitynet-analysis-scripts/actions?query=workflow%3A%22Check+Markdown+links%22)
 
 This repository contains juypter notebooks for the evaluation of smartphone
 app-based data collection. It is designed to be launched with binder
