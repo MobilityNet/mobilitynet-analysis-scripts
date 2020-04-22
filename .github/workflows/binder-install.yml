@@ -28,8 +28,7 @@ jobs:
 
     - name: Install repo2docker
       run: |
-        pip3 install --upgrade setuptools
-        pip3 install jupyter-repo2docker
+        python3 -m pip install jupyter-repo2docker
 
     - name: Build docker from checked out repo
       run: jupyter-repo2docker --no-run .
