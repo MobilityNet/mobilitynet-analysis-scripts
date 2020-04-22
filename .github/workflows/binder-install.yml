@@ -36,18 +36,15 @@ jobs:
       run: |
         echo "image SHA was ${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }}"
         echo "Checking to see if image exists"
-        docker image list
-        echo "Done checking images"
+        docker image list | grep ${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }}
+        echo "Checking to see if repo2docker creation image exists"
+        docker image list | grep repo2docker
 
-        echo "Conda version was ${{ steps.install-using-repo2docker.outputs.CURR_CONDA_VER }}"
-        echo "repo2docker version was ${{ steps.install-using-repo2docker.outputs.CURR_R2D_VER }}"
-        echo "docker version was ${{ steps.install-using-repo2docker.outputs.CURR_DOCKER_VER }}"
-
+        echo "Reading versions of related software"
+        docker --version
         CURR_DOCKER_VER=`docker --version`
-        echo "On rechecking, docker ver is $CURR_DOCKER_VER"
-
+        docker run ${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }} /srv/conda/bin/conda --version | cut -d " " -f 2
         CURR_CONDA_VER=`docker run ${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }} /srv/conda/bin/conda --version | cut -d " " -f 2`
-        echo "On rechecking, conda ver is $CURR_CONDA_VER"
-
+        docker run jupyter/repo2docker:master pip3 list | grep jupyter-repo2docker
         CURR_R2D_VER=`docker run jupyter/repo2docker:master pip3 list | grep jupyter-repo2docker`
-        echo "On rechecking, repo2docker ver is $CURR_R2D_VER"
+        echo "On checking, docker ver is $CURR_DOCKER_VER, conda ver is $CURR_CONDA_VER and repo2docker ver is $CURR_R2D_VER"
