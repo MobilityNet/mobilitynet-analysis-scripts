@@ -28,9 +28,12 @@ jobs:
 
     - name: install-using-repo2docker
       uses: shankari/repo2docker-action@master
+      with:
+        IMAGE_NAME: "mobilitynet"
 
     - name: Verify repo2docker environment
       run: |
         echo "Conda version was ${{ steps.install-using-repo2docker.outputs.CURR_CONDA_VER }}"
         echo "repo2docker version was ${{ steps.install-using-repo2docker.outputs.CURR_R2D_VER }}"
+        echo "docker version was ${{ steps.install-using-repo2docker.outputs.CURR_DOCKER_VER }}"
 
