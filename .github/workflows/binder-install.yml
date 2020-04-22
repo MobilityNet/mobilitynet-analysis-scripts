@@ -35,10 +35,13 @@ jobs:
     - name: Verify repo2docker environment
       run: |
         echo "image SHA was ${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }}"
-        echo "Checking to see if image exists"
-        docker image list | grep ${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }}
+        echo "Listing all images"
+        docker image list
+
+        echo "Checking to see if mobilitynet exists"
+        docker image list | grep mobilitynet | wc -l
         echo "Checking to see if repo2docker creation image exists"
-        docker image list | grep repo2docker
+        docker image list | grep repo2docker | wc -l
 
         echo "Reading versions of related software"
         docker --version
