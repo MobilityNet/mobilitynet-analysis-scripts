@@ -44,10 +44,15 @@ jobs:
         docker image list | grep repo2docker | wc -l
 
         echo "Reading versions of related software"
+        echo "---- DOCKER ----"
         docker --version
         CURR_DOCKER_VER=`docker --version`
+        echo "---- CONDA ----"
         docker run ${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }} /srv/conda/bin/conda --version | cut -d " " -f 2
         CURR_CONDA_VER=`docker run ${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }} /srv/conda/bin/conda --version | cut -d " " -f 2`
+        echo "---- repo2docker----"
         docker run jupyter/repo2docker:master pip3 list | grep jupyter-repo2docker
         CURR_R2D_VER=`docker run jupyter/repo2docker:master pip3 list | grep jupyter-repo2docker`
-        echo "On checking, docker ver is $CURR_DOCKER_VER, conda ver is $CURR_CONDA_VER and repo2docker ver is $CURR_R2D_VER"
+        echo "On checking, docker ver is $CURR_DOCKER_VER"
+        echo "             conda ver is $CURR_CONDA_VER and"
+        echo "             repo2docker ver is $CURR_R2D_VER"
