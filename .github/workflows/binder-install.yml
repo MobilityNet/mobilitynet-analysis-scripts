@@ -26,10 +26,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Install repo2docker
-      run: |
-        python3 -m pip install jupyter-repo2docker
+    - name: Install using repo2docker
+      uses: shankari/repo2docker-action@master
 
-    - name: Build docker from checked out repo
-      run: jupyter-repo2docker --no-run .
 
