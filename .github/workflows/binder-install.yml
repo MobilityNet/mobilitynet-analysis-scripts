@@ -26,7 +26,8 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: install-using-repo2docker
+    - name: Create a docker image using repo2docker
+      id: install-using-repo2docker
       uses: shankari/repo2docker-action@master
       with:
         IMAGE_NAME: "mobilitynet"
@@ -36,4 +37,8 @@ jobs:
         echo "Conda version was ${{ steps.install-using-repo2docker.outputs.CURR_CONDA_VER }}"
         echo "repo2docker version was ${{ steps.install-using-repo2docker.outputs.CURR_R2D_VER }}"
         echo "docker version was ${{ steps.install-using-repo2docker.outputs.CURR_DOCKER_VER }}"
+        echo "image SHA was ${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }}"
+        echo "Checking to see if image exists"
+        docker image list
+        echo "Done checking images"
 
