@@ -5,6 +5,7 @@
 # Thanks to @tpogden for his gist
 
 import os
+import sys
 import argparse
 import glob
 
@@ -55,9 +56,11 @@ for i, n in enumerate(notebooks):
             msg = 'Error executing the notebook "%s".\n' % n
             msg += 'See notebook "%s" for the traceback.' % n_out
             print(msg)
+            sys.exit(1)
         except TimeoutError:
             msg = 'Timeout executing the notebook "%s".\n' % n
             print(msg)
+            sys.exit(110)
         finally:
             # Write output file
             with open(n_out + '.ipynb', mode='wt') as f:
