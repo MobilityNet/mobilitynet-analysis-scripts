@@ -40,4 +40,5 @@ jobs:
     - name: Test the interactive timeline
       shell: bash -l {0}
       run: |
-        bin/run_notebooks.py ${{ matrix.target }}
+        source $SOURCE_SCRIPT
+        python bin/run_notebooks.py ${{ matrix.target }}
