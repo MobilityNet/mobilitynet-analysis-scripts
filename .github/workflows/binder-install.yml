@@ -67,8 +67,8 @@ jobs:
 
     - name: Save the built image as an artifact
       run: |
-        echo "About to upload ${{ steps.package-build.outputs.OUT_FILENAME}}.tar"
-        ls -al ${{ steps.package-build.outputs.OUT_FILENAME}}.tar
+        echo "About to upload /tmp/${{ steps.package-build.outputs.OUT_FILENAME}}.tar"
+        ls -al /tmp/${{ steps.package-build.outputs.OUT_FILENAME}}.tar
         echo "Space left on disk"
         df -h
 #       uses: actions/upload-artifact@v1
