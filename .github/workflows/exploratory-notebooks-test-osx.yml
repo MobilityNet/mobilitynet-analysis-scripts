@@ -41,5 +41,6 @@ jobs:
       shell: bash -l {0}
       run: |
         source $SOURCE_SCRIPT
-        source activate emissioneval
+        conda activate emissioneval
+        conda env list
         python bin/run_notebooks.py ${{ matrix.target }}
