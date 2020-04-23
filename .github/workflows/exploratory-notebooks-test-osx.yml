@@ -41,4 +41,5 @@ jobs:
       shell: bash -l {0}
       run: |
         source $SOURCE_SCRIPT
+        source activate emissioneval
         python bin/run_notebooks.py ${{ matrix.target }}
