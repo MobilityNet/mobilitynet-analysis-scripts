@@ -1,0 +1,43 @@
+name: exploratory-notebook-test-osx
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron:  '5 4 * * 0'
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  test:
+    env: 
+      EXP_CONDA_VER: 4.7.12
+      SOURCE_SCRIPT: /Users/runner/miniconda-4.7.12/etc/profile.d/conda.sh
+      PLATFORM: MacOSX-x86_64
+    # We run only on macos here since the repo2docker tests will run on ubuntu
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        target: [Data_exploration_template.ipynb, timeline_car_scooter_brex_san_jose.ipynb, timeline_train_bus_ebike_mtv_ucb.ipynb]
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+
+    - name: Install miniconda + the emissioneval environment
+      shell: bash -l {0}
+      run: |
+        source setup/setup_conda.sh $EXP_CONDA_VER $PLATFORM
+        source setup/setup.sh
+        conda activate emissioneval
+
+    - name: Test the interactive timeline
+      shell: bash -l {0}
+      run: |
+        bin/run_notebooks.py ${{ matrix.target }}
