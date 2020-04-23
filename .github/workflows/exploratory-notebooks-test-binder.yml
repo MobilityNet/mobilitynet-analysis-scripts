@@ -59,7 +59,7 @@ jobs:
 
         echo "About to copy file from docker"
         docker exec mobilitynet_test ls
-        DOCKER_WD=`docker exec mobilitynet_test echo $PWD`
+        DOCKER_WD=`docker exec mobilitynet_test pwd"`
         echo "DOCKER_WD=$DOCKER_WD"
         docker exec mobilitynet_test ls $DOCKER_WD
         docker exec mobilitynet_test ls $DOCKER_WD/$OUT_FILENAME
