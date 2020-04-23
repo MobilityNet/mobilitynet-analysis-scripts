@@ -29,9 +29,6 @@ jobs:
         - os: ubuntu-16.04
           PLATFORM: Linux-x86_64
           SOURCE_SCRIPT: /home/runner/miniconda-4.7.12/etc/profile.d/conda.sh
-        - os: ubuntu-18.04
-          PLATFORM: Linux-x86_64
-          SOURCE_SCRIPT: /home/runner/miniconda-4.7.12/etc/profile.d/conda.sh
         - os: ubuntu-latest
           PLATFORM: Linux-x86_64
           SOURCE_SCRIPT: /home/runner/miniconda-4.7.12/etc/profile.d/conda.sh

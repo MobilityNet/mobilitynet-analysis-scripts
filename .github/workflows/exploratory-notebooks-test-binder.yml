@@ -24,7 +24,7 @@ jobs:
         # Two tests are sufficient because the other notebooks are already
         # tested in the manual install and the timeline notebooks are almost
         # identical
-        target: [Data_exploration_template.ipynb, timeline_car_scooter_brex_san_jose.ipynb]
+        target: [Data_exploration_template.ipynb]
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
