@@ -46,7 +46,7 @@ jobs:
 
         mkdir -p /tmp/artifacts
         # docker run -v /tmp/artifacts:/artifacts ${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }} "python bin/run_notebooks.py ${{ matrix.target }} && cp $OUT_FILENAME /artifacts"
-        docker run -v /tmp/artifacts:/artifacts ${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }} "which python && python --version && ls bin && ls ${{ matrix.target}} && ls /artifacts"
+        # docker run -v /tmp/artifacts:/artifacts ${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }} "which python && python --version && ls bin && ls ${{ matrix.target}} && ls /artifacts"
         docker run -v /tmp/artifacts:/artifacts ${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }} << EOF
         echo "About to run notebooks"
         python bin/run_notebooks.py ${{ matrix.target }}
