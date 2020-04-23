@@ -45,13 +45,18 @@ jobs:
         conda activate emissioneval
         conda env list
         python bin/run_notebooks.py ${{ matrix.target }}
+
+    - name: Generate failure output file
+      id: print-out-file-name
+      if: failure()
         OUT_FILENAME=`echo ${{ matrix.target }} | sed "s/.ipynb/_out.ipynb/"`
         echo "output filename = $OUT_FILENAME"
         echo "::set-output name=OUT_FILENAME::${OUT_FILENAME}"
 
     - name: Upload result for the interactive timeline
       uses: actions/upload-artifact@v1
+      if: failure()
       with:
-        name: ${{ steps.run-test.outputs.OUT_FILENAME }}
-        path: ./${{ steps.run-test.outputs.OUT_FILENAME }}
+        name: ${{ steps.print-out-file-name.outputs.OUT_FILENAME }}
+        path: ./${{ steps.print-out-file-name.outputs.OUT_FILENAME }}
 
