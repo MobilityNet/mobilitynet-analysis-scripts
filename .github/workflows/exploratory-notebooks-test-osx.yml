@@ -49,6 +49,7 @@ jobs:
     - name: Generate failure output file
       id: print-out-file-name
       if: failure()
+      run: |
         OUT_FILENAME=`echo ${{ matrix.target }} | sed "s/.ipynb/_out.ipynb/"`
         echo "output filename = $OUT_FILENAME"
         echo "::set-output name=OUT_FILENAME::${OUT_FILENAME}"
