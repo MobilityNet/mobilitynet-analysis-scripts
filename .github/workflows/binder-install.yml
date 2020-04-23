@@ -62,10 +62,16 @@ jobs:
       run: |
         OUT_FILENAME=`echo ${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }} | sed "s/:/_/"`
         docker save ${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }} > /tmp/$OUT_FILENAME.tar
+        ls -alh /tmp/$OUT_FILENAME.tar
         echo "::set-output name=OUT_FILENAME::${OUT_FILENAME}"
 
     - name: Save the built image as an artifact
-      uses: actions/upload-artifact@v1
-      with:
-        name: ${{ steps.package-build.outputs.OUT_FILENAME}}.tar
-        path: /tmp/${{ steps.package-build.outputs.OUT_FILENAME }}.tar
+      run: |
+        echo "About to upload ${{ steps.package-build.outputs.OUT_FILENAME}}.tar"
+        ls -al ${{ steps.package-build.outputs.OUT_FILENAME}}.tar
+        echo "Space left on disk"
+        df -h
+#       uses: actions/upload-artifact@v1
+#       with:
+#         name: ${{ steps.package-build.outputs.OUT_FILENAME}}.tar
+#         path: /tmp/${{ steps.package-build.outputs.OUT_FILENAME }}.tar
