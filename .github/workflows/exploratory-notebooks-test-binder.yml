@@ -49,8 +49,6 @@ jobs:
         docker exec mobilitynet_test python bin/run_notebooks.py ${{ matrix.target }}
         echo "After running the notebooks, checking container list"
         docker container list
-        echo "After running the notebooks, checking ps -a"
-        docker ps -a
 
     - name: Copy the failure output
       id: copy-failure-output
@@ -61,7 +59,9 @@ jobs:
 
         echo "About to copy file from docker"
         docker exec mobilitynet_test ls
-        docker cp mobilitynet_test:$OUT_FILENAME /tmp
+        DOCKER_WD=`docker exec mobilitynet_test echo $PWD`
+        echo "DOCKER_WD=$DOCKER_WD"
+        docker cp mobilitynet_test:$DOCKER_WD/$OUT_FILENAME /tmp
         ls -al /tmp/$OUT_FILENAME
         echo "::set-output name=OUT_FILENAME::${OUT_FILENAME}"
 
@@ -76,6 +76,4 @@ jobs:
       run: |
         echo "Running docker container list"
         docker container list
-        echo "Running docker ps -a"
-        docker ps -a
-        # docker stop mobility_test
+        docker stop mobilitynet_test
