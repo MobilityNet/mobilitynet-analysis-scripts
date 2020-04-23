@@ -64,5 +64,5 @@ jobs:
     - name: Save the built image as an artifact
       uses: actions/upload-artifact@v1
       with:
-        name: ${{ steps.run-test.outputs.OUT_FILENAME }}.tar
-        path: /tmp/${{ steps.run-test.outputs.OUT_FILENAME }}.tar
+        name: ${{ steps.run-test.outputs.IMAGE_SHA_NAME }}.tar
+        path: /tmp/${{ steps.run-test.outputs.IMAGE_SHA_NAME }}.tar
