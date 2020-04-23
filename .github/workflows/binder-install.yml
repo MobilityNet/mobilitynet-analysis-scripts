@@ -64,5 +64,5 @@ jobs:
     - name: Save the built image as an artifact
       uses: actions/upload-artifact@v1
       with:
-        name: ${{ steps.run-test.outputs.IMAGE_SHA_NAME }}.tar
-        path: /tmp/${{ steps.run-test.outputs.IMAGE_SHA_NAME }}.tar
+        name: ${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }}.tar
+        path: /tmp/${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }}.tar
