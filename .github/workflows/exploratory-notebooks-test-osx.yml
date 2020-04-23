@@ -38,14 +38,6 @@ jobs:
         conda activate emissioneval
 
     - name: Test the interactive timeline
-      shell: bash -l {0}
-      run: |
-        source $SOURCE_SCRIPT
-        conda activate emissioneval
-        conda env list
-        python bin/run_notebooks.py ${{ matrix.target }}
-
-    - name: Test the interactive timeline
       id: run-test
       shell: bash -l {0}
       run: |

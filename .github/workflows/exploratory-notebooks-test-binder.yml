@@ -47,6 +47,15 @@ jobs:
         mkdir -p /tmp/artifacts
         # docker run -v /tmp/artifacts:/artifacts ${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }} "python bin/run_notebooks.py ${{ matrix.target }} && cp $OUT_FILENAME /artifacts"
         docker run -v /tmp/artifacts:/artifacts ${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }} "which python && python --version && ls bin && ls ${{ matrix.target}} && ls /artifacts"
+        docker run -v /tmp/artifacts:/artifacts ${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }} << EOF
+        echo "About to run notebooks"
+        python bin/run_notebooks.py ${{ matrix.target }}
+        TEST_EXIT_CODE = $?
+        echo "Existing exit code = $TEST_EXIT_CODE, copying $OUT_FILENAME to artifacts"
+        cp $OUT_FILENAME /artifacts
+        echo "Exiting with the correct exit code"
+        exit $TEST_EXIT_CODE
+        EOF
 
         echo "Checking to see that the output file is there"
         ls /tmp/artifacts
