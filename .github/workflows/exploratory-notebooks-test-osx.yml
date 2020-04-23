@@ -61,5 +61,5 @@ jobs:
       uses: actions/upload-artifact@v1
       with:
         name: ${{ steps.run-test.outputs.OUT_FILENAME }}
-        path: .
+        path: ./${{ steps.run-test.outputs.OUT_FILENAME }}
 
