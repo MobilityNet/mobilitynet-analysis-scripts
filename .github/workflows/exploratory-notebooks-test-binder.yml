@@ -41,14 +41,14 @@ jobs:
     - name: Start the recently built docker container
       run: |
         echo "image SHA was ${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }}"
-        docker run --name mobilitynet_test -p 8888:8888  ${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }} jupyter notebook --ip 0.0.0.0
+        docker run --name mobilitynet_test -d -p 8888:8888  ${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }} jupyter notebook --ip 0.0.0.0
 
     - name: Test the interactive timeline
       run: |
         echo "About to run notebooks"
         docker exec mobilitynet_test python bin/run_notebooks.py ${{ matrix.target }}
 
-    - name: Test the interactive timeline
+    - name: Copy the failure output
       id: copy-failure-output
       if: failure()
       run: |

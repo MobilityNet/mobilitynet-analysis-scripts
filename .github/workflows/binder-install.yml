@@ -58,11 +58,14 @@ jobs:
         echo "             repo2docker ver is $CURR_R2D_VER"
 
     - name: Package the built image
+      id: package-build
       run: |
-        docker save ${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }} > /tmp/${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }}.tar
+        OUT_FILENAME=`echo ${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }} | sed "s/:/_/"`
+        docker save ${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }} > /tmp/$OUT_FILENAME.tar
+        echo "::set-output name=OUT_FILENAME::${OUT_FILENAME}"
 
     - name: Save the built image as an artifact
       uses: actions/upload-artifact@v1
       with:
-        name: ${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }}.tar
-        path: /tmp/${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }}.tar
+        name: ${{ steps.package-build.outputs.OUT_FILENAME}}.tar
+        path: /tmp/${{ steps.package-build.outputs.OUT_FILENAME }}.tar
