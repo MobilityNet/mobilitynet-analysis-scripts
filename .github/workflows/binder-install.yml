@@ -56,3 +56,13 @@ jobs:
         echo "On checking, docker ver is $CURR_DOCKER_VER"
         echo "             conda ver is $CURR_CONDA_VER and"
         echo "             repo2docker ver is $CURR_R2D_VER"
+
+    - name: Package the built image
+      run: |
+        docker save ${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }} > /tmp/${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }}.tar
+
+    - name: Save the built image as an artifact
+      uses: actions/upload-artifact@v1
+      with:
+        name: ${{ steps.run-test.outputs.OUT_FILENAME }}.tar
+        path: /tmp/${{ steps.run-test.outputs.OUT_FILENAME }}.tar
