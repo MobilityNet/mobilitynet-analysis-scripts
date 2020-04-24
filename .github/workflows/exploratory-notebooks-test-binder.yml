@@ -71,52 +71,52 @@ jobs:
         echo "             conda ver is $CURR_CONDA_VER and"
         echo "             repo2docker ver is $CURR_R2D_VER"
 
-    - name: Package the built image
-      id: package-build
-      run: |
-        OUT_IMGNAME=`echo ${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }} | sed "s/:/_/"`
-        docker save ${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }} > /tmp/$OUT_IMGNAME.tar
-        ls -alh /tmp/$OUT_IMGNAME.tar
-        gzip /tmp/$OUT_IMGNAME.tar
-        ls -alh /tmp/$OUT_IMGNAME.tar.gz
-        echo "Space left on disk"
-        df -h
-        echo "::set-output name=OUT_IMGNAME::${OUT_IMGNAME}"
-
-    - name: Save the built image as an artifact
-      uses: actions/upload-artifact@v1
-      with:
-        name: repo2docker_image
-        path: /tmp/${{ steps.package-build.outputs.OUT_IMGNAME }}.tar.gz
-
-  test:
-    needs: build
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        # Two tests are sufficient because the other notebooks are already
-        # tested in the manual install and the timeline notebooks are almost
-        # identical
-        target: [Data_exploration_template.ipynb]
-
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-
-    - name: Downloads the built image as an artifact
-      uses: actions/download-artifact@v1
-      with:
-        name: repo2docker_image
-
-    - name: Import the artifact as an image
-      run: |
-        ls -alh repo2docker_image/
-        docker load --input repo2docker_image/${{ needs.build.outputs.OUT_IMGNAME }}.tar.gz
-
+#     - name: Package the built image
+#       id: package-build
+#       run: |
+#         OUT_IMGNAME=`echo ${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }} | sed "s/:/_/"`
+#         docker save ${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }} > /tmp/$OUT_IMGNAME.tar
+#         ls -alh /tmp/$OUT_IMGNAME.tar
+#         gzip /tmp/$OUT_IMGNAME.tar
+#         ls -alh /tmp/$OUT_IMGNAME.tar.gz
+#         echo "Space left on disk"
+#         df -h
+#         echo "::set-output name=OUT_IMGNAME::${OUT_IMGNAME}"
+# 
+#     - name: Save the built image as an artifact
+#       uses: actions/upload-artifact@v1
+#       with:
+#         name: repo2docker_image
+#         path: /tmp/${{ steps.package-build.outputs.OUT_IMGNAME }}.tar.gz
+# 
+#   test:
+#     needs: build
+#     runs-on: ubuntu-latest
+#     strategy:
+#       matrix:
+#         # Two tests are sufficient because the other notebooks are already
+#         # tested in the manual install and the timeline notebooks are almost
+#         # identical
+#         target: [Data_exploration_template.ipynb]
+# 
+#     steps:
+#     - name: Checkout
+#       uses: actions/checkout@v2
+# 
+#     - name: Downloads the built image as an artifact
+#       uses: actions/download-artifact@v1
+#       with:
+#         name: repo2docker_image
+# 
+#     - name: Import the artifact as an image
+#       run: |
+#         ls -alh repo2docker_image/
+#         docker load --input repo2docker_image/${{ needs.build.outputs.OUT_IMGNAME }}.tar.gz
+# 
     - name: Start the recently built docker container
       run: |
         echo "image SHA was ${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }}"
-        docker run --name mobilitynet_test -d -p 8888:8888  ${{ needs.build.outputs.IMAGE_SHA_NAME }} jupyter notebook --ip 0.0.0.0
+        docker run --name mobilitynet_test -d -p 8888:8888  ${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }} jupyter notebook --ip 0.0.0.0
 
     - name: Test the interactive timeline
       run: |
