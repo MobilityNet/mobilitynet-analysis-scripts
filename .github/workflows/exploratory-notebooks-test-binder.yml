@@ -99,6 +99,10 @@ jobs:
         # identical
         target: [Data_exploration_template.ipynb]
 
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
     - name: Downloads the built image as an artifact
       uses: actions/download-artifact@v1
       with:
