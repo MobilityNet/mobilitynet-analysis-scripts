@@ -1,0 +1,81 @@
+# This is a basic workflow to help you get started with Actions
+
+name: exploratory-notebook-test-binder
+
+# Controls when the action will run. Triggers the workflow on push or pull request 
+# events but only for the master branch
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron:  '5 4 * * 0'
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  test:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # Two tests are sufficient because the other notebooks are already
+        # tested in the manual install and the timeline notebooks are almost
+        # identical
+        target: [Data_exploration_template.ipynb]
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Create a docker image using repo2docker
+      id: install-using-repo2docker
+      uses: shankari/repo2docker-action@master
+      with:
+        IMAGE_NAME: "mobilitynet"
+
+    - name: Start the recently built docker container
+      run: |
+        echo "image SHA was ${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }}"
+        docker run --name mobilitynet_test -d -p 8888:8888  ${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }} jupyter notebook --ip 0.0.0.0
+
+    - name: Test the interactive timeline
+      run: |
+        echo "About to run notebooks"
+        docker exec mobilitynet_test python bin/run_notebooks.py ${{ matrix.target }}
+        echo "After running the notebooks, checking container list"
+        docker container list
+
+    - name: Copy the failure output
+      id: copy-failure-output
+      if: failure()
+      run: |
+        OUT_FILENAME=`echo ${{ matrix.target }} | sed "s/.ipynb/_out.ipynb/"`
+        echo "output filename = $OUT_FILENAME"
+
+        echo "About to copy file from docker"
+        docker exec mobilitynet_test ls
+        DOCKER_WD=`docker exec mobilitynet_test pwd`
+        echo "DOCKER_WD=$DOCKER_WD"
+        docker exec mobilitynet_test ls $DOCKER_WD
+        docker exec mobilitynet_test ls $DOCKER_WD/$OUT_FILENAME
+        docker cp mobilitynet_test:$DOCKER_WD/$OUT_FILENAME /tmp
+        ls -al /tmp/$OUT_FILENAME
+        echo "::set-output name=OUT_FILENAME::${OUT_FILENAME}"
+
+    - name: Upload result for the interactive timeline
+      if: failure()
+      uses: actions/upload-artifact@v1
+      with:
+        name: ${{ steps.copy-failure-output.outputs.OUT_FILENAME }}
+        path: /tmp/${{ steps.copy-failure-output.outputs.OUT_FILENAME }}
+
+    - name: Shutdown the recently built docker container
+      run: |
+        echo "Running docker container list"
+        docker container list
+        docker stop mobilitynet_test
