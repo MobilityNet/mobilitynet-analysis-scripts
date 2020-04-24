@@ -23,7 +23,10 @@ jobs:
     runs-on: macos-latest
     strategy:
       matrix:
-        target: [Data_exploration_template.ipynb, timeline_train_bus_ebike_mtv_ucb.ipynb]
+        target: [Data_exploration_template.ipynb,
+                 timeline_train_bus_ebike_mtv_ucb.ipynb,
+                 timeline_car_scooter_brex_san_jose.ipynb,
+                 timeline_unimodal_car_bike_los_altos.ipynb]
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:

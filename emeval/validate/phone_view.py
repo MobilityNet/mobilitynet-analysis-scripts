@@ -1,7 +1,8 @@
 import arrow
 import pandas as pd
 
-MAX_DURATION_VARIATION = 5 * 60 # seconds
+WARN_DURATION_VARIATION = 5 * 60 # seconds
+MAX_DURATION_VARIATION = 45 * 60 # seconds
 
 def get_expected_config_map_for_calibration(sd):
     expected_config_map = {}
@@ -169,6 +170,9 @@ def validate_range_durations(phone_view, range_key, range_entry_id):
     for col in duration_df:
         duration_variation = duration_df[col] - duration_df[col].median()
         print("For %s, duration_variation = %s" % (col, duration_variation.tolist()))
+        if duration_variation.abs().max() > WARN_DURATION_VARIATION:
+            "WARNING: for %s, duration_variation.abs().max() %d > threshold %d" % \
+                (col, duration_variation.abs().max(), WARN_DURATION_VARIATION)
         assert duration_variation.abs().max() < MAX_DURATION_VARIATION,\
             "INVALID: for %s, duration_variation.abs().max() %d > threshold %d" % \
                 (col, duration_variation.abs().max(), MAX_DURATION_VARIATION)
