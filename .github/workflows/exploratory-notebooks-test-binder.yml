@@ -27,15 +27,12 @@ jobs:
   # https://github.com/MobilityNet/mobilitynet-analysis-scripts/runs/612938777?check_suite_focus=true
   # Fail to upload '/tmp/mobilitynet_ec3aba6d029f.tar' due to 'Blob is incomplete (missing block).
   # while we figure out how to trim that, we have to run them as steps in the same job
-  build_and_test:
+  build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        # Two tests are sufficient because the other notebooks are already
-        # tested in the manual install and the timeline notebooks are almost
-        # identical
-        target: [Data_exploration_template.ipynb]
+    outputs:
+        IMAGE_SHA_NAME: ${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }}
+        OUT_IMGNAME: ${{ steps.package-build.outputs.OUT_IMGNAME }}
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -89,13 +86,33 @@ jobs:
     - name: Save the built image as an artifact
       uses: actions/upload-artifact@v1
       with:
-        name: ${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }}
+        name: repo2docker_image
         path: /tmp/${{ steps.package-build.outputs.OUT_IMGNAME }}.tar.gz
+
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # Two tests are sufficient because the other notebooks are already
+        # tested in the manual install and the timeline notebooks are almost
+        # identical
+        target: [Data_exploration_template.ipynb]
+
+    - name: Downloads the built image as an artifact
+      uses: actions/download-artifact@v1
+      with:
+        name: repo2docker_image
+
+    - name: Import the artifact as an image
+      run: |
+        ls -alh repo2docker_image/
+        docker load --input repo2docker_image/${{ needs.build.outputs.OUT_IMGNAME }}.tar.gz
 
     - name: Start the recently built docker container
       run: |
         echo "image SHA was ${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }}"
-        docker run --name mobilitynet_test -d -p 8888:8888  ${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }} jupyter notebook --ip 0.0.0.0
+        docker run --name mobilitynet_test -d -p 8888:8888  ${{ needs.build.outputs.IMAGE_SHA_NAME }} jupyter notebook --ip 0.0.0.0
 
     - name: Test the interactive timeline
       run: |
