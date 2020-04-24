@@ -82,18 +82,16 @@ jobs:
         ls -alh /tmp/$OUT_IMGNAME.tar
         gzip /tmp/$OUT_IMGNAME.tar
         ls -alh /tmp/$OUT_IMGNAME.tar.gz
+        echo "Space left on disk"
+        df -h
         echo "::set-output name=OUT_IMGNAME::${OUT_IMGNAME}"
 
     - name: Save the built image as an artifact
       run: |
-        echo "About to upload /tmp/${{ steps.package-build.outputs.OUT_IMGNAME}}.tar"
-        ls -alh /tmp/${{ steps.package-build.outputs.OUT_IMGNAME}}.tar.gz
-        echo "Space left on disk"
-        df -h
-#       uses: actions/upload-artifact@v1
-#       with:
-#         name: ${{ steps.package-build.outputs.OUT_IMGNAME}}.tar
-#         path: /tmp/${{ steps.package-build.outputs.OUT_IMGNAME }}.tar
+        uses: actions/upload-artifact@v1
+        with:
+          name: ${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }}
+          path: /tmp/${{ steps.package-build.outputs.OUT_IMGNAME }}.tar.gz
 
     - name: Start the recently built docker container
       run: |
