@@ -87,11 +87,10 @@ jobs:
         echo "::set-output name=OUT_IMGNAME::${OUT_IMGNAME}"
 
     - name: Save the built image as an artifact
-      run: |
-        uses: actions/upload-artifact@v1
-        with:
-          name: ${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }}
-          path: /tmp/${{ steps.package-build.outputs.OUT_IMGNAME }}.tar.gz
+      uses: actions/upload-artifact@v1
+      with:
+        name: ${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }}
+        path: /tmp/${{ steps.package-build.outputs.OUT_IMGNAME }}.tar.gz
 
     - name: Start the recently built docker container
       run: |
