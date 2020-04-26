@@ -1,0 +1,81 @@
+name: osx-ubuntu-manual-install
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron:  '5 4 * * 0'
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    env: 
+      EXP_CONDA_VER: 4.7.12
+    # The type of runner that the job will run on
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-16.04, ubuntu-latest, macos-latest]
+        include:
+        - os: macos-latest
+          PLATFORM: MacOSX-x86_64
+          SOURCE_SCRIPT: /Users/runner/miniconda-4.7.12/etc/profile.d/conda.sh
+        - os: ubuntu-16.04
+          PLATFORM: Linux-x86_64
+          SOURCE_SCRIPT: /home/runner/miniconda-4.7.12/etc/profile.d/conda.sh
+        - os: ubuntu-latest
+          PLATFORM: Linux-x86_64
+          SOURCE_SCRIPT: /home/runner/miniconda-4.7.12/etc/profile.d/conda.sh
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+
+    - name: Install miniconda
+      shell: bash -l {0}
+      run: |
+        source setup/setup_conda.sh $EXP_CONDA_VER ${{ matrix.PLATFORM }}
+        if [ ${{ matrix.PLATFORM }} == "Linux-x86_64" ]; then
+            echo "Linux install, going to check conda path"
+            which conda
+        else
+            echo "OSX install, skipping conda path check"
+            echo "    since 'which conda' inexplicably returns with status code 1"
+            echo "    only in the CI environment"
+        fi
+
+    - name: Check whether the CI environment variable is set
+      shell: bash -l {0}
+      run: |
+        source ${{ matrix.SOURCE_SCRIPT }}
+        echo $CI
+
+    - name: Setup the emissioneval environment
+      shell: bash -l {0}
+      run: |
+        conda --version
+        which conda
+        source ${{ matrix.SOURCE_SCRIPT }}
+        conda --version
+        source setup/setup.sh
+        echo "About to activate environment"
+        conda activate emissioneval
+        conda env list
+
+    - name: Teardown the emissioneval environment
+      shell: bash -l {0}
+      run: |
+        source ${{ matrix.SOURCE_SCRIPT }}
+        source setup/teardown.sh
+
+    - name: Teardown the miniconda install
+      shell: bash -l {0}
+      run: |
+        source setup/teardown_conda.sh $EXP_CONDA_VER

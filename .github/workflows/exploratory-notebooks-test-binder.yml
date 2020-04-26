@@ -1,0 +1,162 @@
+# This is a basic workflow to help you get started with Actions
+
+name: exploratory-notebook-test-binder
+
+# Controls when the action will run. Triggers the workflow on push or pull request 
+# events but only for the master branch
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron:  '5 4 * * 0'
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # We would ideally have two jobs here called "build" and "test"
+  # However, in order to do that we would have to publish the image as an artifact
+  # to share it between jobs
+  # https://help.github.com/en/actions/configuring-and-managing-workflows/persisting-workflow-data-using-artifacts
+  # and it looks like the generated image is too large
+  # https://github.com/MobilityNet/mobilitynet-analysis-scripts/runs/613707818?check_suite_focus=true
+  # -rw-r--r-- 1 runner docker 3.3G Apr 23 21:37 /tmp/mobilitynet_84f67fcad71c.tar
+  # Filesystem      Size  Used Avail Use% Mounted on
+  # /dev/sda1        84G   79G  5.1G  94% /
+  # https://github.com/MobilityNet/mobilitynet-analysis-scripts/runs/612938777?check_suite_focus=true
+  # Fail to upload '/tmp/mobilitynet_ec3aba6d029f.tar' due to 'Blob is incomplete (missing block).
+  # while we figure out how to trim that, we have to run them as steps in the same job
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    outputs:
+        IMAGE_SHA_NAME: ${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }}
+        OUT_IMGNAME: ${{ steps.package-build.outputs.OUT_IMGNAME }}
+    strategy:
+      matrix:
+        # Two tests are sufficient because the other notebooks are already
+        # tested in the manual install and the timeline notebooks are almost
+        # identical
+        target: [Data_exploration_template.ipynb, timeline_car_scooter_brex_san_jose.ipynb]
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Create a docker image using repo2docker
+      id: install-using-repo2docker
+      uses: shankari/repo2docker-action@master
+      with:
+        IMAGE_NAME: "mobilitynet"
+
+    - name: Verify repo2docker environment
+      run: |
+        echo "image SHA was ${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }}"
+        echo "Listing all images"
+        docker image list
+
+        echo "Checking to see if mobilitynet exists"
+        docker image list | grep mobilitynet | wc -l
+        echo "Checking to see if repo2docker creation image exists"
+        docker image list | grep repo2docker | wc -l
+
+        echo "Reading versions of related software"
+        echo "---- DOCKER ----"
+        docker --version
+        CURR_DOCKER_VER=`docker --version`
+        echo "---- CONDA ----"
+        docker run ${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }} /srv/conda/bin/conda --version | cut -d " " -f 2
+        CURR_CONDA_VER=`docker run ${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }} /srv/conda/bin/conda --version | cut -d " " -f 2`
+        echo "---- repo2docker----"
+        docker run jupyter/repo2docker:master pip3 list | grep jupyter-repo2docker
+        CURR_R2D_VER=`docker run jupyter/repo2docker:master pip3 list | grep jupyter-repo2docker`
+        echo "On checking, docker ver is $CURR_DOCKER_VER"
+        echo "             conda ver is $CURR_CONDA_VER and"
+        echo "             repo2docker ver is $CURR_R2D_VER"
+
+#     - name: Package the built image
+#       id: package-build
+#       run: |
+#         OUT_IMGNAME=`echo ${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }} | sed "s/:/_/"`
+#         docker save ${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }} > /tmp/$OUT_IMGNAME.tar
+#         ls -alh /tmp/$OUT_IMGNAME.tar
+#         gzip /tmp/$OUT_IMGNAME.tar
+#         ls -alh /tmp/$OUT_IMGNAME.tar.gz
+#         echo "Space left on disk"
+#         df -h
+#         echo "::set-output name=OUT_IMGNAME::${OUT_IMGNAME}"
+# 
+#     - name: Save the built image as an artifact
+#       uses: actions/upload-artifact@v1
+#       with:
+#         name: repo2docker_image
+#         path: /tmp/${{ steps.package-build.outputs.OUT_IMGNAME }}.tar.gz
+# 
+#   test:
+#     needs: build
+#     runs-on: ubuntu-latest
+#     strategy:
+#       matrix:
+#         # Two tests are sufficient because the other notebooks are already
+#         # tested in the manual install and the timeline notebooks are almost
+#         # identical
+#         target: [Data_exploration_template.ipynb]
+# 
+#     steps:
+#     - name: Checkout
+#       uses: actions/checkout@v2
+# 
+#     - name: Downloads the built image as an artifact
+#       uses: actions/download-artifact@v1
+#       with:
+#         name: repo2docker_image
+# 
+#     - name: Import the artifact as an image
+#       run: |
+#         ls -alh repo2docker_image/
+#         docker load --input repo2docker_image/${{ needs.build.outputs.OUT_IMGNAME }}.tar.gz
+# 
+    - name: Start the recently built docker container
+      run: |
+        echo "image SHA was ${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }}"
+        docker run --name mobilitynet_test -d -p 8888:8888  ${{ steps.install-using-repo2docker.outputs.IMAGE_SHA_NAME }} jupyter notebook --ip 0.0.0.0
+
+    - name: Test the interactive timeline
+      run: |
+        echo "About to run notebooks"
+        docker exec mobilitynet_test python bin/run_notebooks.py ${{ matrix.target }}
+        echo "After running the notebooks, checking container list"
+        docker container list
+
+    - name: Copy the failure output
+      id: copy-failure-output
+      if: failure()
+      run: |
+        OUT_FILENAME=`echo ${{ matrix.target }} | sed "s/.ipynb/_out.ipynb/"`
+        echo "output filename = $OUT_FILENAME"
+
+        echo "About to copy file from docker"
+        docker exec mobilitynet_test ls
+        DOCKER_WD=`docker exec mobilitynet_test pwd`
+        echo "DOCKER_WD=$DOCKER_WD"
+        docker exec mobilitynet_test ls $DOCKER_WD
+        docker exec mobilitynet_test ls $DOCKER_WD/$OUT_FILENAME
+        docker cp mobilitynet_test:$DOCKER_WD/$OUT_FILENAME /tmp
+        ls -al /tmp/$OUT_FILENAME
+        echo "::set-output name=OUT_FILENAME::${OUT_FILENAME}"
+
+    - name: Upload result for the interactive timeline
+      if: failure()
+      uses: actions/upload-artifact@v1
+      with:
+        name: ${{ steps.copy-failure-output.outputs.OUT_FILENAME }}
+        path: /tmp/${{ steps.copy-failure-output.outputs.OUT_FILENAME }}
+
+    - name: Shutdown the recently built docker container
+      run: |
+        echo "Running docker container list"
+        docker container list
+        docker stop mobilitynet_test
