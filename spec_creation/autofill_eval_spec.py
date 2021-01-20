@@ -285,6 +285,11 @@ def validate_and_fill_eval_trips(curr_spec):
     modified_spec = copy.copy(curr_spec)
     eval_trips = modified_spec["evaluation_trips"]
     for t in eval_trips:
+
+        # key that holds information regarding timespan of ground truth data
+        # TODO: determine where to find timespan info for trip
+        t["timespan"] = ""
+
         if "legs" in t:
             print("Filling multi-modal trip %s" % t["id"])
             assert not has_duplicate_legs(t), \
