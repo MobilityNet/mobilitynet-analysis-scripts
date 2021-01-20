@@ -8,7 +8,7 @@
         "timezone": "America/Los_Angeles"
     },
     "start_fmt_date": "2019-07-16",
-    "end_fmt_date": "2019-08-30",
+    "end_fmt_date": "2020-04-30",
     "phones": {
         "android": {
           "ucb-sdb-android-1": "accuracy_control",
@@ -28,6 +28,15 @@
     "sensing_settings": [{
         "android": ["HAHFDC", "HAMFDC"],
         "ios": ["HAHFDC", "MAHFDC"]
+    },{
+        "android": ["HAHFDC", "MAHFDC"],
+        "ios": ["HAHFDC", "HAMFDC"]
+    },{
+        "android": ["MAMFDC", "HAMFDC"],
+        "ios": ["MAMFDC", "MAHFDC"]
+    },{
+        "android": ["MAMFDC", "MAHFDC"],
+        "ios": ["MAMFDC", "HAMFDC"]
     }],
     "evaluation_trips": [
         {
@@ -77,7 +86,14 @@
                         ]
                       }
                     },
-                    "polyline": "axecF`lchVD@LAXK@I?S@OHUDGDEDKF@H@JAFAJARq@AOMG?K[S[gAIWIUW{@BKH[DK?CFUXy@OE?Ag@UWUOKiAm@Le@Jc@BK@CDO{@a@AAMGMICAq@_@e@WiAm@WOUMIEAAMGFQ@CPo@X_ANi@JY?CDKMIAAaDeBWMMIUMA?KGKGAAg@Yi@Yi@Y_@OAAOIKGCAGEs@`Cs@_@BIGEd@_BHDV}@"
+                    "waypoint_coords": {
+                      "type": "Feature",
+                      "geometry": {
+                        "type": "LineString",
+                        "coordinates": []
+                      },
+                      "polyline": "axecF`lchVD@LAXK@I?S@OHUDGDEDKF@H@JAFAJARq@AOMG?K[S[gAIWIUW{@BKH[DK?CFUXy@OE?Ag@UWUOKiAm@Le@Jc@BK@CDO{@a@AAMGMICAq@_@e@WiAm@WOUMIEAAMGFQ@CPo@X_ANi@JY?CDKMIAAaDeBWMMIUMA?KGKGAAg@Yi@Yi@Y_@OAAOIKGCAGEs@`Cs@_@BIGEd@_BHDV}@"
+                    }
                 },
                 {
                     "id": "commuter_rail_aboveground",
@@ -123,7 +139,8 @@
                     "relation": {
                         "relation_id": 9605484,
                         "start_node": 6138188701,
-                        "end_node": 1342778583
+                        "end_node": 1342778583,
+                        "polyline": "gsfcFz_bhV[hA_BpFELK\IRQl@gG`TqCpJeCnIcBzFiBfGuC~JeBzF{DzM{HzWIVmGhTqAjEgAvDq@xBm@dBu@pBo@|Am@pAw@bBoEhIu@tAk@dAsHbNmDtGKRw@tAg@~@qHdNiKlRoQh\w@vAoJhQqCbFqEnI}FnK}FrKKR??GH??qBrDeAlBQ^U^{ArC_AdBeAlB}@dBuAdCkDnG??o@lA??m@dAuAjCy@zAy@xAeJvPsF~JqQn\KR}OzY??S\Q\??mAzB}E|IcAnBq@rAq@xAeA|ByAbDeAzBgArB}DnH{AnCq@nA}@`BeB|CaAzAs@jAu@fAc@p@{A`Co@dAe@z@GJMTc@t@??mBnD??k@dA}Qx\aClEeAnB??cDbGy@|AeB~CcAfBKR}ApCgDfGc@v@k@dAINKRwAjCo@jAuExI_DxF}E`JgCrE}B~D}AnCaFdJkIlOgDdGk@hAoDrGuDhHyCvFqBrD}FpK_@r@k@bA??w@xA??INKR??a@t@QXcB`DoInOoHbNwFfK{FpKeHlM{CvFw@zAg@z@}@bBQZyCrFGLq@lAGJ??qA`CuAhCeAnBaCjEmBlDuBzDy@|A??w@tA??[j@cDbGgCvEq@nAw@vACDEHOVqGrLKTMRKP??gGbL}CzFkBjDOVS`@??sGnLeAjBkAnBkBpCoAfBCD??OR??mAzAoEnFqElF??wL|N??eApA??iIvJ??eAnA??_PlRiFfG{ClDmA|A{AhBeE`FuDpEy@`A??q@v@??{BlCsDrEyDpEcAjAyInKyAhBsBfCwApBw@jAmE|GuAtB{@pA??sAjB??}FrHyBrCkB`Co@v@k@t@??[`@eApA??o@x@??W\c@h@??q@|@WZs@~@qA`BqCnD??}@hAmDpEuBlCm@v@kAzAyAlBuArBmAnB_QtYaC`E??yAdC??_DlFiBtCs@fAu@fA_GnIwAnBsA~AqAxA{AzAk@j@i@b@gFtE??s@l@??MLqGzFe@b@sCfCi@d@c@^a@^e@^e@^}JbIsP~MiFdEcGzE??KH??sC|Bs@j@u@j@{@l@}@l@eAn@eAl@eAh@oAj@iAf@}Al@aDhAuBt@u@X}Bx@gAb@aAb@eAh@kAn@eAn@cAv@{@p@_Az@cA`A}@`A??kMtN}AhB}AlB}DrE}EpFg@j@uAzAuCdDMNiBrBmCzCKJyCfDyChD}FrG??IHED??ST}A`Bc@d@a@b@??UX??sFhG??[\??uB~Bs@~@g@l@QV??[`@??s@dAeA`B{@vAy@vA??Wj@??_AlBo@tAu@fBCHe@nAa@hAaCtHCDqIdXENgDlKCHiDlKELaCrHq@rBWz@ELEJCJ_FvOsE~NUr@wJzZ}DfMCD??KZ??mD~KeBjF{@lCu@~By@lCIRsHdVqMta@aFvOgAdDa@pA{BlHKZ??wAnEiCfIs@rBq@dBu@|A{@~A{@vAeAxA_AhAeAhAoFnFuAtA??cHhH"
                     }
                 },{
                     "id": "subway_underground",
@@ -169,7 +186,8 @@
                     "relation": {
                         "relation_id": 2851613,
                         "start_node": 2208932514,
-                        "end_node": 2239764355
+                        "end_node": 2239764355,
+                        "polyline": "wsndFzo~iVqIbJl@q@oFvFt@w@jCmCaEdEaBtA??MN??gClCgMnM}GxGsLtL??wAvAaDdD??uCvCc@b@g@d@e@`@_@\a@Za@Z}GpFkA~@mAz@kAx@wAbAmChBw@f@w@f@y@f@y@j@}@h@}@l@eBnAoBpAkChB??oBrAyBzA??aG`EsCnBa@X{JzGsn@|Z{RrKaGzC??i@V??sDhB??OH??_@R??QH??q@ZmIzD}J|D}BjAyB~AgEhDiElDuIvGiPbNaB|AaBbByAdBkA`BoApBuAbCiA`CuIhSyAbDqAlCwAhCoAxBmAdBoAzAiAjA}@|@kA~@mJbHoAdAkAfAoArAmAtAoA`BkAfBeA`BcDlGqF`KsGjLeA`BgAxAmArA_BrAwAdAsAz@iIxE{KfGgBjAkB~AgBhBqAbBqAnBgArBmAbC{AzC{AfCcBtBUXkAnAeBbBuD`DuKvIs@n@q@n@m@l@k@t@e@r@e@v@??aBfC??cAzAcAzA??}@rA_ArAWb@sFfJ??c@p@U\MPMNMNMNONKJOLOLOJOJSLOJe@Ti@T{@^??oD|A??UJy@\g@Rq@T{@Ro@Hy@Fm@Bo@@kFD{DDmD@??u@@??oB?s@@i@Bw@Ds@H??{@P{@TgCv@??e@N_Bd@e@Lg@Je@Ji@Hi@Dk@Bs@@q@?cEB??qDBoCBqD@kA?g@?e@Cc@E_@Ic@Kg@Qc@Ua@Wc@YeF}D??gGyE??u@k@??gAy@cGuE??i@c@YUYYY][a@Ua@S_@Oa@Oa@Oc@Kc@Ia@Gc@Gc@Ee@Ce@Ac@Ak@?e@BoL??BqN?s@Aq@?u@Ag@Cq@Co@Eq@Gm@Gk@Gm@Ki@Ko@Mk@Om@Qm@Uo@Qg@Uk@Wi@Yi@[i@[g@[g@]c@Yc@gB_CwAmBGGqAeB_AmAa@k@a@e@a@e@]a@a@e@e@e@e@c@i@g@??][c@_@]Y_@U[U_@W_@S_@Sa@Qa@Q_@Ma@Ka@Kc@Ia@I??o@KaRkBuFw@??cC[??eBYuAUsAYiA[eAc@}@]??i@[a@We@Yg@]k@c@k@e@m@m@i@i@c@g@a@e@a@k@a@m@a@m@]k@[m@]q@[o@Ys@Yq@Yu@Wu@Yw@Uw@Uw@Wy@??sB{G}CmIaHuM_CsDuFsJ_]}l@kGaI{IgGsf@qXYQSIOGSA_@A[BU@ePr@}Jd@{nApFeBHsERsT|@aCD??gA@eACeAKeAOcAWcA]_Ae@_Ai@{@o@w@s@u@{@s@}@{CeE}OkTgDuEwSeYuJwMg[yb@oFmH}CiEu@cAgCkDeCiDwAkBqAiBU]S]Qa@Oa@yF{P??md@ssAqAkEgAsE{@uEu@_Fo@{Eo@uFm_@i|Ds@_Ji@}Ia@{IUaIQsIKcKFeLVmLzDw~@??^qI??xBce@J{BLmBNkBPcBLwAP}AR}AxA_LJw@lCkSVcBTuAXuA\qA\mAl@sBpDyL~CmKd@{A^sA^wAVgA`@aB??p@yE|C{TXgB^gB^}A`@uAd@qAl@cBt@mBvDgK??Ri@??dA{BXu@??Pa@L[??Pk@No@Hk@Da@Dc@@UBg@Bk@@_@???e@@e@?c@Ag@C_@AWE[EYGQa@sAm@kAu@_A_Aq@??uJeF??qQqJk\iQg@Yw@Wk@Ic@Ac@?c@Dk@Lg@Ri@\e@`@}F`Ha@b@c@\k@^??k@Zm@Vk@Rm@Ng@He@Fc@Be@Bi@@MAY?i@E??e@Ea@EMCQCUEi@MeAUeBa@??gAYy@Q{@QoB_@WG??aAQ??y@O??_AO??iDo@??_F}@cB[aB[qAY{A[mBc@cBa@gAYeCm@oA[aAUo@Ki@I??aBU??cC[cH}@??sAO??GA??}AS??kDY??cAM??eBQ??kAMu@I??e@Cc@Cg@???m@?m@B??g@Di@Hi@Hi@Ne@N??g@R??c@Ra@Ta@Te@Zg@^i@b@_@\gB|A_Av@_At@}@j@cAh@eAb@eA\kAZiARuARsg@pGwANaAHYB??i@B_AD??}@?_AA??}AGkAMcB[gM{DiKuCs^}J}Cw@iAQu@GeAAaADcO~@mEXeVpAkE^}Ir@"
                     }
                 },{
                     "id": "walk_to_bus",
@@ -215,7 +233,8 @@
                       "type": "Feature",
                       "geometry": {
                         "type": "LineString",
-                        "coordinates": []
+                        "coordinates": [],
+                        "polyline": "kpcfF`ogiVCUCw@SAYCe@Cy@CI?"
                       }
                     }
                 },{
@@ -258,7 +277,12 @@
                           ]
                         }
                     },
-                    "polyline": "aucfFdlgiVQ?G?M?????AUIgAAU??CW?GAOAECYC_@KiBCYNbCIuAASCYI@mAH??wAHU@??M?k@DcAF??i@BK@??M@Q@m@B??E@]@??WBQN??A[GeA??C[Ew@AGAYM_BC[GWIW??EMAK??EOCK??CMEQ??Bc@O_CYaEe@iHCKG[??AGC]CS??CMGu@Ca@Eq@K{AMiBAO??AOAMCc@"
+                    "relation": {
+                        "relation_id": 9709380,
+                        "start_node": 6410508153,
+                        "end_node": 6561896571,
+                        "polyline": "aucfFdlgiVQ?G?M?????AUIgAAU??CW?GAOAECYC_@KiBCYNbCIuAASCYI@mAH??wAHU@??M?k@DcAF??i@BK@??M@Q@m@B??E@]@??WBQN??A[GeA??C[Ew@AGAYM_BC[GWIW??EMAK??EOCK??CMEQ??Bc@O_CYaEe@iHCKG[??AGC]CS??CMGu@Ca@Eq@K{AMiBAO??AOAMCc@"
+                    }
                 }
             ]
         },
@@ -315,7 +339,8 @@
                   [ -122.25762426853179, 37.869721094384055 ],
                   [ -122.25762426853179, 37.869467010881124 ]
                 ]
-              }
+              },
+              "polyline": "ypdfFvqeiVPCLCAOAMFADAJAbAULCP?v@QBAVGXIJC^KFQJOt@SAKd@M\I??FVLCJp@Hj@AHRRDHFJP|A??@FJCVGr@Qd@MVGPE`@MVIPGb@MLEFCBBTICKAU@AZIAK^IRENAL?J?ZF@?FMFIFCDADAl@GDABBB@PNFDH@B?FAb@M@???"
             }
         },{
             "id": "berkeley_to_mtv_SF_express_bus",
@@ -343,10 +368,13 @@
                         ]
                       }
                     },
-                    "end_loc": {
+                    "end_loc": [
+                    {
                       "type": "Feature",
                       "properties": {
-                          "name": "Wurster bikeshare station"
+                          "name": "Wurster bikeshare station",
+                          "valid_start_fmt_date": "2019-07-16",
+                          "valid_end_fmt_date": "2019-08-30"
                       },
                       "geometry": {
                         "type": "Polygon",
@@ -362,25 +390,71 @@
                           ]
                         ]
                       }
-                    },
-                    "waypoint_coords": {
+                    },{
                       "type": "Feature",
+                      "properties": {
+                          "name": "Wurster bikeshare station",
+                          "valid_start_fmt_date": "2019-09-01",
+                          "valid_end_fmt_date": "2020-04-30"
+                      },
+                      "geometry": {
+                        "type": "Polygon",
+                        "coordinates": [
+                          [
+                            [ -122.25493669509888, 37.86945007194977 ],
+                            [ -122.25488305091856, 37.86911552725767 ],
+                            [ -122.2538959980011, 37.86923833497933 ],
+                            [ -122.25399255752562, 37.86958134856587 ],
+                            [ -122.25493669509888, 37.86945007194977 ]
+                          ]
+                        ]
+                      }
+                    }
+                    ],
+                    "waypoint_coords": [
+                    {
+                      "type": "Feature",
+                      "properties": {
+                        "valid_start_fmt_date": "2019-07-16",
+                        "valid_end_fmt_date": "2019-08-30"
+                      },
                       "geometry": {
                         "type": "LineString",
                         "coordinates": [
                           [ -122.2573506832123, 37.86900118885007 ],
                           [ -122.25430905818939, 37.86940772460436 ]
                         ]
-                      }
+                      },
+                      "polyline": "ikcfFtleiVA?c@LK@IAGEQOCACCE@m@FE@C@A??MFMVGRCTSBG?Ag@sDQcAWWO}BLSHGDEl@IBA~@KAYBMJIDWH?PC@???BCNAAO"
+                    },{
+                      "type": "Feature",
+                      "properties": {
+                          "valid_start_fmt_date": "2019-09-01",
+                          "valid_end_fmt_date": "2020-04-30"
+                      },
+                      "geometry": {
+                        "type": "LineString",
+                        "coordinates": [
+                          [ -122.25754648447035, 37.87027372297761 ],
+                          [ -122.25720047950745, 37.869888365545194 ],
+                          [ -122.25505203008653, 37.87027160563457 ],
+                          [ -122.25451827049254, 37.86941195933999 ]
+                        ]
+                      },
+                      "polyline": "ikcfFtleiVh@O`@MDANE??HCGeA?CAIAQMkBEi@Ca@MeB?KEk@G{@Ei@AUEg@Df@@TLABATAN?XE"
                     }
+                  ]
                 },{
                     "id": "ebike_bikeshare_urban_long",
                     "name": "Wurster bikeshare station to 40th San Pablo",
                     "mode": "BICYCLING",
-                    "start_loc": {
+                    "start_loc": [
+                    {
                         "type": "Feature",
                         "properties": {
-                            "name": "Wurster bikeshare station"
+                            "name": "Wurster bikeshare station",
+                            "valid_start_fmt_date": "2019-07-16",
+                            "valid_end_fmt_date": "2019-08-30"
                         },
                         "geometry": {
                           "type": "Polygon",
@@ -394,7 +468,27 @@
                             ]
                           ]
                         }
-                    },
+                    },{
+                        "type": "Feature",
+                        "properties": {
+                            "name": "Wurster bikeshare station",
+                            "valid_start_fmt_date": "2019-09-01",
+                            "valid_end_fmt_date": "2020-04-30"
+                        },
+                        "geometry": {
+                          "type": "Polygon",
+                          "coordinates": [
+                            [
+                              [ -122.25493669509888, 37.86945007194977 ],
+                              [ -122.25488305091856, 37.86911552725767 ],
+                              [ -122.2538959980011, 37.86923833497933 ],
+                              [ -122.25399255752562, 37.86958134856587 ],
+                              [ -122.25493669509888, 37.86945007194977 ]
+                            ]
+                          ]
+                        }
+                    }
+                    ],
                     "end_loc": {
                       "type": "Feature",
                       "properties": {
@@ -413,18 +507,38 @@
                         ]
                       }
                     },
-                    "waypoint_coords": {
+                    "waypoint_coords": [
+                    {
                       "type": "Feature",
-                      "properties": {},
+                      "properties": {
+                        "valid_start_fmt_date": "2019-07-16",
+                        "valid_end_fmt_date": "2019-08-30"
+                      },
                       "geometry": {
                         "type": "LineString",
                         "coordinates": [
                           [ -122.27141618728638, 37.848997707091975 ],
                           [ -122.27179169654846, 37.84719742398725 ],
                           [ -122.27291822433472, 37.846312092173754 ]
-                        ]
+                        ],
+                        "polyline": "klcfFvydiVBEHHD@H?PC@?BCNA@TDh@Fz@Dj@?JLdBB`@Dh@LjB@P@H?BFdAFr@PfC@LPtC@P@LNpB@ZHbAJ`B@NDf@Dz@@N@R@VDj@FhA@@F`ALpBJ|A@PH`ARvC@RB\Fz@@PDj@BX@NBP@RJtA@NJxABf@Dp@Dj@BZLATAzAKNARAPANAXAFApAGPANALANARAlBKRALANATAzAKRAPALALAXCF?nAITALAPANARA~AKRALAN?LAd@ClAIPANANALAPAb@CD?TAV@H@d@DN@N@RB`@DR?\?JBFDFDZXNLTNLFFDdCn@PFLDnBh@n@PNDPF|Cz@NDLDb@JlA\ZD`@?V?\HND~@VPD^H^Ll@NPDpA^l@PRFp@PfAZXHx@TVHp@PRFF@VHf@LLDNJRVLRNJNBPBV?L?RBNBLDlAZ~@VHBNDNDJBfA\LDTFXHHBPFNDr@LfCZh@FVBRABAHA@?A?DRFPLXLXPV\ZFFpAhAd@`@DDrAnAjArA|@tAh@x@Tb@`@p@HNJV\QJELCVI^IXGp@KlASJAdC]xB_@FARYfAP\Jd@NdD~@|Bn@`AV~@VNDhBf@JB`AXt@RbAXf@NPDZHPFVHjCr@HBJBh@NhAZHBzBl@JDJBr@RbAXNDRFxA`@@?D@HBJBpBj@LDNDzCx@TFEV?JBZ"
                       }
+                    },{
+                      "type": "Feature",
+                      "properties": {
+                        "valid_start_fmt_date": "2019-09-01",
+                        "valid_end_fmt_date": "2020-04-30"
+                      },
+                      "geometry": {
+                        "type": "LineString",
+                        "coordinates": [
+                          [ -122.27141618728638, 37.848997707091975 ],
+                          [ -122.27179169654846, 37.84719742398725 ],
+                          [ -122.27291822433472, 37.846312092173754 ]
+                        ],
+                        "polyline": "gjcfFbydiV@N@TDh@Fz@Dj@?JLdBB`@Dh@LjB@P@H?BFdAFr@PfC@LPtC@P@LNpB@ZHbAJ`B@NDf@Dz@@N@R@VDj@FhA@@F`ALpBJ|A@PH`ARvC@RB\Fz@@PDj@BX@NBP@RJtA@NJxABf@Dp@Dj@BZLATAzAKNARAPANAXAFApAGPANALANARAlBKRALANATAzAKRAPALALAXCF?nAITALAPANARA~AKRALAN?LAd@ClAIPANANALAPAb@CD?TAV@H@d@DN@N@RB`@DR?\?JBFDFDZXNLTNLFFDdCn@PFLDnBh@n@PNDPF|Cz@NDLDb@JlA\ZD`@?V?\HND~@VPD^H^Ll@NPDpA^l@PRFp@PfAZXHx@TVHp@PRFF@VHf@LLDNJRVLRNJNBPBV?L?RBNBLDlAZ~@VHBNDNDJBfA\LDTFXHHBPFNDr@LfCZh@FVBRABAHA@?A?DRFPLXLXPV\ZFFpAhAd@`@DDrAnAjArA|@tAh@x@Tb@`@p@HNJV\QJELCVI^IXGp@KlASJAdC]xB_@FARYfAP\Jd@NdD~@|Bn@`AV~@VNDhBf@JB`AXt@RbAXf@NPDZHPFVHjCr@HBJBh@NhAZHBzBl@JDJBr@RbAXNDRFxA`@@?D@HBJBpBj@LDNDzCx@TFEV?JBZ"
                     }
+                    ]
                 },{ 
                     "id": "express_bus",
                     "name": "Express bus (#F/#C) to the Transbay Terminal",
@@ -448,10 +562,13 @@
                         ]
                       }
                     },
-                    "end_loc": {
+                    "end_loc": [
+                    {
                       "type": "Feature",
                       "properties": {
-                        "name": "Transbay Terminal"
+                        "name": "Transbay Terminal",
+                        "valid_start_fmt_date": "2019-07-16",
+                        "valid_end_fmt_date": "2019-08-30"
                       },
                       "geometry": {
                         "type": "Polygon",
@@ -465,16 +582,55 @@
                           ]
                         ]
                       }
-                    },
-                    "polyline": "_|{eFvtiiVBL??Fh@DX@R??DX??BTDf@??b@`D??l@zETdB??VvB??l@`FR`B??TdB??j@zEL`A??\\vC??LbAPnA??Fn@??DTFf@??Hj@J^NZ??F^Hd@Fb@n@jFFf@Bf@Af@Ed@Kd@Qd@S^??OTSPSLUJWH??W@UA]@k@B??I?y@@K@??Q@??cDD_@@[@[B[BaAL??_@H[HYHs@TUFYDUDUB??UBSD??[C[CYGWGWMWM??CASM??]OYM??ICEAWG??UCUCWAU?oAF??eCJ??yAF??m@B??kAH??gAH[@u@DM@[BSD??E?_@HODM@??sAV??LpB@R??@R?Z??ARAh@?ZDX??z@S??XE??`AS??J`A??LdAFb@NxAB^??T|B??Ad@ENGJMHk@L??YFi@NUHMDc@Ta@Z??Y@YFSEGIEQ?SBMHMd@Y??tEu@??jDaA??f@K??bCu@l@Wt@Y??dN{Ep@W??jGeBlASfCUjAIhBCR?n@?`AHfAX|@^`Al@n@p@n@v@j@`A^`A`@jA\\`BdA~F??d@rCh@tD??`AlJt@rHXnC??j@vFF~@BdAA`ACbAI~AQpCChA@hAB`AJbAf@rDTpA??BZ??Fn@Ft@Dr@Bt@?t@A`AA|A?hA?~@Bz@Fv@Fx@J`AJ~@d@nDRfAnAfHXtA\\nA^hAfBzE??b@jBR|@l@nCVfBRrBRvBP`CL`Ct@fU??LbDJvCLrCLjCNbCP|CPhCRnCxMteBJfALfALfAPbAP`ANz@Pv@Pt@Pr@Vx@Tt@Rp@Vp@Xt@Xt@Zt@Zp@pRda@??Vf@Vb@Xd@Xb@Z`@V\\^d@^d@^`@\\\\\\Z\\ZtFxE|AfB??vChD??rFdG??pDjD??lyB~aCxKtLv@|@h@x@??x@dB??h@p@JJJPRd@R`@R`@x@`BNVFJFHFDFFHBHBH?H?JCJCFGHIFKDMDO?O?QAMCMEMGKGGmCyC??KMIIIGIGKGMCKCMAKAK@M?KBODKDSJKDIDKBK@w@N??SDIDIBGFKH??SVMP??OROT??w@`A??kA~A??uAdB??i@u@??mAcBMQ??OPs@`AUZ??MQOU??Q?GK??W[??a@i@??W\\??ED??SX??KJ??KLGH??OR??CDAH?H@H@B??LV??DHBB??PT"
+                    },{
+                      "type": "Feature",
+                      "properties": {
+                        "name": "Salesforce Transit Center",
+                        "valid_start_fmt_date": "2019-09-01",
+                        "valid_end_fmt_date": "2020-04-30"
+                      },
+                      "geometry": {
+                        "type": "Polygon",
+                        "coordinates": [
+                          [
+                            [ -122.39764094352722, 37.789777126922225 ],
+                            [ -122.39604771137236, 37.788492605324016 ],
+                            [ -122.39419698715209, 37.78992126326592 ],
+                            [ -122.39582777023315, 37.791218477707325 ],
+                            [ -122.39764094352722, 37.789777126922225 ]
+                          ]
+                        ]
+                      }
+                    }
+                    ],
+                    "relation": [
+                      {
+                        "relation_id": 2718359,
+                        "start_node": 6410561636,
+                        "end_node": 2504237931,
+                        "valid_start_fmt_date": "2019-07-16",
+                        "valid_end_fmt_date": "2019-08-30",
+                        "polyline": "_|{eFvtiiVBL??Fh@DX@R??DX??BTDf@??b@`D??l@zETdB??VvB??l@`FR`B??TdB??j@zEL`A??\\vC??LbAPnA??Fn@??DTFf@??Hj@J^NZ??F^Hd@Fb@n@jFFf@Bf@Af@Ed@Kd@Qd@S^??OTSPSLUJWH??W@UA]@k@B??I?y@@K@??Q@??cDD_@@[@[B[BaAL??_@H[HYHs@TUFYDUDUB??UBSD??[C[CYGWGWMWM??CASM??]OYM??ICEAWG??UCUCWAU?oAF??eCJ??yAF??m@B??kAH??gAH[@u@DM@[BSD??E?_@HODM@??sAV??LpB@R??@R?Z??ARAh@?ZDX??z@S??XE??`AS??J`A??LdAFb@NxAB^??T|B??Ad@ENGJMHk@L??YFi@NUHMDc@Ta@Z??Y@YFSEGIEQ?SBMHMd@Y??tEu@??jDaA??f@K??bCu@l@Wt@Y??dN{Ep@W??jGeBlASfCUjAIhBCR?n@?`AHfAX|@^`Al@n@p@n@v@j@`A^`A`@jA\\`BdA~F??d@rCh@tD??`AlJt@rHXnC??j@vFF~@BdAA`ACbAI~AQpCChA@hAB`AJbAf@rDTpA??BZ??Fn@Ft@Dr@Bt@?t@A`AA|A?hA?~@Bz@Fv@Fx@J`AJ~@d@nDRfAnAfHXtA\\nA^hAfBzE??b@jBR|@l@nCVfBRrBRvBP`CL`Ct@fU??LbDJvCLrCLjCNbCP|CPhCRnCxMteBJfALfALfAPbAP`ANz@Pv@Pt@Pr@Vx@Tt@Rp@Vp@Xt@Xt@Zt@Zp@pRda@??Vf@Vb@Xd@Xb@Z`@V\\^d@^d@^`@\\\\\\Z\\ZtFxE|AfB??vChD??rFdG??pDjD??lyB~aCxKtLv@|@h@x@??x@dB??h@p@JJJPRd@R`@R`@x@`BNVFJFHFDFFHBHBH?H?JCJCFGHIFKDMDO?O?QAMCMEMGKGGmCyC??KMIIIGIGKGMCKCMAKAK@M?KBODKDSJKDIDKBK@w@N??SDIDIBGFKH??SVMP??OROT??w@`A??kA~A??uAdB??i@u@??mAcBMQ??OPs@`AUZ??MQOU??Q?GK??W[??a@i@??W\\??ED??SX??KJ??KLGH??OR??CDAH?H@H@B??LV??DHBB??PT"
+                      },{
+                        "relation_id": 2718359,
+                        "start_node": 6410561636,
+                        "end_node": 6383982769,
+                        "valid_start_fmt_date": "2019-09-01",
+                        "valid_end_fmt_date": "2020-04-30",
+                        "polyline": "_|{eFvtiiVBL??Fh@DX@R??DX??BTDf@??b@`D??l@zETdB??VvB??l@`FR`B??TdB??j@zEL`A??\vC??LbAPnA??Fn@??DTFf@??Hj@J^NZ??F^Hd@Fb@n@jFFf@Bf@Af@Ed@Kd@Qd@S^??OTSPSLUJWH??W@UA]@k@B??I?y@@K@??Q@??cDD_@@[@[B[BaAL??_@H[HYHs@TUFYDUDUB??UBSD??[C[CYGWGWMWM??CASM??]OYM??ICEAWG??UCUCWAU?oAF??eCJ??yAF??m@B??kAH??gAH[@u@DM@[BSD??E?_@HODM@??sAV??LpB@R??@R?Z??ARAh@?ZDX??z@S??XE??`AS??J`A??LdAFb@NxAB^??T|B??Ad@ENGJMHk@L??YFi@NUHMDc@Ta@Z??Y@YFSEGIEQ?SBMHMd@Y??tEu@??jDaA??f@K??bCu@l@Wt@Y??dN{Ep@W??jGeBlASfCUjAIhBCR?n@?`AHfAX|@^`Al@n@p@n@v@j@`A^`A`@jA\`BdA~F??d@rCh@tD??`AlJt@rHXnC??j@vFF~@BdAA`ACbAI~AQpCChA@hAB`AJbAf@rDTpA??BZ??Fn@Ft@Dr@Bt@?t@A`AA|A?hA?~@Bz@Fv@Fx@J`AJ~@d@nDRfAdA`GHd@XtA\nA^hAfBzE??b@jBR|@l@nCVfBRrBRvBP`CL`Ct@fU??LbDJvCLrCLjCNbCP|CPhCRnCxMteBJfALfALfAPbAP`ANz@Pv@Pt@Pr@Vx@Tt@Rp@Vp@Xt@Xt@Zt@Zp@pRda@??Vf@Vb@Xd@Xb@Z`@V\^d@^d@^`@\\\Z\ZtFxE|AfB??vChD??rFdG??hDvD??nyB`bCxKrLv@~@f@v@??|AbDH^JXh@jBFVDZBX??Jz@@z@Cl@E\GXKd@_@`A??_@z@??gAtA??iAxAUZmA`BKL??y@dA??Wl@OZK^I^I`@Qt@IXMT??GJ??k@v@MSGI??[c@??Y_@??[c@??]e@??]e@??[c@??]c@??[e@??W]??W]??W]??W]??g@q@??[e@??]c@??]e@??W]??Y_@j@w@`@j@??X`@??VZ"
+                      }
+                    ]
                 },{ 
                     "id": "walk_downtown_urban_canyon",
                     "name": "Transbay Terminal to Embarcadero station",
                     "mode": "WALKING",
-                    "start_loc": {
+                    "start_loc": [
+                    {
                       "type": "Feature",
                       "properties": {
-                        "name": "Transbay Terminal"
+                        "name": "Transbay Terminal",
+                        "valid_start_fmt_date": "2019-07-16",
+                        "valid_end_fmt_date": "2019-08-30"
                       },
                       "geometry": {
                         "type": "Polygon",
@@ -488,7 +644,27 @@
                           ]
                         ]
                       }
-                    }, "end_loc": {
+                    },{
+                      "type": "Feature",
+                      "properties": {
+                        "name": "Salesforce Transit Center",
+                        "valid_start_fmt_date": "2019-09-01",
+                        "valid_end_fmt_date": "2020-04-30"
+                      },
+                      "geometry": {
+                        "type": "Polygon",
+                        "coordinates": [
+                          [
+                            [ -122.39764094352722, 37.789777126922225 ],
+                            [ -122.39604771137236, 37.788492605324016 ],
+                            [ -122.39419698715209, 37.78992126326592 ],
+                            [ -122.39582777023315, 37.791218477707325 ],
+                            [ -122.39764094352722, 37.789777126922225 ]
+                          ]
+                        ]
+                      }
+                    }
+                    ], "end_loc": {
                       "type": "Feature",
                       "properties": {
                         "name": "Embarcadero Station"
@@ -505,8 +681,36 @@
                           ]
                         ]
                       }
+                    },
+                    "waypoint_coords": [
+                    {
+                      "type": "Feature",
+                      "properties": {
+                        "valid_start_fmt_date": "2019-07-16",
+                        "valid_end_fmt_date": "2019-08-30"
+                      },
+                      "geometry": {
+                        "type": "LineString",
+                        "coordinates": []
+                      },
+                      "polyline": "qzseFt|_jVMSMQCE}@nAMNKPMQw@dAc@l@OR}BzCeAxAOP}@lA[b@a@`@WZIBEBIAOCICj@r@h@t@"
+                    },{
+                      "type": "Feature",
+                      "properties": {
+                        "valid_start_fmt_date": "2019-09-01",
+                        "valid_end_fmt_date": "2020-04-30"
+                      },
+                      "geometry": {
+                        "type": "LineString",
+                        "coordinates": [
+                          [ -122.39580094814299, 37.79116548736748 ],
+                          [ -122.39495068788528, 37.7918480000373 ]
+                        ]
+                      },
+                      "polyline": "qyseFnm`jVILMOmAcBi@UEGCEEGMNCDqAfBAC{@iAmA_B????eAxAOP}@lA[b@a@`@WZIBEBIAOCICj@r@h@t@"
                     }
-                },{ 
+                    ]
+                },{
                     "id": "light_rail_below_above_ground",
                     "name": "Muni Metro Line N",
                     "mode": "LIGHT_RAIL",
@@ -550,7 +754,8 @@
                     "relation": {
                       "relation_id": 63223,
                       "start_node": 5323877769,
-                      "end_node": 1723633815
+                      "end_node": 1723633815,
+                      "polyline": "aoteFlo`jV??g@q@c@m@??kDyE??Q_@Ma@Ee@?g@De@Ja@R_@??RWtDcE^e@jB}BRWRSTQVOVOVKXI??\KXKVKVMRKPMTQTO??RSRSPSNSDG??Zc@lCqDV]DGFERURQHGPMPIRKRGTGTGjASh@IXEVCZCXAV?\@l@@R@R@jL`@T@T@|DLl@BD?lHVV@T@D?XBT@TBRBRFRFRHPHNJPLNLNNNPNPhAzAPTHJBDrCzDV\`@h@LPX\V^VZXd@PVPVFHV`@X^|AxBt@bAdAvARZ??JJHJDFFJBDNPV^"
                     }
                 }, {
                     "id": "commuter_rail_with_tunnels",
@@ -593,7 +798,12 @@
                         ]
                       }
                     },
-                    "polyline": "meqeFbh`jVrElGpAfBxC`EvBvC??LPPVx@fAx@fARXPTLP??JLNLPLPJPJPFRFPBVDR@T?RAPC??XETGTKVMTORQPURU??nAgBjBgCNQHMX_@vAmBpCwD|FeIV]RWT[hBeCp@u@t@o@x@e@|@]~@S`AIzCM??`^_B??xAIxAGxACzAAjA?jABjABjADhAF??jEVbKx@??dIh@L@??tAJ??bEZ??h@D??dEVz@HvE\\??v@F??jHh@vNfA??xAL??hIj@~Gh@??bCNpDX??ng@rD??~BRrEZ??p@D|Kv@tAJnALhAJdALnARrAVND??dATnCr@??nHjB??xu@zRzBd@??`AR??nDr@l@Jh@Fp@Hn@Dt@Dp@Bh@@n@@??hEClE@pO?l@?`H?`K?lF@pC?nP?fAAhACnAEtAIpAKnAO`BS~AWfAUlAYlBe@vAc@pAe@lAe@jAg@pAm@`Ae@`Ai@fAq@jAu@pA}@h@c@fRcO`EaD??bAy@??lHgG`OqLjA}@??dAu@lAq@jAk@hAc@rAc@hAWlAQvAOfAGpAAnABhADpALjARjAVjA^nAd@lAj@hAp@bAp@fA|@??pEhExBrBh@h@dB`BdMtL`E|DtElEjEdE`LrK~LnLdA`A?@lBhBfCbCbGzF`C|BbBxAjBbBrBbBnBxAtB~A`FxD??~AjAr@j@|@l@r@d@x@h@|@d@|@f@~@b@dAf@nAd@~@\\hA^bAZlAXdAVbARjAP~@N~@J`AJ~@H`AF`ADl@DfABpA?bNCb@?zKEjOE??nCGdAI|@I??`AQ|@S|@W`A]t@]t@]??dB{@??`Ae@??|CwA??p@_@??b@SlHkDrFkC??b@S??zMsG`Ae@??\\QhB_AfB_Ax@g@x@i@h@]rA_AlDaCpDkC~DsC|PoLfPaLjA{@fAy@bA}@~@y@dAcAxIyItByBlKsKdBgB~QgRrN_O??|GaHb@a@??LObAeApFoFdAiA`AiAbA{A|@wAz@_Br@_Br@eBp@qBhCiItAoE??b@wAdFaPjEaN`EmMnGcStHgVHQj@iBNe@Vy@ZcAFSf@}AlBiGpDaL??H[??BE~DeMrJ{ZTq@vLw_@DIBIDMrAcErAkEd@_BjDsKBIfDkKDSpIcX@GbCuH`@kAb@kADIr@eBl@uAbAsB??Vg@??x@yAz@yAdA_Br@cA??Xa@??l@w@pAaBdBmB??X[??tFkG??TW??^c@b@c@~AcB~@cAhAqAfBoBl@s@zCgDxCgDxCgDxBeCf@k@|KaMj@o@|DqE~AgB~AiBhMqN??|@aAbAcA~@y@z@s@bAs@`Ao@hAq@fAi@~@c@jAe@zBy@jDqAfBq@v@Y`Bo@dAe@pAq@dAk@bAk@bAo@`Aq@x@k@t@k@r@k@rC}B??JI??bG{EhFeErP_N|JcIf@_@b@_@b@_@d@_@d@c@rCgCzGcG\\[LM??t@o@??dFuEh@a@j@k@zA{ApA{ArAaBvAmB~FqIt@gAr@eAhBwC~CkF??xAeC??`CaE|PuYlAoBvAsBvAmBxBsCxAkBZa@Z_@rCqDz@eA??xCkDpA_B~ByC??b@k@V[??n@w@??V]RWX_@\\c@??f@m@l@y@fBcCxB}C|FuH??rAiB??z@qArAuBpE_Ht@iAtAkBrBmCxAiBzIoKdAmAvDoEtDsExBkC??p@w@??rFwGX[|FeHnFuGjFgG|OmR??bAoA??hIwJ??fAoA??vL}N??pEoFlEmFlA_B??NQ??BEpAgBhBqClAoBdAiBrGqL??R_@NYjBkD~C{FdGaLJSLQLWpGqLLUDIDGhBgD|AuCh@aAbDeGZk@??t@uA??z@}AtB{DnBqDdCsErCmFrAcC??x@yAFKh@aAvCqFbAkBd@_AjAsBx@_B|@}ALWdDeG`B{CpJkQlFwJ??vAmC|AqCzDiH|HuNTe@??v@wA??|CyFlDqGnBuDdOqXj@eAdDeGlIoO~Pm[xDiHb@w@~C{F`JoPJSHMnA}BnCcFTc@|AoCJSxFmKfJ{PhKoR~DkHj@eA??lBoD??^o@JSFKxAcCbBaCb@o@r@eAv@iAbA_BfB{CnBqDxAoCjAwBpBwDfAuBbA{BxAgD`A}Bn@yAz@eBv@_BhH{M??d@{@??`AgB|MsVJSpQm\\rFaKbJwPrBuDvAiCl@gA??n@mA??bDcGp@mA`BsCfAmB`AgB|AuCP]R[dAoBdCuE~FsK|FqKnEoIlCgFpJkQ|@aBnQg\\`KcRfE{HpCgFnBoDjAwBhAuB`HeM`B{ClBoDfBeDr@wAl@qAn@_Bt@oBl@gBv@gC`AgDvA}ElGgTHWpHmWtCsJh@gBxFwRhBkGbB{FdCoIrCqJfG}SX}@FSJ]FS|AkFfCuI"
+                    "relation": {
+                      "relation_id": 9605701,
+                      "start_node": 6138188689,
+                      "end_node": 6138188702,
+                      "polyline": "meqeFbh`jVrElGpAfBxC`EvBvC??LPPVx@fAx@fARXPTLP??JLNLPLPJPJPFRFPBVDR@T?RAPC??XETGTKVMTORQPURU??nAgBjBgCNQHMX_@vAmBpCwD|FeIV]RWT[hBeCp@u@t@o@x@e@|@]~@S`AIzCM??`^_B??xAIxAGxACzAAjA?jABjABjADhAF??jEVbKx@??dIh@L@??tAJ??bEZ??h@D??dEVz@HvE\\??v@F??jHh@vNfA??xAL??hIj@~Gh@??bCNpDX??ng@rD??~BRrEZ??p@D|Kv@tAJnALhAJdALnARrAVND??dATnCr@??nHjB??xu@zRzBd@??`AR??nDr@l@Jh@Fp@Hn@Dt@Dp@Bh@@n@@??hEClE@pO?l@?`H?`K?lF@pC?nP?fAAhACnAEtAIpAKnAO`BS~AWfAUlAYlBe@vAc@pAe@lAe@jAg@pAm@`Ae@`Ai@fAq@jAu@pA}@h@c@fRcO`EaD??bAy@??lHgG`OqLjA}@??dAu@lAq@jAk@hAc@rAc@hAWlAQvAOfAGpAAnABhADpALjARjAVjA^nAd@lAj@hAp@bAp@fA|@??pEhExBrBh@h@dB`BdMtL`E|DtElEjEdE`LrK~LnLdA`A?@lBhBfCbCbGzF`C|BbBxAjBbBrBbBnBxAtB~A`FxD??~AjAr@j@|@l@r@d@x@h@|@d@|@f@~@b@dAf@nAd@~@\\hA^bAZlAXdAVbARjAP~@N~@J`AJ~@H`AF`ADl@DfABpA?bNCb@?zKEjOE??nCGdAI|@I??`AQ|@S|@W`A]t@]t@]??dB{@??`Ae@??|CwA??p@_@??b@SlHkDrFkC??b@S??zMsG`Ae@??\\QhB_AfB_Ax@g@x@i@h@]rA_AlDaCpDkC~DsC|PoLfPaLjA{@fAy@bA}@~@y@dAcAxIyItByBlKsKdBgB~QgRrN_O??|GaHb@a@??LObAeApFoFdAiA`AiAbA{A|@wAz@_Br@_Br@eBp@qBhCiItAoE??b@wAdFaPjEaN`EmMnGcStHgVHQj@iBNe@Vy@ZcAFSf@}AlBiGpDaL??H[??BE~DeMrJ{ZTq@vLw_@DIBIDMrAcErAkEd@_BjDsKBIfDkKDSpIcX@GbCuH`@kAb@kADIr@eBl@uAbAsB??Vg@??x@yAz@yAdA_Br@cA??Xa@??l@w@pAaBdBmB??X[??tFkG??TW??^c@b@c@~AcB~@cAhAqAfBoBl@s@zCgDxCgDxCgDxBeCf@k@|KaMj@o@|DqE~AgB~AiBhMqN??|@aAbAcA~@y@z@s@bAs@`Ao@hAq@fAi@~@c@jAe@zBy@jDqAfBq@v@Y`Bo@dAe@pAq@dAk@bAk@bAo@`Aq@x@k@t@k@r@k@rC}B??JI??bG{EhFeErP_N|JcIf@_@b@_@b@_@d@_@d@c@rCgCzGcG\\[LM??t@o@??dFuEh@a@j@k@zA{ApA{ArAaBvAmB~FqIt@gAr@eAhBwC~CkF??xAeC??`CaE|PuYlAoBvAsBvAmBxBsCxAkBZa@Z_@rCqDz@eA??xCkDpA_B~ByC??b@k@V[??n@w@??V]RWX_@\\c@??f@m@l@y@fBcCxB}C|FuH??rAiB??z@qArAuBpE_Ht@iAtAkBrBmCxAiBzIoKdAmAvDoEtDsExBkC??p@w@??rFwGX[|FeHnFuGjFgG|OmR??bAoA??hIwJ??fAoA??vL}N??pEoFlEmFlA_B??NQ??BEpAgBhBqClAoBdAiBrGqL??R_@NYjBkD~C{FdGaLJSLQLWpGqLLUDIDGhBgD|AuCh@aAbDeGZk@??t@uA??z@}AtB{DnBqDdCsErCmFrAcC??x@yAFKh@aAvCqFbAkBd@_AjAsBx@_B|@}ALWdDeG`B{CpJkQlFwJ??vAmC|AqCzDiH|HuNTe@??v@wA??|CyFlDqGnBuDdOqXj@eAdDeGlIoO~Pm[xDiHb@w@~C{F`JoPJSHMnA}BnCcFTc@|AoCJSxFmKfJ{PhKoR~DkHj@eA??lBoD??^o@JSFKxAcCbBaCb@o@r@eAv@iAbA_BfB{CnBqDxAoCjAwBpBwDfAuBbA{BxAgD`A}Bn@yAz@eBv@_BhH{M??d@{@??`AgB|MsVJSpQm\\rFaKbJwPrBuDvAiCl@gA??n@mA??bDcGp@mA`BsCfAmB`AgB|AuCP]R[dAoBdCuE~FsK|FqKnEoIlCgFpJkQ|@aBnQg\\`KcRfE{HpCgFnBoDjAwBhAuB`HeM`B{ClBoDfBeDr@wAl@qAn@_Bt@oBl@gBv@gC`AgDvA}ElGgTHWpHmWtCsJh@gBxFwRhBkGbB{FdCoIrCqJfG}SX}@FSJ]FS|AkFfCuI"
+                    }
                 },{
                     "id": "inner_suburb_downtown_walk",
                     "name": "Mountain View train station to library",
@@ -637,7 +847,15 @@
                         ]
                       }
                     },
-                    "polyline": "spfcFh|ahVW|@IEe@~AFDCHr@^r@aCFDB@JFNH@@^Nh@Xh@Xf@X@@JFJF@?TLLHVL`DdB@@LHEJ?BKXOh@Y~@Qn@ABGPLF@@HDTLVNhAl@d@Vp@^B@LHLF@@z@`@ENABCJKb@Md@hAl@NJVTf@T?@NDYx@GT?BEJIZCJVz@HTHVZfAZR?JLF@NSp@K@G@K@IAGAEJEDEFITAN?RAHYJM@EA"
+                    "waypoint_coords": {
+                      "type": "Feature",
+                      "properties": {},
+                      "geometry": {
+                        "type": "LineString",
+                        "coordinates": []
+                      },
+                      "polyline": "spfcFh|ahVW|@IEe@~AFDCHr@^r@aCFDB@JFNH@@^Nh@Xh@Xf@X@@JFJF@?TLLHVL`DdB@@LHEJ?BKXOh@Y~@Qn@ABGPLF@@HDTLVNhAl@d@Vp@^B@LHLF@@z@`@ENABCJKb@Md@hAl@NJVTf@T?@NDYx@GT?BEJIZCJVz@HTHVZfAZR?JLF@NSp@K@G@K@IAGAEJEDEFITAN?RAHYJM@EA"
+                    }
                 }
             ]
         }

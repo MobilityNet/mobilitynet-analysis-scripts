@@ -86,7 +86,14 @@
                         ]
                       }
                     },
-                    "polyline": "axecF`lchVD@LAXK@I?S@OHUDGDEDKF@H@JAFAJARq@AOMG?K[S[gAIWIUW{@BKH[DK?CFUXy@OE?Ag@UWUOKiAm@Le@Jc@BK@CDO{@a@AAMGMICAq@_@e@WiAm@WOUMIEAAMGFQ@CPo@X_ANi@JY?CDKMIAAaDeBWMMIUMA?KGKGAAg@Yi@Yi@Y_@OAAOIKGCAGEs@`Cs@_@BIGEd@_BHDV}@"
+                    "waypoint_coords": {
+                      "type": "Feature",
+                      "geometry": {
+                        "type": "LineString",
+                        "coordinates": []
+                      },
+                      "polyline": "axecF`lchVD@LAXK@I?S@OHUDGDEDKF@H@JAFAJARq@AOMG?K[S[gAIWIUW{@BKH[DK?CFUXy@OE?Ag@UWUOKiAm@Le@Jc@BK@CDO{@a@AAMGMICAq@_@e@WiAm@WOUMIEAAMGFQ@CPo@X_ANi@JY?CDKMIAAaDeBWMMIUMA?KGKGAAg@Yi@Yi@Y_@OAAOIKGCAGEs@`Cs@_@BIGEd@_BHDV}@"
+                    }
                 },
                 {
                     "id": "commuter_rail_aboveground",
@@ -267,7 +274,12 @@
                           ]
                         }
                     },
-                    "polyline": "aucfFdlgiVQ?G?M?????AUIgAAU??CW?GAOAECYC_@KiBCYNbCIuAASCYI@mAH??wAHU@??M?k@DcAF??i@BK@??M@Q@m@B??E@]@??WBQN??A[GeA??C[Ew@AGAYM_BC[GWIW??EMAK??EOCK??CMEQ??Bc@O_CYaEe@iHCKG[??AGC]CS??CMGu@Ca@Eq@K{AMiBAO??AOAMCc@"
+                    "relation": {
+                        "relation_id": 9709380,
+                        "start_node": 6410508153,
+                        "end_node": 6561896571,
+                        "polyline": "aucfFdlgiVQ?G?M?????AUIgAAU??CW?GAOAECYC_@KiBCYNbCIuAASCYI@mAH??wAHU@??M?k@DcAF??i@BK@??M@Q@m@B??E@]@??WBQN??A[GeA??C[Ew@AGAYM_BC[GWIW??EMAK??EOCK??CMEQ??Bc@O_CYaEe@iHCKG[??AGC]CS??CMGu@Ca@Eq@K{AMiBAO??AOAMCc@"
+                    }
                 }
             ]
         },
@@ -475,11 +487,13 @@
                         ]
                       }
                     },
+                    "trajectory": {
                     "relation": {
-                        "relation_id": 2718359,
-                        "start_node": 6410561636,
-                        "end_node": 6383982769
-                    }
+                         "relation_id": 2718359,
+                         "start_node": 6410561636,
+                         "end_node": 6383982769,
+                         "polyline": "vtiiV_|{eFLB??h@FXDR@??XD??TBf@D??`Db@??zEl@dBT??vBV??`Fl@`BR??dBT??zEj@`AL??vC\\??bALnAP??n@F??TDf@F??j@H^JZN??^Fd@Hb@FjFn@f@Ff@Bf@Ad@Ed@Kd@Q^S??TOPSLSJUHW??@WAU@]Bk@???I@y@@K??@Q??DcD@_@@[B[B[LaA??H_@H[HYTs@FUDYDUBU??BUDS??C[C[GYGWMWMW??ACMS??O]MY??CIAEGW??CUCUAW?UFoA??JeC??FyA??Bm@??HkA??HgA@[Du@@MB[DS???EH_@DO@M??VsA??pBLR@??R@Z???RAh@AZ?XD??Sz@??EX??S`A??`AJ??dALb@FxAN^B??|BT??d@ANEJGHMLk@??FYNi@HUDMTc@Za@??@YFYESIGQES?MBMHYd@??u@tE??aAjD??Kf@??u@bCWl@Yt@??{EdNWp@??eBjGSlAUfCIjAChB?R?n@H`AXfA^|@l@`Ap@n@v@n@`Aj@`A^jA`@`B\\~FdA??rCd@tDh@??lJ`ArHt@nCX??vFj@~@FdAB`AAbAC~AIpCQhAChA@`ABbAJrDf@pAT??ZB??n@Ft@Fr@Dt@Bt@?`AA|AAhA?~@?z@Bv@Fx@F`AJ~@JnDd@fAR`GdAd@HtAXnA\\hA^zEfB??jBb@|@RnCl@fBVrBRvBR`CP`CLfUt@??bDLvCJrCLjCLbCN|CPhCPnCRteBxMfAJfALfALbAP`APz@Nv@Pt@Pr@Px@Vt@Tp@Rp@Vt@Xt@Xt@Zp@Zda@pR??f@Vb@Vd@Xb@X`@Z\\Vd@^d@^`@^\\\\Z\\Z\\xEtFfB|A??hDvC??dGrF??vDhD??`bCnyBrLxK~@v@v@f@??bD|A^HXJjBh@VFZDXB??z@Jz@@l@C\\EXGd@K`A_@??z@_@??tAgA??xAiAZU`BmALK??dAy@??l@WZO^K^I`@It@QXITM??JG??v@k@SMIG??c@[??_@Y??c@[??e@]??e@]??c@[??c@]??e@[??]W??]W??]W??]W??q@g@??e@[??c@]??e@]??]W??_@Yw@j@j@`@??`@X??ZV"
+                     }
                 },{ 
                     "id": "walk_downtown_urban_canyon",
                     "name": "Transbay Terminal to Embarcadero station",

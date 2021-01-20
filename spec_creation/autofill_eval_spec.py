@@ -151,10 +151,10 @@ def get_coords_for_relation(rid, start_node, end_node):
     assert start_index <= end_index, "Start index %d is before end %d" % (start_index, end_index)
     return coords_list[start_index:end_index+1]
 
-def get_route_from_relation(t):
+def get_route_from_relation(r):
     # get_coords_for_relation assumes that start and end are both nodes
-    return get_coords_for_relation(t["relation"]["relation_id"],
-        t["relation"]["start_node"], t["relation"]["end_node"])
+    return get_coords_for_relation(r["relation_id"],
+        r["start_node"], r["end_node"])
 
 def validate_and_fill_leg(orig_leg):
     # print(t)
@@ -184,10 +184,17 @@ def validate_and_fill_leg(orig_leg):
     # integration (otp/routers/default/plan?)
     # But once people figure out the underlying call, they can copy-paste the
     # geometry into the spec.
+
+    rclist = []
     if "polyline" in t:
         route_coords = get_route_from_polyline(t)
+        rclist.append(route_coords)
     elif "relation" in t:
-        route_coords = get_route_from_relation(t)
+        if isinstance(t["relation"], list):
+            for r in t["relation"]:
+                rclist.append(get_route_from_relation(r))
+        else:
+            rclist.append(get_route_from_relation(r))
     else:
         # We need to find a point within the polygon to pass to the routing engine
         start_coords_shp = geo.Polygon(start_polygon["geometry"]["coordinates"][0]).representative_point()
