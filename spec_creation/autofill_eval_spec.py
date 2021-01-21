@@ -157,8 +157,8 @@ def get_route_from_relation(r):
         r["start_node"], r["end_node"])
 
 def validate_and_fill_leg(orig_leg):
-    # print(t)
     t = copy.copy(orig_leg)
+    # print(t)
     t["type"] = "TRAVEL"
     # These are now almost certain to be polygons
     # and probably user-drawn, not looked up from OSM
@@ -203,6 +203,17 @@ def validate_and_fill_leg(orig_leg):
         end_coords = geo.mapping(end_coords_shp)["coordinates"]
         print("Representative_coords: start = %s, end = %s" % (start_coords, end_coords))
         route_coords = get_route_from_osrm(t, start_coords, end_coords)
+
+    # fill in timespan for which ground truth is valid (see issue #11)
+    # first, if end_loc is a dict, we need to convert end_loc to a list of dicts.
+    # otherwise, expect a list of dicts.
+    if isinstance(t["end_loc"], dict):
+        t["end_loc"] = [t["end_loc"]]
+
+    # next, add dates
+    for e in t["end_loc"]:
+        e["properties"]["valid_start_fmt_date"] = ""
+        e["properties"]["valid_end_fmt_date"] = ""
 
     t["route_coords"] = {
         "type": "Feature",
@@ -308,10 +319,6 @@ def validate_and_fill_eval_trips(curr_spec):
             # Let's check again after we have inserted the shim legs
             assert not has_duplicate_legs(t), \
                 "Found duplicate leg ids in trip %s" % t["id"]
-            
-            # key that holds information regarding timespan of ground truth data
-            # TODO: determine where to find timespan info for trip
-            t["timespan"] = ""
         
         else:
             print("Filling unimodal trip %s" % t["id"])
