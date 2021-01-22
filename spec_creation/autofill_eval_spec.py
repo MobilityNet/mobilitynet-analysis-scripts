@@ -166,7 +166,7 @@ def _add_temporal_ground_truth(orig_loc):
     if isinstance(loc, dict):
         loc = [loc]
 
-    print(loc)
+    #print(loc)
 
     # next, add dates
     for l in loc:
