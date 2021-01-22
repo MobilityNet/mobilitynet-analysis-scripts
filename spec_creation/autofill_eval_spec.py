@@ -156,6 +156,25 @@ def get_route_from_relation(r):
     return get_coords_for_relation(r["relation_id"],
         r["start_node"], r["end_node"])
 
+def _add_temporal_ground_truth(orig_loc):
+    # fill in timespan for which ground truth is valid (see issue #11)
+    # first, if start_loc/end_loc are dicts, we need to convert end_loc to a list of dicts.
+    # otherwise, expect a list of dicts for each.
+
+    loc = copy.copy(orig_loc)
+
+    if isinstance(loc, dict):
+        loc = [loc]
+
+    print(loc)
+
+    # next, add dates
+    for l in loc:
+        l["properties"]["valid_start_fmt_date"] = ""
+        l["properties"]["valid_end_fmt_date"] = ""
+
+    return loc
+
 def validate_and_fill_leg(orig_leg):
     t = copy.copy(orig_leg)
     # print(t)
@@ -204,16 +223,8 @@ def validate_and_fill_leg(orig_leg):
         print("Representative_coords: start = %s, end = %s" % (start_coords, end_coords))
         route_coords = get_route_from_osrm(t, start_coords, end_coords)
 
-    # fill in timespan for which ground truth is valid (see issue #11)
-    # first, if end_loc is a dict, we need to convert end_loc to a list of dicts.
-    # otherwise, expect a list of dicts.
-    if isinstance(t["end_loc"], dict):
-        t["end_loc"] = [t["end_loc"]]
-
-    # next, add dates
-    for e in t["end_loc"]:
-        e["properties"]["valid_start_fmt_date"] = ""
-        e["properties"]["valid_end_fmt_date"] = ""
+    for l in [t["start_loc"], t["end_loc"]]:
+        l = _add_temporal_ground_truth(l)
 
     t["route_coords"] = {
         "type": "Feature",
@@ -237,7 +248,7 @@ def get_hidden_access_transfer_walk_segments(prev_l, l):
             "type": "ACCESS",
             "mode": "WALKING",
             "name": "Walk from the building to your vehicle",
-            "loc": l["start_loc"],
+            "loc": _add_temporal_ground_truth(l["start_loc"]),
         }]
 
     if l is None and prev_l["mode"] != "WALKING":
@@ -250,7 +261,7 @@ def get_hidden_access_transfer_walk_segments(prev_l, l):
             "type": "ACCESS",
             "mode": "WALKING",
             "name": "Walk from your vehicle to the building",
-            "loc": prev_l["end_loc"]
+            "loc": _add_temporal_ground_truth(prev_l["end_loc"])
         }]
 
     # The order of the checks is important because we want the STOPPED to come
@@ -270,7 +281,7 @@ def get_hidden_access_transfer_walk_segments(prev_l, l):
             "mode": "WALKING",
             "name": "Transfer between %s and %s at %s" %\
                 (prev_l["mode"], l["mode"], prev_l["end_loc"]["properties"]["name"]),
-            "loc": l["start_loc"]
+            "loc": _add_temporal_ground_truth(l["start_loc"])
         })
 
     if l is not None and "multiple_occupancy" in l and l["multiple_occupancy"] == True:
@@ -280,7 +291,7 @@ def get_hidden_access_transfer_walk_segments(prev_l, l):
             "mode": "STOPPED",
             "name": "Wait for %s at %s" %\
                 (l["mode"], l["start_loc"]["properties"]["name"]),
-            "loc": l["start_loc"]
+            "loc": _add_temporal_ground_truth(l["start_loc"])
         })
 
     # return from the last two checks

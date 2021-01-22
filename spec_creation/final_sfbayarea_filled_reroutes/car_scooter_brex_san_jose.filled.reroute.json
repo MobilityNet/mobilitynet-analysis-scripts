@@ -172,51 +172,55 @@
           "type": "ACCESS",
           "mode": "WALKING",
           "name": "Walk from the building to your vehicle",
-          "loc": {
-            "type": "Feature",
-            "properties": {
-              "name": "Mountain View Library"
-            },
-            "geometry": {
-              "type": "Polygon",
-              "coordinates": [
-                [
+          "loc": [
+            {
+              "type": "Feature",
+              "properties": {
+                "name": "Mountain View Library",
+                "valid_start_fmt_date": "",
+                "valid_end_fmt_date": ""
+              },
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [
                   [
-                    -122.08355963230133,
-                    37.39091642895306
-                  ],
-                  [
-                    -122.08428382873535,
-                    37.38975713188671
-                  ],
-                  [
-                    -122.08383858203888,
-                    37.389573859018185
-                  ],
-                  [
-                    -122.08340406417847,
-                    37.390196132517175
-                  ],
-                  [
-                    -122.08311975002289,
-                    37.39012793841312
-                  ],
-                  [
-                    -122.08280861377716,
-                    37.390656441096894
-                  ],
-                  [
-                    -122.08355426788331,
-                    37.39096757399895
-                  ],
-                  [
-                    -122.08355963230133,
-                    37.39091642895306
+                    [
+                      -122.08355963230133,
+                      37.39091642895306
+                    ],
+                    [
+                      -122.08428382873535,
+                      37.38975713188671
+                    ],
+                    [
+                      -122.08383858203888,
+                      37.389573859018185
+                    ],
+                    [
+                      -122.08340406417847,
+                      37.390196132517175
+                    ],
+                    [
+                      -122.08311975002289,
+                      37.39012793841312
+                    ],
+                    [
+                      -122.08280861377716,
+                      37.390656441096894
+                    ],
+                    [
+                      -122.08355426788331,
+                      37.39096757399895
+                    ],
+                    [
+                      -122.08355963230133,
+                      37.39091642895306
+                    ]
                   ]
                 ]
-              ]
+              }
             }
-          }
+          ]
         },
         {
           "id": "freeway_driving_weekday",
@@ -225,7 +229,9 @@
           "start_loc": {
             "type": "Feature",
             "properties": {
-              "name": "Mountain View Library"
+              "name": "Mountain View Library",
+              "valid_start_fmt_date": "",
+              "valid_end_fmt_date": ""
             },
             "geometry": {
               "type": "Polygon",
@@ -267,43 +273,41 @@
               ]
             }
           },
-          "end_loc": [
-            {
-              "type": "Feature",
-              "properties": {
-                "name": "San Jose King Library",
-                "valid_start_fmt_date": "",
-                "valid_end_fmt_date": ""
-              },
-              "geometry": {
-                "type": "Polygon",
-                "coordinates": [
+          "end_loc": {
+            "type": "Feature",
+            "properties": {
+              "name": "San Jose King Library",
+              "valid_start_fmt_date": "",
+              "valid_end_fmt_date": ""
+            },
+            "geometry": {
+              "type": "Polygon",
+              "coordinates": [
+                [
                   [
-                    [
-                      -121.88688397407532,
-                      37.33674277401349
-                    ],
-                    [
-                      -121.8852210044861,
-                      37.33460162979272
-                    ],
-                    [
-                      -121.88409447669984,
-                      37.33517744150916
-                    ],
-                    [
-                      -121.88620805740356,
-                      37.33704560024162
-                    ],
-                    [
-                      -121.88688397407532,
-                      37.33674277401349
-                    ]
+                    -121.88688397407532,
+                    37.33674277401349
+                  ],
+                  [
+                    -121.8852210044861,
+                    37.33460162979272
+                  ],
+                  [
+                    -121.88409447669984,
+                    37.33517744150916
+                  ],
+                  [
+                    -121.88620805740356,
+                    37.33704560024162
+                  ],
+                  [
+                    -121.88688397407532,
+                    37.33674277401349
                   ]
                 ]
-              }
+              ]
             }
-          ],
+          },
           "polyline": "ayecF~nchVeB}@aFkCMGSKOIgCsAyAu@f@gBn@{BqCyA{Aw@MIDKd@aBTu@Lc@FSQKEA]Se@WgAi@GKCCEGGGGGKGy@g@IGIEYQCCSMYSy@c@wBkAQ@a@SKGs@_@u@c@A?UMc@[}@u@MKo@s@MQSYu@kA]g@[a@i@{@CEU]KMIOc@m@cAyACU_@k@]i@OYcBeCS[_@i@i@y@q@aAS[cA}AeEoFKMa@i@iBkBu@w@i@i@k@m@i@c@KG_@Wm@[o@W_Aa@_A]KC@Q@E?UAUCWG[GYK[GUKUKUMUMSMSk@w@IQIQCSESAU?S?UBUDcCvDaY~BgQ\\gC`@iCd@iCrB}Kl@oD^aC\\eCZ}BtBoOrJmt@p@}Ev@aG~CuUhEa\\\\mC`BcMhIan@|D}YJu@fDeWfAaHzCyPxFoZhBoJ~AyHzCaO`@mB~@yEjAmGn@gDdAqFxA_ItEiW|Iie@vCsOhC_NfDaQj@}CP_AnFkYtF{YrCkOjB}JfA{GrBqOpBkPhB{OzCiXFk@bBuNjCaUf@eEX_CZyBj@uDDYh@aBl@_EVkA~@oEh@eBZo@Xi@`AmAj@k@j@_@VMTI^M\\KzCu@pAa@r@S~@c@\\Op@c@d@_@XYf@i@b@g@j@{@NYf@{@jAyBnAaCrFoKr@oAt@mA|@qA`AmAfAoAdAcAtAiAxAgAlA{@vUyOlMyIvEaDnGkE|BwA~CkBzBgAxCsAjIsDl@Yl@[t@g@r@e@hB}AnB_Cd@u@`@s@d@{@b@_A`@eA`AcCdA_Cv@wAv@kAr@}@p@w@r@s@r@o@f@_@d@[`@Wh@[z@a@fBs@bC_A`Bu@`Ae@`@WdGqD^E|CmBj@YdD{AVKZI^Ef@A`@Dr@NRBf@FVBT?^EXGf@STKTI\\QTKdAu@bBoAPUHe@@w@Gy@Co@@]DYfA{@JInBqA^SRMNMDGL[N_@Zu@Te@HKh@m@rCgBt@e@PKSk@EMACsAsDqAmDEMEIcAkCIUKYiA}CCGi@{AEMGOUo@Yu@e@mAAGEIGQe@mAk@}AIUKUmAaDIUMYQe@Qe@",
           "type": "TRAVEL",
           "route_coords": {
@@ -1613,7 +1617,98 @@
           "type": "ACCESS",
           "mode": "WALKING",
           "name": "Walk from your vehicle to the building",
-          "loc": {
+          "loc": [
+            {
+              "type": "Feature",
+              "properties": {
+                "name": "San Jose King Library",
+                "valid_start_fmt_date": "",
+                "valid_end_fmt_date": ""
+              },
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [
+                      -121.88688397407532,
+                      37.33674277401349
+                    ],
+                    [
+                      -121.8852210044861,
+                      37.33460162979272
+                    ],
+                    [
+                      -121.88409447669984,
+                      37.33517744150916
+                    ],
+                    [
+                      -121.88620805740356,
+                      37.33704560024162
+                    ],
+                    [
+                      -121.88688397407532,
+                      37.33674277401349
+                    ]
+                  ]
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bus trip with e-scooter access",
+      "name": "Return trip with e-scooter -> bus",
+      "legs": [
+        {
+          "id": "walk_start",
+          "type": "ACCESS",
+          "mode": "WALKING",
+          "name": "Walk from the building to your vehicle",
+          "loc": [
+            {
+              "type": "Feature",
+              "properties": {
+                "name": "San Jose King Library",
+                "valid_start_fmt_date": "",
+                "valid_end_fmt_date": ""
+              },
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [
+                      -121.88688397407532,
+                      37.33674277401349
+                    ],
+                    [
+                      -121.8852210044861,
+                      37.33460162979272
+                    ],
+                    [
+                      -121.88409447669984,
+                      37.33517744150916
+                    ],
+                    [
+                      -121.88620805740356,
+                      37.33704560024162
+                    ],
+                    [
+                      -121.88688397407532,
+                      37.33674277401349
+                    ]
+                  ]
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "city_escooter",
+          "name": "King library to #522 Rapid bus stop",
+          "mode": "ESCOOTER",
+          "start_loc": {
             "type": "Feature",
             "properties": {
               "name": "San Jose King Library",
@@ -1647,127 +1742,42 @@
                 ]
               ]
             }
-          }
-        }
-      ]
-    },
-    {
-      "id": "bus trip with e-scooter access",
-      "name": "Return trip with e-scooter -> bus",
-      "legs": [
-        {
-          "id": "walk_start",
-          "type": "ACCESS",
-          "mode": "WALKING",
-          "name": "Walk from the building to your vehicle",
-          "loc": {
+          },
+          "end_loc": {
             "type": "Feature",
             "properties": {
-              "name": "San Jose King Library"
+              "name": "Alameda and Naglee",
+              "valid_start_fmt_date": "",
+              "valid_end_fmt_date": ""
             },
             "geometry": {
               "type": "Polygon",
               "coordinates": [
                 [
                   [
-                    -121.88688397407532,
-                    37.33674277401349
+                    -121.91962301731108,
+                    37.33791568570916
                   ],
                   [
-                    -121.8852210044861,
-                    37.33460162979272
+                    -121.91919386386871,
+                    37.337570211803545
                   ],
                   [
-                    -121.88409447669984,
-                    37.33517744150916
+                    -121.9190490245819,
+                    37.33771949084662
                   ],
                   [
-                    -121.88620805740356,
-                    37.33704560024162
+                    -121.91938161849974,
+                    37.33807775933949
                   ],
                   [
-                    -121.88688397407532,
-                    37.33674277401349
-                  ]
-                ]
-              ]
-            }
-          }
-        },
-        {
-          "id": "city_escooter",
-          "name": "King library to #522 Rapid bus stop",
-          "mode": "ESCOOTER",
-          "start_loc": {
-            "type": "Feature",
-            "properties": {
-              "name": "San Jose King Library"
-            },
-            "geometry": {
-              "type": "Polygon",
-              "coordinates": [
-                [
-                  [
-                    -121.88688397407532,
-                    37.33674277401349
-                  ],
-                  [
-                    -121.8852210044861,
-                    37.33460162979272
-                  ],
-                  [
-                    -121.88409447669984,
-                    37.33517744150916
-                  ],
-                  [
-                    -121.88620805740356,
-                    37.33704560024162
-                  ],
-                  [
-                    -121.88688397407532,
-                    37.33674277401349
+                    -121.91962301731108,
+                    37.33791568570916
                   ]
                 ]
               ]
             }
           },
-          "end_loc": [
-            {
-              "type": "Feature",
-              "properties": {
-                "name": "Alameda and Naglee",
-                "valid_start_fmt_date": "",
-                "valid_end_fmt_date": ""
-              },
-              "geometry": {
-                "type": "Polygon",
-                "coordinates": [
-                  [
-                    [
-                      -121.91962301731108,
-                      37.33791568570916
-                    ],
-                    [
-                      -121.91919386386871,
-                      37.337570211803545
-                    ],
-                    [
-                      -121.9190490245819,
-                      37.33771949084662
-                    ],
-                    [
-                      -121.91938161849974,
-                      37.33807775933949
-                    ],
-                    [
-                      -121.91962301731108,
-                      37.33791568570916
-                    ]
-                  ]
-                ]
-              }
-            }
-          ],
           "polyline": "kd{bF~w|fVTn@QRxHnSaEpCkErC{GzEeLtHnCzGjA`DkAaDsCnBOHwBzBq@|@e@t@qEvISj@U~@KdA?x@B`@J|@Nv@DTvAnE`@`BxAxHJp@RnBRdEAzCI|BK`B]hC{@vGSz@o@dBU^e@n@qAxAB`@h@~@d@r@fBzClBnCJ~@AP_@t@gBrBnOtVzDbGZ_@",
           "type": "TRAVEL",
           "route_coords": {
@@ -1997,78 +2007,86 @@
           "type": "TRANSFER",
           "mode": "WALKING",
           "name": "Transfer between ESCOOTER and BUS at Alameda and Naglee",
-          "loc": {
-            "type": "Feature",
-            "properties": {
-              "name": "Alameda and Naglee"
-            },
-            "geometry": {
-              "type": "Polygon",
-              "coordinates": [
-                [
+          "loc": [
+            {
+              "type": "Feature",
+              "properties": {
+                "name": "Alameda and Naglee",
+                "valid_start_fmt_date": "",
+                "valid_end_fmt_date": ""
+              },
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [
                   [
-                    -121.91962301731108,
-                    37.33791568570916
-                  ],
-                  [
-                    -121.91919386386871,
-                    37.337570211803545
-                  ],
-                  [
-                    -121.9190490245819,
-                    37.33771949084662
-                  ],
-                  [
-                    -121.91938161849974,
-                    37.33807775933949
-                  ],
-                  [
-                    -121.91962301731108,
-                    37.33791568570916
+                    [
+                      -121.91962301731108,
+                      37.33791568570916
+                    ],
+                    [
+                      -121.91919386386871,
+                      37.337570211803545
+                    ],
+                    [
+                      -121.9190490245819,
+                      37.33771949084662
+                    ],
+                    [
+                      -121.91938161849974,
+                      37.33807775933949
+                    ],
+                    [
+                      -121.91962301731108,
+                      37.33791568570916
+                    ]
                   ]
                 ]
-              ]
+              }
             }
-          }
+          ]
         },
         {
           "id": "wait_for_city_bus_rapid_transit",
           "type": "WAITING",
           "mode": "STOPPED",
           "name": "Wait for BUS at Alameda and Naglee",
-          "loc": {
-            "type": "Feature",
-            "properties": {
-              "name": "Alameda and Naglee"
-            },
-            "geometry": {
-              "type": "Polygon",
-              "coordinates": [
-                [
+          "loc": [
+            {
+              "type": "Feature",
+              "properties": {
+                "name": "Alameda and Naglee",
+                "valid_start_fmt_date": "",
+                "valid_end_fmt_date": ""
+              },
+              "geometry": {
+                "type": "Polygon",
+                "coordinates": [
                   [
-                    -121.91962301731108,
-                    37.33791568570916
-                  ],
-                  [
-                    -121.91919386386871,
-                    37.337570211803545
-                  ],
-                  [
-                    -121.9190490245819,
-                    37.33771949084662
-                  ],
-                  [
-                    -121.91938161849974,
-                    37.33807775933949
-                  ],
-                  [
-                    -121.91962301731108,
-                    37.33791568570916
+                    [
+                      -121.91962301731108,
+                      37.33791568570916
+                    ],
+                    [
+                      -121.91919386386871,
+                      37.337570211803545
+                    ],
+                    [
+                      -121.9190490245819,
+                      37.33771949084662
+                    ],
+                    [
+                      -121.91938161849974,
+                      37.33807775933949
+                    ],
+                    [
+                      -121.91962301731108,
+                      37.33791568570916
+                    ]
                   ]
                 ]
-              ]
+              }
             }
-          }
+          ]
         },
         {
           "id": "city_bus_rapid_transit",
@@ -2078,7 +2096,9 @@
           "start_loc": {
             "type": "Feature",
             "properties": {
-              "name": "Alameda and Naglee"
+              "name": "Alameda and Naglee",
+              "valid_start_fmt_date": "",
+              "valid_end_fmt_date": ""
             },
             "geometry": {
               "type": "Polygon",
@@ -2108,43 +2128,41 @@
               ]
             }
           },
-          "end_loc": [
-            {
-              "type": "Feature",
-              "properties": {
-                "name": "El Camino and Castro",
-                "valid_start_fmt_date": "",
-                "valid_end_fmt_date": ""
-              },
-              "geometry": {
-                "type": "Polygon",
-                "coordinates": [
+          "end_loc": {
+            "type": "Feature",
+            "properties": {
+              "name": "El Camino and Castro",
+              "valid_start_fmt_date": "",
+              "valid_end_fmt_date": ""
+            },
+            "geometry": {
+              "type": "Polygon",
+              "coordinates": [
+                [
                   [
-                    [
-                      -122.08482027053833,
-                      37.386277001946475
-                    ],
-                    [
-                      -122.08392173051834,
-                      37.3858337159894
-                    ],
-                    [
-                      -122.08380103111267,
-                      37.386027653918106
-                    ],
-                    [
-                      -122.08469152450562,
-                      37.38644536467614
-                    ],
-                    [
-                      -122.08482027053833,
-                      37.386277001946475
-                    ]
+                    -122.08482027053833,
+                    37.386277001946475
+                  ],
+                  [
+                    -122.08392173051834,
+                    37.3858337159894
+                  ],
+                  [
+                    -122.08380103111267,
+                    37.386027653918106
+                  ],
+                  [
+                    -122.08469152450562,
+                    37.38644536467614
+                  ],
+                  [
+                    -122.08482027053833,
+                    37.386277001946475
                   ]
                 ]
-              }
+              ]
             }
-          ],
+          },
           "polyline": "up{bFzkcgVMNwD|EaEfF{BrCcAnA{@fAMLiAvAe@n@OPkAzAEDGLGJABABEJEN?BMh@K^Kh@I\\EJI`@AFCHGZKl@On@Mh@]bBKb@Qz@Or@]zA}AdHOx@w@`Ec@|Bi@nCCNENYn@OT[\\[XOHSHWFc@@Y?]E]Ke@Se@]qBqAq@c@aAk@[Oy@O_@Aw@DSDYFSD_@Ng@X_@^SRW^Ub@c@bA}@bCuAjD}@|Bk@tA[r@g@~@SV{@|@CBOJYTYTGFe@b@YX_@f@w@lAUb@mAlCgBbE}AxDABkCbGYh@GNSf@KVI`@G\\E^?X?h@BVD\\H^`@rAb@jA`@jAN`@Pf@HZZfADNv@rCn@rCb@tAJ`@dAfEpAlFrAlF^zBX`C@F@ZB^@^@j@ApB?Z?~@?~D@~FAzB?`G?z@AP@zA@hB?tG?bRA`R?|A@R?\\?fB?`DAtB@fFA|G@hA?xD?~KAbC?Z?n@?dA?\\?fG?bF@`KA~CA|A@Z?N?H@rA@fM?t@?hHBdS?vEAtA?v@?bD?\\?b@?p@?|@?NAdB@j@?x@AZ?D?H?bB@rA@fB?VDzBBxA?`@@R?d@@hA?jC?j@@pA?R?XBnEBjHAnB?j@B~D@tD?jE?\\AdC?z@?bA?d@?z@?z@AvACjACNCx@CVGl@UlBIr@_@hBs@zBi@~AM\\Wp@KN_@t@Yd@?@s@lAu@hAo@v@mA|Ay@hA]b@qBfCiCjDyBjC}BrCgAtAsD|Eq@|@k@r@QTGHILORiGdIqA|Aq@z@KNIJOPQTiA~A{@jAgEnFsDnEeArAg@n@yC~DuBfCmClDo@v@]d@GJILSb@EHKRa@jAQd@a@pAWdAG^ET[tBU|AE`@y@zGE`@CVERUzA}@vFiB`L[jBa@|B_B`K_@lCOfAoCdT_AhHkAfIUvAk@~COt@kDdRK^WbAQl@Sr@W|@[hA[bAc@~AM`@Qp@Sl@EPY|@Ux@gA~DwA`F[dAQt@u@jCEPAFITyAxFADK^]nAOj@y@|CW`ACHOh@K^AFM^ETABQn@I`@CDENEPWbAABYjAK\\ADOj@Y`AGLO`@AJIRGT[z@Ut@oApDADOb@g@zAYz@Un@GLIVo@nB{@vBABs@fBoCfHeAjCe@fAc@`AKZSh@_A`CcDfIm@`Bi@tA{@vB]z@aBbEmAbDIRUl@e@lA",
           "type": "TRAVEL",
           "route_coords": {
@@ -3716,7 +3734,9 @@
           "start_loc": {
             "type": "Feature",
             "properties": {
-              "name": "El Camino and Castro"
+              "name": "El Camino and Castro",
+              "valid_start_fmt_date": "",
+              "valid_end_fmt_date": ""
             },
             "geometry": {
               "type": "Polygon",
@@ -3746,55 +3766,53 @@
               ]
             }
           },
-          "end_loc": [
-            {
-              "type": "Feature",
-              "properties": {
-                "name": "Mountain View Library",
-                "valid_start_fmt_date": "",
-                "valid_end_fmt_date": ""
-              },
-              "geometry": {
-                "type": "Polygon",
-                "coordinates": [
+          "end_loc": {
+            "type": "Feature",
+            "properties": {
+              "name": "Mountain View Library",
+              "valid_start_fmt_date": "",
+              "valid_end_fmt_date": ""
+            },
+            "geometry": {
+              "type": "Polygon",
+              "coordinates": [
+                [
                   [
-                    [
-                      -122.08355963230133,
-                      37.39091642895306
-                    ],
-                    [
-                      -122.08428382873535,
-                      37.38975713188671
-                    ],
-                    [
-                      -122.08383858203888,
-                      37.389573859018185
-                    ],
-                    [
-                      -122.08340406417847,
-                      37.390196132517175
-                    ],
-                    [
-                      -122.08311975002289,
-                      37.39012793841312
-                    ],
-                    [
-                      -122.08280861377716,
-                      37.390656441096894
-                    ],
-                    [
-                      -122.08355426788331,
-                      37.39096757399895
-                    ],
-                    [
-                      -122.08355963230133,
-                      37.39091642895306
-                    ]
+                    -122.08355963230133,
+                    37.39091642895306
+                  ],
+                  [
+                    -122.08428382873535,
+                    37.38975713188671
+                  ],
+                  [
+                    -122.08383858203888,
+                    37.389573859018185
+                  ],
+                  [
+                    -122.08340406417847,
+                    37.390196132517175
+                  ],
+                  [
+                    -122.08311975002289,
+                    37.39012793841312
+                  ],
+                  [
+                    -122.08280861377716,
+                    37.390656441096894
+                  ],
+                  [
+                    -122.08355426788331,
+                    37.39096757399895
+                  ],
+                  [
+                    -122.08355963230133,
+                    37.39091642895306
                   ]
                 ]
-              }
+              ]
             }
-          ],
+          },
           "polyline": "o~dcFfschVr@iBLYMGuAo@MGi@Wc@UYOGEOIQKQKg@WWOECGCOISKyAw@QKKVi@|AK\\CHM\\cAvCM\\]~@iB_A]SsAq@",
           "type": "TRAVEL",
           "route_coords": {
