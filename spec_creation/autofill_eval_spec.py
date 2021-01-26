@@ -226,6 +226,7 @@ def validate_and_fill_leg(orig_leg, default_start_fmt_date, default_end_fmt_date
         end_coords = geo.mapping(end_coords_shp)["coordinates"]
         print("Representative_coords: start = %s, end = %s" % (start_coords, end_coords))
         route_coords = get_route_from_osrm(t, start_coords, end_coords)
+        rclist.append(route_coords)
 
     for l in [t["start_loc"], t["end_loc"]]:
         l = _add_temporal_ground_truth(l, default_start_fmt_date, default_end_fmt_date)
@@ -235,7 +236,7 @@ def validate_and_fill_leg(orig_leg, default_start_fmt_date, default_end_fmt_date
         "properties": {},
         "geometry": {
             "type": "LineString",
-            "coordinates": [coords_swap(rc) for rc in route_coords]
+            "coordinates": [coords_swap(rc) for rc in rclist]
         }
     }
     return t
