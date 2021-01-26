@@ -156,9 +156,9 @@ def get_route_from_relation(r):
     return get_coords_for_relation(r["relation_id"],
         r["start_node"], r["end_node"])
 
-def _add_temporal_ground_truth(orig_loc, start_fmt_date, end_fmt_date):
+def _add_temporal_ground_truth(orig_loc, default_start_fmt_date, default_end_fmt_date):
     # fill in timespan for which ground truth is valid (see issue #11)
-    # first, if loc is a dict, we need to convert end_loc to a list of dicts.
+    # first, if loc is a dict, we need to convert loc to a list of dicts.
     # otherwise, expect a list of dicts for each.
 
     loc = copy.copy(orig_loc)
@@ -170,16 +170,16 @@ def _add_temporal_ground_truth(orig_loc, start_fmt_date, end_fmt_date):
 
     # next, add dates if they do not exist
     for l in loc:
-        if not l["properties"].get("valid_start_fmt_date"):
-            l["properties"]["valid_start_fmt_date"] = start_fmt_date
-        if not l["properties"].get("valid_end_fmt_date"):
-            l["properties"]["valid_end_fmt_date"] = end_fmt_date
+        if l["properties"].get("valid_start_fmt_date") is None:
+            l["properties"]["valid_start_fmt_date"] = default_start_fmt_date
+        if l["properties"].get("valid_end_fmt_date") is None:
+            l["properties"]["valid_end_fmt_date"] = default_end_fmt_date
 
     print(loc)
 
     return loc
 
-def validate_and_fill_leg(orig_leg, start_fmt_date, end_fmt_date):
+def validate_and_fill_leg(orig_leg, default_start_fmt_date, default_end_fmt_date):
     t = copy.copy(orig_leg)
     # print(t)
     t["type"] = "TRAVEL"
@@ -217,7 +217,7 @@ def validate_and_fill_leg(orig_leg, start_fmt_date, end_fmt_date):
             for r in t["relation"]:
                 rclist.append(get_route_from_relation(r))
         else:
-            rclist.append(get_route_from_relation(r))
+            rclist.append(get_route_from_relation(t["relation"]))
     else:
         # We need to find a point within the polygon to pass to the routing engine
         start_coords_shp = geo.Polygon(start_polygon["geometry"]["coordinates"][0]).representative_point()
@@ -228,7 +228,7 @@ def validate_and_fill_leg(orig_leg, start_fmt_date, end_fmt_date):
         route_coords = get_route_from_osrm(t, start_coords, end_coords)
 
     for l in [t["start_loc"], t["end_loc"]]:
-        l = _add_temporal_ground_truth(l, start_fmt_date, end_fmt_date)
+        l = _add_temporal_ground_truth(l, default_start_fmt_date, default_end_fmt_date)
 
     t["route_coords"] = {
         "type": "Feature",
@@ -240,7 +240,7 @@ def validate_and_fill_leg(orig_leg, start_fmt_date, end_fmt_date):
     }
     return t
 
-def get_hidden_access_transfer_walk_segments(prev_l, l, start_fmt_date, end_fmt_date):
+def get_hidden_access_transfer_walk_segments(prev_l, l, default_start_fmt_date, default_end_fmt_date):
     # print("prev_l = %s, l = %s" % (prev_l, l))
     if prev_l is None and l["mode"] != "WALKING":
         # This is the first leg and is a vehicular trip,
@@ -252,7 +252,7 @@ def get_hidden_access_transfer_walk_segments(prev_l, l, start_fmt_date, end_fmt_
             "type": "ACCESS",
             "mode": "WALKING",
             "name": "Walk from the building to your vehicle",
-            "loc": _add_temporal_ground_truth(l["start_loc"]),
+            "loc": _add_temporal_ground_truth(l["start_loc"], default_start_fmt_date, default_end_fmt_date),
         }]
 
     if l is None and prev_l["mode"] != "WALKING":
@@ -265,7 +265,7 @@ def get_hidden_access_transfer_walk_segments(prev_l, l, start_fmt_date, end_fmt_
             "type": "ACCESS",
             "mode": "WALKING",
             "name": "Walk from your vehicle to the building",
-            "loc": _add_temporal_ground_truth(prev_l["end_loc"], start_fmt_date, end_fmt_date)
+            "loc": _add_temporal_ground_truth(prev_l["end_loc"], default_start_fmt_date, default_end_fmt_date)
         }]
 
     # The order of the checks is important because we want the STOPPED to come
@@ -285,7 +285,7 @@ def get_hidden_access_transfer_walk_segments(prev_l, l, start_fmt_date, end_fmt_
             "mode": "WALKING",
             "name": "Transfer between %s and %s at %s" %\
                 (prev_l["mode"], l["mode"], prev_l["end_loc"]["properties"]["name"]),
-            "loc": _add_temporal_ground_truth(l["start_loc"], start_fmt_date, end_fmt_date)
+            "loc": _add_temporal_ground_truth(l["start_loc"], default_start_fmt_date, default_end_fmt_date)
         })
 
     if l is not None and "multiple_occupancy" in l and l["multiple_occupancy"] == True:
@@ -295,7 +295,7 @@ def get_hidden_access_transfer_walk_segments(prev_l, l, start_fmt_date, end_fmt_
             "mode": "STOPPED",
             "name": "Wait for %s at %s" %\
                 (l["mode"], l["start_loc"]["properties"]["name"]),
-            "loc": _add_temporal_ground_truth(l["start_loc"], start_fmt_date, end_fmt_date)
+            "loc": _add_temporal_ground_truth(l["start_loc"], default_start_fmt_date, default_end_fmt_date)
         })
 
     # return from the last two checks
@@ -310,8 +310,8 @@ def has_duplicate_legs(trip):
 def validate_and_fill_eval_trips(curr_spec):
     modified_spec = copy.copy(curr_spec)
 
-    start_fmt_date = curr_spec["start_fmt_date"]
-    end_fmt_date = curr_spec["end_fmt_date"]
+    default_start_fmt_date = curr_spec["start_fmt_date"]
+    default_end_fmt_date = curr_spec["end_fmt_date"]
 
     eval_trips = modified_spec["evaluation_trips"]
     for t in eval_trips:
@@ -325,12 +325,12 @@ def validate_and_fill_eval_trips(curr_spec):
                 print("Filling leg %s" % l["id"])
                 # Add in shim legs like the ones to walk to/from your vehicle
                 # or to transfer between transit modes
-                shim_legs = get_hidden_access_transfer_walk_segments(prev_l, l, start_fmt_date, end_fmt_date)
+                shim_legs = get_hidden_access_transfer_walk_segments(prev_l, l, default_start_fmt_date, default_end_fmt_date)
                 print("Got shim legs %s, extending" % ([sl["id"] for sl in shim_legs]))
                 ret_leg_list.extend(shim_legs)
-                ret_leg_list.append(validate_and_fill_leg(l, start_fmt_date, end_fmt_date))
+                ret_leg_list.append(validate_and_fill_leg(l, default_start_fmt_date, default_end_fmt_date))
                 prev_l = l
-            shim_legs = get_hidden_access_transfer_walk_segments(prev_l, None, start_fmt_date, end_fmt_date)
+            shim_legs = get_hidden_access_transfer_walk_segments(prev_l, None, default_start_fmt_date, default_end_fmt_date)
             assert len(shim_legs) <= 1, "Last leg should not have a transfer shim"
             print("Got shim legs %s, extending" % ([sl["id"] for sl in shim_legs]))
             ret_leg_list.extend(shim_legs)
@@ -352,12 +352,12 @@ def validate_and_fill_eval_trips(curr_spec):
             t["id"] = unmod_trip["id"]
             t["name"] = unmod_trip["name"]
             t["legs"] = []
-            before_shim_leg = get_hidden_access_transfer_walk_segments(None, unmod_trip, start_fmt_date, end_fmt_date)
+            before_shim_leg = get_hidden_access_transfer_walk_segments(None, unmod_trip, default_start_fmt_date, default_end_fmt_date)
             assert len(before_shim_leg) <= 1, "First leg should not have a transfer shim"
             print("Got shim legs %s, extending" % ([sl["id"] for sl in before_shim_leg]))
             t["legs"].extend(before_shim_leg)
-            t["legs"].append(validate_and_fill_leg(unmod_trip, start_fmt_date, end_fmt_date))
-            after_shim_leg = get_hidden_access_transfer_walk_segments(unmod_trip, None, start_fmt_date, end_fmt_date)
+            t["legs"].append(validate_and_fill_leg(unmod_trip, default_start_fmt_date, default_end_fmt_date))
+            after_shim_leg = get_hidden_access_transfer_walk_segments(unmod_trip, None, default_start_fmt_date, default_end_fmt_date)
             assert len(after_shim_leg) <= 1, "Last leg should not have a transfer shim"
             print("Got shim legs %s, extending" % ([sl["id"] for sl in after_shim_leg]))
             t["legs"].extend(after_shim_leg)
