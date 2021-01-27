@@ -153,8 +153,9 @@ def get_coords_for_relation(rid, start_node, end_node):
 
 def get_route_from_relation(r):
     # get_coords_for_relation assumes that start and end are both nodes
-    return get_coords_for_relation(r["relation_id"],
-        r["start_node"], r["end_node"])
+    if "polyline" in r:
+        return get_route_from_polyline(r)
+    return get_coords_for_relation(r["relation_id"], r["start_node"], r["end_node"])
 
 def _add_temporal_ground_truth(orig_loc, default_start_fmt_date, default_end_fmt_date):
     # fill in timespan for which ground truth is valid (see issue #11)
@@ -166,16 +167,12 @@ def _add_temporal_ground_truth(orig_loc, default_start_fmt_date, default_end_fmt
     if isinstance(loc, dict):
         loc = [loc]
 
-    print(loc)
-
     # next, add dates if they do not exist
     for l in loc:
         if l["properties"].get("valid_start_fmt_date") is None:
             l["properties"]["valid_start_fmt_date"] = default_start_fmt_date
         if l["properties"].get("valid_end_fmt_date") is None:
             l["properties"]["valid_end_fmt_date"] = default_end_fmt_date
-
-    print(loc)
 
     return loc
 
