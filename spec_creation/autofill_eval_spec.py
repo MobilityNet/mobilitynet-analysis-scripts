@@ -153,8 +153,6 @@ def get_coords_for_relation(rid, start_node, end_node):
 
 def get_route_from_relation(r):
     # get_coords_for_relation assumes that start and end are both nodes
-    if "polyline" in r:
-        return get_route_from_polyline(r)
     return get_coords_for_relation(r["relation_id"], r["start_node"], r["end_node"])
 
 def _add_temporal_ground_truth(orig_loc, default_start_fmt_date, default_end_fmt_date):
