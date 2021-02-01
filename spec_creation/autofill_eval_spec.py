@@ -76,7 +76,16 @@ def get_route_from_osrm(t, start_coords, end_coords):
             }
         }
     elif "waypoint_coords" in t:
-        waypoint_coords = t["waypoint_coords"]["geometry"]["coordinates"]
+        if isinstance(t["waypoint_coords"], dict):
+            waypoint_coords = t["waypoint_coords"]["geometry"]["coordinates"]
+        else:
+            waypoint_coords = []
+            for wc in waypoint_coords:
+                waypoint_coords.append({
+                    "valid_start_fmt_date": wc["properties"]["valid_start_fmt_date"],
+                    "valid_end_fmt_date": wc["properties"]["valid_end_fmt_date"],
+                    "coordinates": wc["geometry"]["coordinates"]
+                })
     else:
         waypoint_coords = []
     logging.debug("waypoint_coords = %s..." % waypoint_coords[0:3])
@@ -85,7 +94,11 @@ def get_route_from_osrm(t, start_coords, end_coords):
     return route_coords
 
 def get_route_from_polyline(t):
-    return pl.PolylineCodec().decode(t["polyline"])
+    try:
+        return pl.PolylineCodec().decode(t if isinstance(t, str) else t["polyline"])
+    except IndexError:
+        logging.debug(f"Error returned by pl.PolylineCodec().decode() for {t=}, falling back on empty route [].")
+        return []
 
 # Porting the perl script at
 # https://wiki.openstreetmap.org/wiki/Relations/Relations_to_GPX to python
@@ -162,9 +175,6 @@ def _add_temporal_ground_truth(orig_loc, default_start_fmt_date, default_end_fmt
 
     loc = copy.copy(orig_loc)
 
-    print("adding temporal ground truth...")
-    print(f"before: {loc=}")
-
     if isinstance(loc, dict):
         loc = [loc]
 
@@ -174,73 +184,75 @@ def _add_temporal_ground_truth(orig_loc, default_start_fmt_date, default_end_fmt
             l["properties"]["valid_start_fmt_date"] = default_start_fmt_date
         if l["properties"].get("valid_end_fmt_date") is None:
             l["properties"]["valid_end_fmt_date"] = default_end_fmt_date
-    
-    print(f"after: {loc=}")
 
     return loc
 
 def validate_and_fill_leg(orig_leg, default_start_fmt_date, default_end_fmt_date):
     t = copy.copy(orig_leg)
-    # print(t)
     t["type"] = "TRAVEL"
-    # These are now almost certain to be polygons
-    # and probably user-drawn, not looked up from OSM
-    # so what we will get here is an geojson representation of a polygon
-    # TODO: Drop support for single point
-    start_polygon = _fill_coords_from_id(t["start_loc"])
-    end_polygon = _fill_coords_from_id(t["end_loc"])
-    print("Raw polygons: start = %s..., end = %s..." %
-        (start_polygon["geometry"]["coordinates"][0][0:3],
-         end_polygon["geometry"]["coordinates"][0][0:3]))
+    t["start_loc"] = _add_temporal_ground_truth(t["start_loc"], default_start_fmt_date, default_end_fmt_date)
+    t["end_loc"] = _add_temporal_ground_truth(t["end_loc"], default_start_fmt_date, default_end_fmt_date)
 
-    # there are three possible ways in which users can specify routes
-    # - waypoints from OSM, which we will map into coordinates and then
-    # move to step 2
-    # - list of coordinates, which we will use to find route coordinates
-    # using OSRM
-    # - a relation with start and end nodes, used only for public transit trips
-    # - a polyline, which we can get from external API calls such as OTP or Google Maps
-    # Right now, we leave the integrations unspecified because there is not
-    # much standardization other than with google maps
-    # For example, the VTA trip planner () clearly uses OTP
-    # () but the path (api/otp/plan?) is different from the one for our OTP
-    # integration (otp/routers/default/plan?)
-    # But once people figure out the underlying call, they can copy-paste the
-    # geometry into the spec.
+    start_polygons = [_fill_coords_from_id(loc) for loc in t["start_loc"]]
+    end_polygons = [_fill_coords_from_id(loc) for loc in t["end_loc"]]
 
-    rclist = []
-    if "polylines" in t:
-        for p in t["polylines"]:
-            rclist.append(get_route_from_polyline(p["polyline"]))
-    elif "polyline" in t:
-        rclist.append(get_route_from_polyline(t))
-    elif "relation" in t:
-        if isinstance(t["relation"], list):
-            for r in t["relation"]:
-                rclist.append(get_route_from_relation(r))
-        else:
-            rclist.append(get_route_from_relation(t["relation"]))
-    else:
-        # We need to find a point within the polygon to pass to the routing engine
-        start_coords_shp = geo.Polygon(start_polygon["geometry"]["coordinates"][0]).representative_point()
-        start_coords = geo.mapping(start_coords_shp)["coordinates"]
-        end_coords_shp = geo.Polygon(end_polygon["geometry"]["coordinates"][0]).representative_point()
-        end_coords = geo.mapping(end_coords_shp)["coordinates"]
-        print("Representative_coords: start = %s, end = %s" % (start_coords, end_coords))
-        route_coords = get_route_from_osrm(t, start_coords, end_coords)
-        rclist.append(route_coords)
+    # iterate across all start polygon and end polygon combinations
+    route_coords = []
+    for i in range(len(start_polygons)):
+        for j in range(len(end_polygons)):
+            start_polygon = start_polygons[i]
+            end_polygon = end_polygons[j]
 
-    for l in [t["start_loc"], t["end_loc"]]:
-        l = _add_temporal_ground_truth(l, default_start_fmt_date, default_end_fmt_date)
+            # there are three possible ways in which users can specify routes
+            # - waypoints from OSM, which we will map into coordinates and then
+            # move to step 2
+            # - list of coordinates, which we will use to find route coordinates
+            # using OSRM
+            # - a relation with start and end nodes, used only for public transit trips
+            # - a polyline, which we can get from external API calls such as OTP or Google Maps
+            # Right now, we leave the integrations unspecified because there is not
+            # much standardization other than with google maps
+            # For example, the VTA trip planner () clearly uses OTP
+            # () but the path (api/otp/plan?) is different from the one for our OTP
+            # integration (otp/routers/default/plan?)
+            # But once people figure out the underlying call, they can copy-paste the
+            # geometry into the spec.       
 
-    t["route_coords"] = {
-        "type": "Feature",
-        "properties": {},
-        "geometry": {
-            "type": "LineString",
-            "coordinates": [coords_swap(rc) for rc in rclist]
-        }
-    }
+            rclist = []
+            if "polylines" in t:
+                for p in t["polylines"]:
+                    rclist.append(get_route_from_polyline(p["polyline"]))
+            elif "polyline" in t:
+                rclist.append(get_route_from_polyline(t))
+            elif "relation" in t:
+                if isinstance(t["relation"], list):
+                    for r in t["relation"]:
+                        rclist.append(get_route_from_relation(r))
+                else:
+                    rclist.append(get_route_from_relation(t["relation"]))
+            else:
+                # We need to find a point within the polygon to pass to the routing engine
+                start_coords_shp = geo.Polygon(start_polygon["geometry"]["coordinates"][0]).representative_point()
+                start_coords = geo.mapping(start_coords_shp)["coordinates"]
+                end_coords_shp = geo.Polygon(end_polygon["geometry"]["coordinates"][0]).representative_point()
+                end_coords = geo.mapping(end_coords_shp)["coordinates"]
+                print("Representative_coords: start = %s, end = %s" % (start_coords, end_coords))
+                route_coords = get_route_from_osrm(t, start_coords, end_coords)
+                rclist.append(route_coords)
+
+            route_coords.append({
+                "type": "Feature",
+                "properties": {
+                    "valid_start_fmt_date": t["start_loc"][i]["properties"]["valid_start_fmt_date"],
+                    "valid_end_fmt_date": t["end_loc"][j]["properties"]["valid_end_fmt_date"]
+                },
+                "geometry": {
+                    "type": "LineString",
+                    "coordinates": [coords_swap(rc) for rc in rclist]
+                }
+            })
+
+    t["route_coords"] = route_coords
     return t
 
 def get_hidden_access_transfer_walk_segments(prev_l, l, default_start_fmt_date, default_end_fmt_date):
