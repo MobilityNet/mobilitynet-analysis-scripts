@@ -162,6 +162,9 @@ def _add_temporal_ground_truth(orig_loc, default_start_fmt_date, default_end_fmt
 
     loc = copy.copy(orig_loc)
 
+    print("adding temporal ground truth...")
+    print(f"before: {loc=}")
+
     if isinstance(loc, dict):
         loc = [loc]
 
@@ -171,6 +174,8 @@ def _add_temporal_ground_truth(orig_loc, default_start_fmt_date, default_end_fmt
             l["properties"]["valid_start_fmt_date"] = default_start_fmt_date
         if l["properties"].get("valid_end_fmt_date") is None:
             l["properties"]["valid_end_fmt_date"] = default_end_fmt_date
+    
+    print(f"after: {loc=}")
 
     return loc
 
