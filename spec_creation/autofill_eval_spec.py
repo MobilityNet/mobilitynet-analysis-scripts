@@ -209,12 +209,11 @@ def validate_and_fill_leg(orig_leg, default_start_fmt_date, default_end_fmt_date
     # geometry into the spec.
 
     rclist = []
-    if "polyline" in t:
-        if isinstance(t["polyline"], list):
-            for p in t["polyline"]:
-                rclist.append(get_route_from_polyline(p))
-        else:
-            rclist.append(get_route_from_polyline(t))
+    if "polylines" in t:
+        for p in t["polylines"]:
+            rclist.append(get_route_from_polyline(p["polyline"]))
+    elif "polyline" in t:
+        rclist.append(get_route_from_polyline(t))
     elif "relation" in t:
         if isinstance(t["relation"], list):
             for r in t["relation"]:
