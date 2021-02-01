@@ -210,8 +210,11 @@ def validate_and_fill_leg(orig_leg, default_start_fmt_date, default_end_fmt_date
 
     rclist = []
     if "polyline" in t:
-        route_coords = get_route_from_polyline(t)
-        rclist.append(route_coords)
+        if isinstance(t["polyline"], list):
+            for p in t["polyline"]:
+                rclist.append(get_route_from_polyline(p))
+        else:
+            rclist.append(get_route_from_polyline(t))
     elif "relation" in t:
         if isinstance(t["relation"], list):
             for r in t["relation"]:
