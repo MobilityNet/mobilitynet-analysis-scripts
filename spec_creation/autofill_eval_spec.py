@@ -94,11 +94,7 @@ def get_route_from_osrm(t, start_coords, end_coords):
     return route_coords
 
 def get_route_from_polyline(t):
-    try:
-        return pl.PolylineCodec().decode(t if isinstance(t, str) else t["polyline"])
-    except IndexError:
-        logging.debug(f"Error returned by pl.PolylineCodec().decode() for {t=}, falling back on empty route [].")
-        return []
+    return pl.PolylineCodec().decode(t if isinstance(t, str) else t["polyline"])
 
 # Porting the perl script at
 # https://wiki.openstreetmap.org/wiki/Relations/Relations_to_GPX to python
