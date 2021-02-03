@@ -233,8 +233,8 @@ def validate_and_fill_leg(orig_leg, default_start_fmt_date, default_end_fmt_date
                 end_coords_shp = geo.Polygon(end_polygon["geometry"]["coordinates"][0]).representative_point()
                 end_coords = geo.mapping(end_coords_shp)["coordinates"]
                 print("Representative_coords: start = %s, end = %s" % (start_coords, end_coords))
-                route_coords = get_route_from_osrm(t, start_coords, end_coords)
-                rclist.append(route_coords)
+                route = get_route_from_osrm(t, start_coords, end_coords)
+                rclist.append(route)
 
             route_coords.append({
                 "type": "Feature",
