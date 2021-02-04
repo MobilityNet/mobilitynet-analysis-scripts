@@ -45,7 +45,7 @@ def _fill_coords_from_id(loc):
             loc["geometry"]["coordinates"] = node_to_geojson_coords(loc["properties"]["osm_id"])
         elif loc["geometry"]["type"] == "Polygon":
             # get coords for way returns a tuple of (nodes, points)
-            loc["geometry"]["coordinates"] = [[coords_swap(c) for c in get_coords_for_way(loc["properties"]["osm_id"])[1]]]
+            loc["geometry"]["coordinates"] = [coords_swap(c) for c in get_coords_for_way(loc["properties"]["osm_id"])[1]]
     else:
         assert "coordinates" in loc["geometry"],\
             "Location %s does not have either an osmid or specified set of coordinates"
