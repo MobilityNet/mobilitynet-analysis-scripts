@@ -244,7 +244,7 @@ def validate_and_fill_leg(orig_leg, default_start_fmt_date, default_end_fmt_date
                 },
                 "geometry": {
                     "type": "LineString",
-                    "coordinates": [coords_swap(rc) for rc in rclist]
+                    "coordinates": [[coords_swap(c) for c in r] for r in rclist]
                 }
             })
 
