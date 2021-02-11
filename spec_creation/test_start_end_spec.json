@@ -1,0 +1,153 @@
+{
+    "fmt_version": 1,
+    "id": "train_bus_ebike_mtv_ucb",
+    "name": "Multimodal multi-train, multi-bus, ebike trip to UC Berkeley",
+    "region": {
+        "osm_id": 2157162589,
+        "name": "San Francisco Bay Area",
+        "timezone": "America/Los_Angeles"
+    },
+    "start_fmt_date": "2019-07-16",
+    "end_fmt_date": "2020-04-30",
+    "phones": {
+        "android": {
+          "ucb-sdb-android-1": "accuracy_control",
+          "ucb-sdb-android-2": "evaluation_0",
+          "ucb-sdb-android-3": "evaluation_1",
+          "ucb-sdb-android-4": "power_control"
+        },
+        "ios": {
+          "ucb-sdb-ios-1": "accuracy_control",
+          "ucb-sdb-ios-2": "evaluation_0",
+          "ucb-sdb-ios-3": "evaluation_1",
+          "ucb-sdb-ios-4": "power_control"
+        }
+    },
+    "calibration_tests": [
+    ],
+    "sensing_settings": [{
+        "android": ["HAHFDC", "HAMFDC"],
+        "ios": ["HAHFDC", "MAHFDC"]
+    },{
+        "android": ["HAHFDC", "MAHFDC"],
+        "ios": ["HAHFDC", "HAMFDC"]
+    },{
+        "android": ["MAMFDC", "HAMFDC"],
+        "ios": ["MAMFDC", "MAHFDC"]
+    },{
+        "android": ["MAMFDC", "MAHFDC"],
+        "ios": ["MAMFDC", "HAMFDC"]
+    }],
+    "evaluation_trips": [
+        {
+            "id": "mtv_to_berkeley_sf_bart",
+            "name": "To UCB on Caltrain and BART through SF",
+            "legs":[
+                {
+                    "id": "test_leg_1",
+                    "name": "Test start and end re-routes",
+                    "mode": "WALKING",
+                    "start_loc": [
+                    {
+                      "type": "Feature",
+                      "properties": {
+                        "name": "Test start",
+                        "valid_start_fmt_date": "2019-07-16",
+                        "valid_end_fmt_date": "2019-08-30"
+                      },
+                      "geometry": {
+                        "type": "Polygon",
+                        "coordinates": [
+                          [
+                            [ -122.08355963230133, 37.39091642895306 ],
+                            [ -122.08428382873535, 37.38975713188671 ],
+                            [ -122.08383858203888, 37.389573859018185 ],
+                            [ -122.08340406417847, 37.390196132517175 ],
+                            [ -122.08311975002289, 37.39012793841312 ],
+                            [ -122.08280861377716, 37.390656441096894 ],
+                            [ -122.08355426788331, 37.39096757399895 ],
+                            [ -122.08355963230133, 37.39091642895306 ]
+                          ]
+                        ]
+                      }
+                    },
+                    {
+                      "type": "Feature",
+                      "properties": {
+                        "name": "Test start",
+                        "valid_start_fmt_date": "2019-09-01",
+                        "valid_end_fmt_date": "2020-03-01"
+                      },
+                      "geometry": {
+                        "type": "Polygon",
+                        "coordinates": [
+                          [
+                            [ -122.08355963230133, 37.39091642895306 ],
+                            [ -122.08428382873535, 37.38975713188671 ],
+                            [ -122.08383858203888, 37.389573859018185 ],
+                            [ -122.08340406417847, 37.390196132517175 ],
+                            [ -122.08311975002289, 37.39012793841312 ],
+                            [ -122.08280861377716, 37.390656441096894 ],
+                            [ -122.08355426788331, 37.39096757399895 ],
+                            [ -122.08355963230133, 37.39091642895306 ]
+                          ]
+                        ]
+                      }
+                    }],
+                    "end_loc": [{
+                      "type": "Feature",
+                      "properties": {
+                        "name": "Test end location",
+                        "valid_start_fmt_date": "2019-07-16",
+                        "valid_end_fmt_date": "2019-08-30"
+                      },
+                      "geometry": {
+                        "type": "Polygon",
+                        "coordinates": [
+                          [
+                            [ -122.07675218582153, 37.39485875725021 ],
+                            [ -122.0769828557968, 37.39444961714526 ],
+                            [ -122.07471370697021, 37.3936355921696 ],
+                            [ -122.074493765831, 37.39398080802943 ],
+                            [ -122.07675218582153, 37.39485875725021 ]
+                          ]
+                        ]
+                      }
+                    },
+                    {
+                      "type": "Feature",
+                      "properties": {
+                        "name": "Test end location",
+                        "valid_start_fmt_date": "2019-09-01",
+                        "valid_end_fmt_date": "2020-03-01"
+                      },
+                      "geometry": {
+                        "type": "Polygon",
+                        "coordinates": [
+                          [
+                            [ -122.07675218582153, 37.39485875725021 ],
+                            [ -122.0769828557968, 37.39444961714526 ],
+                            [ -122.07471370697021, 37.3936355921696 ],
+                            [ -122.074493765831, 37.39398080802943 ],
+                            [ -122.07675218582153, 37.39485875725021 ]
+                          ]
+                        ]
+                      }
+                    }],
+                    "polylines": [
+                      {
+                        "polyline": "_|{eFvtiiVBL??Fh@DX@R??DX??BTDf@??b@`D??l@zETdB??VvB??l@`FR`B??TdB??j@zEL`A??\\vC??LbAPnA??Fn@??DTFf@??Hj@J^NZ??F^Hd@Fb@n@jFFf@Bf@Af@Ed@Kd@Qd@S^??OTSPSLUJWH??W@UA]@k@B??I?y@@K@??Q@??cDD_@@[@[B[BaAL??_@H[HYHs@TUFYDUDUB??UBSD??[C[CYGWGWMWM??CASM??]OYM??ICEAWG??UCUCWAU?oAF??eCJ??yAF??m@B??kAH??gAH[@u@DM@[BSD??E?_@HODM@??sAV??LpB@R??@R?Z??ARAh@?ZDX??z@S??XE??`AS??J`A??LdAFb@NxAB^??T|B??Ad@ENGJMHk@L??YFi@NUHMDc@Ta@Z??Y@YFSEGIEQ?SBMHMd@Y??tEu@??jDaA??f@K??bCu@l@Wt@Y??dN{Ep@W??jGeBlASfCUjAIhBCR?n@?`AHfAX|@^`Al@n@p@n@v@j@`A^`A`@jA\\`BdA~F??d@rCh@tD??`AlJt@rHXnC??j@vFF~@BdAA`ACbAI~AQpCChA@hAB`AJbAf@rDTpA??BZ??Fn@Ft@Dr@Bt@?t@A`AA|A?hA?~@Bz@Fv@Fx@J`AJ~@d@nDRfAnAfHXtA\\nA^hAfBzE??b@jBR|@l@nCVfBRrBRvBP`CL`Ct@fU??LbDJvCLrCLjCNbCP|CPhCRnCxMteBJfALfALfAPbAP`ANz@Pv@Pt@Pr@Vx@Tt@Rp@Vp@Xt@Xt@Zt@Zp@pRda@??Vf@Vb@Xd@Xb@Z`@V\\^d@^d@^`@\\\\\\Z\\ZtFxE|AfB??vChD??rFdG??pDjD??lyB~aCxKtLv@|@h@x@??x@dB??h@p@JJJPRd@R`@R`@x@`BNVFJFHFDFFHBHBH?H?JCJCFGHIFKDMDO?O?QAMCMEMGKGGmCyC??KMIIIGIGKGMCKCMAKAK@M?KBODKDSJKDIDKBK@w@N??SDIDIBGFKH??SVMP??OROT??w@`A??kA~A??uAdB??i@u@??mAcBMQ??OPs@`AUZ??MQOU??Q?GK??W[??a@i@??W\\??ED??SX??KJ??KLGH??OR??CDAH?H@H@B??LV??DHBB??PT",
+                        "valid_start_fmt_date": "2019-07-16",
+                        "valid_end_fmt_date": "2019-08-30"
+                      },
+                      {
+                        "polyline": "_|{eFvtiiVBL??Fh@DX@R??DX??BTDf@??b@`D??l@zETdB??VvB??l@`FR`B??TdB??j@zEL`A??\\vC??LbAPnA??Fn@??DTFf@??Hj@J^NZ??F^Hd@Fb@n@jFFf@Bf@Af@Ed@Kd@Qd@S^??OTSPSLUJWH??W@UA]@k@B??I?y@@K@??Q@??cDD_@@[@[B[BaAL??_@H[HYHs@TUFYDUDUB??UBSD??[C[CYGWGWMWM??CASM??]OYM??ICEAWG??UCUCWAU?oAF??eCJ??yAF??m@B??kAH??gAH[@u@DM@[BSD??E?_@HODM@??sAV??LpB@R??@R?Z??ARAh@?ZDX??z@S??XE??`AS??J`A??LdAFb@NxAB^??T|B??Ad@ENGJMHk@L??YFi@NUHMDc@Ta@Z??Y@YFSEGIEQ?SBMHMd@Y??tEu@??jDaA??f@K??bCu@l@Wt@Y??dN{Ep@W??jGeBlASfCUjAIhBCR?n@?`AHfAX|@^`Al@n@p@n@v@j@`A^`A`@jA\\`BdA~F??d@rCh@tD??`AlJt@rHXnC??j@vFF~@BdAA`ACbAI~AQpCChA@hAB`AJbAf@rDTpA??BZ??Fn@Ft@Dr@Bt@?t@A`AA|A?hA?~@Bz@Fv@Fx@J`AJ~@d@nDRfAdA`GHd@XtA\\nA^hAfBzE??b@jBR|@l@nCVfBRrBRvBP`CL`Ct@fU??LbDJvCLrCLjCNbCP|CPhCRnCxMteBJfALfALfAPbAP`ANz@Pv@Pt@Pr@Vx@Tt@Rp@Vp@Xt@Xt@Zt@Zp@pRda@??Vf@Vb@Xd@Xb@Z`@V\\^d@^d@^`@\\\\\\Z\\ZtFxE|AfB??vChD??rFdG??hDvD??nyB`bCxKrLv@~@f@v@??|AbDH^JXh@jBFVDZBX??Jz@@z@Cl@E\\GXKd@_@`A??_@z@??gAtA??iAxAUZmA`BKL??y@dA??Wl@OZK^I^I`@Qt@IXMT??GJ??k@v@MSGI??[c@??Y_@??[c@??]e@??]e@??[c@??]c@??[e@??W]??W]??W]??W]??g@q@??[e@??]c@??]e@??W]??Y_@j@w@`@j@??X`@??VZ",
+                        "valid_start_fmt_date": "2019-09-01",
+                        "valid_end_fmt_date": "2020-04-30"
+                      }
+                    ]
+                }
+            ]
+        }
+    ]
+}
