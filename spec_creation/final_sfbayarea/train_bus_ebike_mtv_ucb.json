@@ -86,14 +86,7 @@
                         ]
                       }
                     },
-                    "waypoint_coords": {
-                      "type": "Feature",
-                      "geometry": {
-                        "type": "LineString",
-                        "coordinates": []
-                      },
-                      "polyline": "axecF`lchVD@LAXK@I?S@OHUDGDEDKF@H@JAFAJARq@AOMG?K[S[gAIWIUW{@BKH[DK?CFUXy@OE?Ag@UWUOKiAm@Le@Jc@BK@CDO{@a@AAMGMICAq@_@e@WiAm@WOUMIEAAMGFQ@CPo@X_ANi@JY?CDKMIAAaDeBWMMIUMA?KGKGAAg@Yi@Yi@Y_@OAAOIKGCAGEs@`Cs@_@BIGEd@_BHDV}@"
-                    }
+                    "polyline": "axecF`lchVD@LAXK@I?S@OHUDGDEDKF@H@JAFAJARq@AOMG?K[S[gAIWIUW{@BKH[DK?CFUXy@OE?Ag@UWUOKiAm@Le@Jc@BK@CDO{@a@AAMGMICAq@_@e@WiAm@WOUMIEAAMGFQ@CPo@X_ANi@JY?CDKMIAAaDeBWMMIUMA?KGKGAAg@Yi@Yi@Y_@OAAOIKGCAGEs@`Cs@_@BIGEd@_BHDV}@"
                 },
                 {
                     "id": "commuter_rail_aboveground",
@@ -219,14 +212,7 @@
                         ]
                       }
                     },
-                    "waypoint_coords": {
-                      "type": "Feature",
-                      "geometry": {
-                        "type": "LineString",
-                        "coordinates": []
-                      },
-                      "polyline": "kpcfF`ogiVCUCw@SAYCe@Cy@CI?"
-                    }
+                    "polyline": "kpcfF`ogiVCUCw@SAYCe@Cy@CI?"
                 },{
                     "id": "city_bus_short",
                     "name": "shuttle bus from downtown to cory",
@@ -249,7 +235,8 @@
                           ]
                         ]    
                       }
-                    }, "end_loc": {
+                    },
+                    "end_loc": {
                         "type": "Feature",
                         "properties": {
                             "name": "Soda/Cory Hall"
@@ -292,7 +279,8 @@
                     ]
                   ]
                 }
-            }, "end_loc": {
+            },
+            "end_loc": {
               "type": "Feature",
               "properties": {
                 "name": "HFA-B"
@@ -310,23 +298,7 @@
                 ]
               }
             },
-            "waypoint_coords": {
-              "type": "Feature",
-              "properties": {},
-              "geometry": {
-                "type": "LineString",
-                "coordinates": [
-                  [ -122.25815534591676, 37.875310709767206 ],
-                  [ -122.25729167461395, 37.87324852982449 ],
-                  [ -122.25858449935912, 37.872757324446724 ],
-                  [ -122.25830554962157, 37.872033213994904 ],
-                  [ -122.25767254829408, 37.870411350143584 ],
-                  [ -122.25762426853179, 37.869721094384055 ],
-                  [ -122.25762426853179, 37.869467010881124 ]
-                ]
-              },
-              "polyline": "ypdfFvqeiVPCLCAOAMFADAJAbAULCP?v@QBAVGXIJC^KFQJOt@SAKd@M\\I??FVLCJp@Hj@AHRRDHFJP|A??@FJCVGr@Qd@MVGPE`@MVIPGb@MLEFCBBTICKAU@AZIAK^IRENAL?J?ZF@?FMFIFCDADAl@GDABBB@PNFDH@B?FAb@M@???"
-            }
+            "polyline": "ypdfFvqeiVPCLCAOAMFADAJAbAULCP?v@QBAVGXIJC^KFQJOt@SAKd@M\\I??FVLCJp@Hj@AHRRDHFJP|A??@FJCVGr@Qd@MVGPE`@MVIPGb@MLEFCBBTICKAU@AZIAK^IRENAL?J?ZF@?FMFIFCDADAl@GDABBB@PNFDH@B?FAb@M@???"
         },{
             "id": "berkeley_to_mtv_SF_express_bus",
             "name": "Multimodal trip through SF by bus and muni",
@@ -375,7 +347,8 @@
                           ]
                         ]
                       }
-                    },{
+                    },
+                    {
                       "type": "Feature",
                       "properties": {
                           "name": "Wurster bikeshare station",
@@ -396,39 +369,18 @@
                       }
                     }
                     ],
-                    "waypoint_coords": [
-                    {
-                      "type": "Feature",
-                      "properties": {
+                    "polylines": [
+                      {
+                        "polyline": "ikcfFtleiVA?c@LK@IAGEQOCACCE@m@FE@C@A??MFMVGRCTSBG?Ag@sDQcAWWO}BLSHGDEl@IBA~@KAYBMJIDWH?PC@???BCNAAO",
                         "valid_start_fmt_date": "2019-07-16",
                         "valid_end_fmt_date": "2019-08-30"
                       },
-                      "geometry": {
-                        "type": "LineString",
-                        "coordinates": [
-                          [ -122.2573506832123, 37.86900118885007 ],
-                          [ -122.25430905818939, 37.86940772460436 ]
-                        ]
-                      },
-                      "polyline": "ikcfFtleiVA?c@LK@IAGEQOCACCE@m@FE@C@A??MFMVGRCTSBG?Ag@sDQcAWWO}BLSHGDEl@IBA~@KAYBMJIDWH?PC@???BCNAAO"
-                    },{
-                      "type": "Feature",
-                      "properties": {
-                          "valid_start_fmt_date": "2019-09-01",
-                          "valid_end_fmt_date": "2020-04-30"
-                      },
-                      "geometry": {
-                        "type": "LineString",
-                        "coordinates": [
-                          [ -122.25754648447035, 37.87027372297761 ],
-                          [ -122.25720047950745, 37.869888365545194 ],
-                          [ -122.25505203008653, 37.87027160563457 ],
-                          [ -122.25451827049254, 37.86941195933999 ]
-                        ]
-                      },
-                      "polyline": "ikcfFtleiVh@O`@MDANE??HCGeA?CAIAQMkBEi@Ca@MeB?KEk@G{@Ei@AUEg@Df@@TLABATAN?XE"
-                    }
-                  ]
+                      {
+                        "polyline": "ikcfFtleiVh@O`@MDANE??HCGeA?CAIAQMkBEi@Ca@MeB?KEk@G{@Ei@AUEg@Df@@TLABATAN?XE",
+                        "valid_start_fmt_date": "2019-09-01",
+                        "valid_end_fmt_date": "2020-04-30"
+                      }
+                    ]
                 },{
                     "id": "ebike_bikeshare_urban_long",
                     "name": "Wurster bikeshare station to 40th San Pablo",
@@ -453,7 +405,8 @@
                             ]
                           ]
                         }
-                    },{
+                    },
+                    {
                         "type": "Feature",
                         "properties": {
                             "name": "Wurster bikeshare station",
@@ -492,38 +445,17 @@
                         ]
                       }
                     },
-                    "waypoint_coords": [
-                    {
-                      "type": "Feature",
-                      "properties": {
+                    "polylines": [
+                      {
+                        "polyline": "klcfFvydiVBEHHD@H?PC@?BCNA@TDh@Fz@Dj@?JLdBB`@Dh@LjB@P@H?BFdAFr@PfC@LPtC@P@LNpB@ZHbAJ`B@NDf@Dz@@N@R@VDj@FhA@@F`ALpBJ|A@PH`ARvC@RB\\Fz@@PDj@BX@NBP@RJtA@NJxABf@Dp@Dj@BZLATAzAKNARAPANAXAFApAGPANALANARAlBKRALANATAzAKRAPALALAXCF?nAITALAPANARA~AKRALAN?LAd@ClAIPANANALAPAb@CD?TAV@H@d@DN@N@RB`@DR?\\?JBFDFDZXNLTNLFFDdCn@PFLDnBh@n@PNDPF|Cz@NDLDb@JlA\\ZD`@?V?\\HND~@VPD^H^Ll@NPDpA^l@PRFp@PfAZXHx@TVHp@PRFF@VHf@LLDNJRVLRNJNBPBV?L?RBNBLDlAZ~@VHBNDNDJBfA\\LDTFXHHBPFNDr@LfCZh@FVBRABAHA@?A?DRFPLXLXPV\\ZFFpAhAd@`@DDrAnAjArA|@tAh@x@Tb@`@p@HNJV\\QJELCVI^IXGp@KlASJAdC]xB_@FARYfAP\\Jd@NdD~@|Bn@`AV~@VNDhBf@JB`AXt@RbAXf@NPDZHPFVHjCr@HBJBh@NhAZHBzBl@JDJBr@RbAXNDRFxA`@@?D@HBJBpBj@LDNDzCx@TFEV?JBZ",
                         "valid_start_fmt_date": "2019-07-16",
                         "valid_end_fmt_date": "2019-08-30"
                       },
-                      "geometry": {
-                        "type": "LineString",
-                        "coordinates": [
-                          [ -122.27141618728638, 37.848997707091975 ],
-                          [ -122.27179169654846, 37.84719742398725 ],
-                          [ -122.27291822433472, 37.846312092173754 ]
-                        ]
-                      },
-                      "polyline": "klcfFvydiVBEHHD@H?PC@?BCNA@TDh@Fz@Dj@?JLdBB`@Dh@LjB@P@H?BFdAFr@PfC@LPtC@P@LNpB@ZHbAJ`B@NDf@Dz@@N@R@VDj@FhA@@F`ALpBJ|A@PH`ARvC@RB\\Fz@@PDj@BX@NBP@RJtA@NJxABf@Dp@Dj@BZLATAzAKNARAPANAXAFApAGPANALANARAlBKRALANATAzAKRAPALALAXCF?nAITALAPANARA~AKRALAN?LAd@ClAIPANANALAPAb@CD?TAV@H@d@DN@N@RB`@DR?\\?JBFDFDZXNLTNLFFDdCn@PFLDnBh@n@PNDPF|Cz@NDLDb@JlA\\ZD`@?V?\\HND~@VPD^H^Ll@NPDpA^l@PRFp@PfAZXHx@TVHp@PRFF@VHf@LLDNJRVLRNJNBPBV?L?RBNBLDlAZ~@VHBNDNDJBfA\\LDTFXHHBPFNDr@LfCZh@FVBRABAHA@?A?DRFPLXLXPV\\ZFFpAhAd@`@DDrAnAjArA|@tAh@x@Tb@`@p@HNJV\\QJELCVI^IXGp@KlASJAdC]xB_@FARYfAP\\Jd@NdD~@|Bn@`AV~@VNDhBf@JB`AXt@RbAXf@NPDZHPFVHjCr@HBJBh@NhAZHBzBl@JDJBr@RbAXNDRFxA`@@?D@HBJBpBj@LDNDzCx@TFEV?JBZ"
-                    },{
-                      "type": "Feature",
-                      "properties": {
+                      {
+                        "polyline": "gjcfFbydiV@N@TDh@Fz@Dj@?JLdBB`@Dh@LjB@P@H?BFdAFr@PfC@LPtC@P@LNpB@ZHbAJ`B@NDf@Dz@@N@R@VDj@FhA@@F`ALpBJ|A@PH`ARvC@RB\\Fz@@PDj@BX@NBP@RJtA@NJxABf@Dp@Dj@BZLATAzAKNARAPANAXAFApAGPANALANARAlBKRALANATAzAKRAPALALAXCF?nAITALAPANARA~AKRALAN?LAd@ClAIPANANALAPAb@CD?TAV@H@d@DN@N@RB`@DR?\\?JBFDFDZXNLTNLFFDdCn@PFLDnBh@n@PNDPF|Cz@NDLDb@JlA\\ZD`@?V?\\HND~@VPD^H^Ll@NPDpA^l@PRFp@PfAZXHx@TVHp@PRFF@VHf@LLDNJRVLRNJNBPBV?L?RBNBLDlAZ~@VHBNDNDJBfA\\LDTFXHHBPFNDr@LfCZh@FVBRABAHA@?A?DRFPLXLXPV\\ZFFpAhAd@`@DDrAnAjArA|@tAh@x@Tb@`@p@HNJV\\QJELCVI^IXGp@KlASJAdC]xB_@FARYfAP\\Jd@NdD~@|Bn@`AV~@VNDhBf@JB`AXt@RbAXf@NPDZHPFVHjCr@HBJBh@NhAZHBzBl@JDJBr@RbAXNDRFxA`@@?D@HBJBpBj@LDNDzCx@TFEV?JBZ",
                         "valid_start_fmt_date": "2019-09-01",
                         "valid_end_fmt_date": "2020-04-30"
-                      },
-                      "geometry": {
-                        "type": "LineString",
-                        "coordinates": [
-                          [ -122.27141618728638, 37.848997707091975 ],
-                          [ -122.27179169654846, 37.84719742398725 ],
-                          [ -122.27291822433472, 37.846312092173754 ]
-                        ]
-                      },
-                      "polyline": "gjcfFbydiV@N@TDh@Fz@Dj@?JLdBB`@Dh@LjB@P@H?BFdAFr@PfC@LPtC@P@LNpB@ZHbAJ`B@NDf@Dz@@N@R@VDj@FhA@@F`ALpBJ|A@PH`ARvC@RB\\Fz@@PDj@BX@NBP@RJtA@NJxABf@Dp@Dj@BZLATAzAKNARAPANAXAFApAGPANALANARAlBKRALANATAzAKRAPALALAXCF?nAITALAPANARA~AKRALAN?LAd@ClAIPANANALAPAb@CD?TAV@H@d@DN@N@RB`@DR?\\?JBFDFDZXNLTNLFFDdCn@PFLDnBh@n@PNDPF|Cz@NDLDb@JlA\\ZD`@?V?\\HND~@VPD^H^Ll@NPDpA^l@PRFp@PfAZXHx@TVHp@PRFF@VHf@LLDNJRVLRNJNBPBV?L?RBNBLDlAZ~@VHBNDNDJBfA\\LDTFXHHBPFNDr@LfCZh@FVBRABAHA@?A?DRFPLXLXPV\\ZFFpAhAd@`@DDrAnAjArA|@tAh@x@Tb@`@p@HNJV\\QJELCVI^IXGp@KlASJAdC]xB_@FARYfAP\\Jd@NdD~@|Bn@`AV~@VNDhBf@JB`AXt@RbAXf@NPDZHPFVHjCr@HBJBh@NhAZHBzBl@JDJBr@RbAXNDRFxA`@@?D@HBJBpBj@LDNDzCx@TFEV?JBZ"
-                    }
+                      }
                     ]
                 },{ 
                     "id": "express_bus",
@@ -625,7 +557,8 @@
                           ]
                         ]
                       }
-                    },{
+                    },
+                    {
                       "type": "Feature",
                       "properties": {
                         "name": "Salesforce Transit Center",
@@ -645,7 +578,8 @@
                         ]
                       }
                     }
-                    ], "end_loc": {
+                    ],
+                    "end_loc": {
                       "type": "Feature",
                       "properties": {
                         "name": "Embarcadero Station"
@@ -663,33 +597,17 @@
                         ]
                       }
                     },
-                    "waypoint_coords": [
-                    {
-                      "type": "Feature",
-                      "properties": {
+                    "polylines": [
+                      {
+                        "polyline": "qzseFt|_jVMSMQCE}@nAMNKPMQw@dAc@l@OR}BzCeAxAOP}@lA[b@a@`@WZIBEBIAOCICj@r@h@t@",
                         "valid_start_fmt_date": "2019-07-16",
                         "valid_end_fmt_date": "2019-08-30"
                       },
-                      "geometry": {
-                        "type": "LineString",
-                        "coordinates": []
-                      },
-                      "polyline": "qzseFt|_jVMSMQCE}@nAMNKPMQw@dAc@l@OR}BzCeAxAOP}@lA[b@a@`@WZIBEBIAOCICj@r@h@t@"
-                    },{
-                      "type": "Feature",
-                      "properties": {
+                      {
+                        "polyline": "qyseFnm`jVILMOmAcBi@UEGCEEGMNCDqAfBAC{@iAmA_B????eAxAOP}@lA[b@a@`@WZIBEBIAOCICj@r@h@t@",
                         "valid_start_fmt_date": "2019-09-01",
                         "valid_end_fmt_date": "2020-04-30"
-                      },
-                      "geometry": {
-                        "type": "LineString",
-                        "coordinates": [
-                          [ -122.39580094814299, 37.79116548736748 ],
-                          [ -122.39495068788528, 37.7918480000373 ]
-                        ]
-                      },
-                      "polyline": "qyseFnm`jVILMOmAcBi@UEGCEEGMNCDqAfBAC{@iAmA_B????eAxAOP}@lA[b@a@`@WZIBEBIAOCICj@r@h@t@"
-                    }
+                      }
                     ]
                 },{
                     "id": "light_rail_below_above_ground",
@@ -713,7 +631,8 @@
                           ]
                         ]
                       }
-                    }, "end_loc": {
+                    },
+                    "end_loc": {
                       "type": "Feature",
                       "properties": {
                         "name": "4th and King"
@@ -756,7 +675,8 @@
                           ]
                         ]
                       }
-                    }, "end_loc": {
+                    },
+                    "end_loc": {
                       "type": "Feature",
                       "properties": {
                         "name": "Mountain View Transit Center"
@@ -818,15 +738,7 @@
                         ]
                       }
                     },
-                    "waypoint_coords": {
-                      "type": "Feature",
-                      "properties": {},
-                      "geometry": {
-                        "type": "LineString",
-                        "coordinates": []
-                      },
-                      "polyline": "spfcFh|ahVW|@IEe@~AFDCHr@^r@aCFDB@JFNH@@^Nh@Xh@Xf@X@@JFJF@?TLLHVL`DdB@@LHEJ?BKXOh@Y~@Qn@ABGPLF@@HDTLVNhAl@d@Vp@^B@LHLF@@z@`@ENABCJKb@Md@hAl@NJVTf@T?@NDYx@GT?BEJIZCJVz@HTHVZfAZR?JLF@NSp@K@G@K@IAGAEJEDEFITAN?RAHYJM@EA"
-                    }
+                    "polyline": "spfcFh|ahVW|@IEe@~AFDCHr@^r@aCFDB@JFNH@@^Nh@Xh@Xf@X@@JFJF@?TLLHVL`DdB@@LHEJ?BKXOh@Y~@Qn@ABGPLF@@HDTLVNhAl@d@Vp@^B@LHLF@@z@`@ENABCJKb@Md@hAl@NJVTf@T?@NDYx@GT?BEJIZCJVz@HTHVZfAZR?JLF@NSp@K@G@K@IAGAEJEDEFITAN?RAHYJM@EA"
                 }
             ]
         }
