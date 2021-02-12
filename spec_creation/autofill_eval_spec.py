@@ -189,64 +189,36 @@ def validate_and_fill_leg(orig_leg, default_start_fmt_date, default_end_fmt_date
     t["start_loc"] = _add_temporal_ground_truth(t["start_loc"], default_start_fmt_date, default_end_fmt_date)
     t["end_loc"] = _add_temporal_ground_truth(t["end_loc"], default_start_fmt_date, default_end_fmt_date)
 
-    start_polygons = [_fill_coords_from_id(loc) for loc in t["start_loc"]]
-    end_polygons = [_fill_coords_from_id(loc) for loc in t["end_loc"]]
-
-    # iterate across all start polygon and end polygon combinations
     route_coords = []
-    for i in range(len(start_polygons)):
-        for j in range(len(end_polygons)):
-            start_polygon = start_polygons[i]
-            end_polygon = end_polygons[j]
 
-            # there are three possible ways in which users can specify routes
-            # - waypoints from OSM, which we will map into coordinates and then
-            # move to step 2
-            # - list of coordinates, which we will use to find route coordinates
-            # using OSRM
-            # - a relation with start and end nodes, used only for public transit trips
-            # - a polyline, which we can get from external API calls such as OTP or Google Maps
-            # Right now, we leave the integrations unspecified because there is not
-            # much standardization other than with google maps
-            # For example, the VTA trip planner () clearly uses OTP
-            # () but the path (api/otp/plan?) is different from the one for our OTP
-            # integration (otp/routers/default/plan?)
-            # But once people figure out the underlying call, they can copy-paste the
-            # geometry into the spec.       
-
-            rclist = []
-            if "polylines" in t:
-                for p in t["polylines"]:
-                    rclist.append(get_route_from_polyline(p["polyline"]))
-            elif "polyline" in t:
-                rclist.append(get_route_from_polyline(t))
-            elif "relation" in t:
-                if isinstance(t["relation"], list):
-                    for r in t["relation"]:
-                        rclist.append(get_route_from_relation(r))
-                else:
-                    rclist.append(get_route_from_relation(t["relation"]))
-            else:
-                # We need to find a point within the polygon to pass to the routing engine
-                start_coords_shp = geo.Polygon(start_polygon["geometry"]["coordinates"][0]).representative_point()
-                start_coords = geo.mapping(start_coords_shp)["coordinates"]
-                end_coords_shp = geo.Polygon(end_polygon["geometry"]["coordinates"][0]).representative_point()
-                end_coords = geo.mapping(end_coords_shp)["coordinates"]
-                print("Representative_coords: start = %s, end = %s" % (start_coords, end_coords))
-                route = get_route_from_osrm(t, start_coords, end_coords)
-                rclist.append(route)
-
+    if "polylines" in t:
+        for p in t["polylines"]:
             route_coords.append({
                 "type": "Feature",
                 "properties": {
-                    "valid_start_fmt_date": t["start_loc"][i]["properties"]["valid_start_fmt_date"],
-                    "valid_end_fmt_date": t["end_loc"][j]["properties"]["valid_end_fmt_date"]
+                    "valid_start_fmt_date": p["valid_start_fmt_date"],
+                    "valid_end_fmt_date": p["valid_end_fmt_date"]
                 },
                 "geometry": {
                     "type": "LineString",
-                    "coordinates": [[coords_swap(c) for c in r] for r in rclist]
+                    "coordinates": [coords_swap(c) for c in get_route_from_polyline(p["polyline"])]
                 }
             })
+    elif "polyline" in t:
+        route_coords.append({
+            "type": "Feature",
+            "properties": {
+                "valid_start_fmt_date": default_start_fmt_date,
+                "valid_end_fmt_date": default_end_fmt_date
+            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [coords_swap(c) for c in get_route_from_polyline(t)]
+            }
+        })
+    else:
+        raise KeyError("'polyline' or 'polylines' structure not found in leg!")
+
 
     t["route_coords"] = route_coords
     return t
