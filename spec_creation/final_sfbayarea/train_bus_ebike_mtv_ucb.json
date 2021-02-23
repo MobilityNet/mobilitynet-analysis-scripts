@@ -194,10 +194,13 @@
                         ]    
                       }
                     },
-                    "end_loc": {
+                    "end_loc": [
+                    {
                       "type": "Feature",
                       "properties": {
-                        "name": "Addison and Shattuck"
+                        "name": "Addison and Shattuck",
+                        "valid_start_fmt_date": "2019-07-16",
+                        "valid_end_fmt_date": "2019-12-31"
                       },
                       "geometry": {
                         "type": "Polygon",
@@ -211,17 +214,49 @@
                           ]
                         ]
                       }
-                    },
-                    "polyline": "kpcfF`ogiVCUCw@SAYCe@Cy@CI?"
+                      },
+                      {
+                        "type": "Feature",
+                        "properties": {
+                          "name": "Addison and Shattuck",
+                          "valid_start_fmt_date": "2020-01-01",
+                          "valid_end_fmt_date": "2020-04-30"
+                        },
+                        "geometry": {
+                          "type": "Polygon",
+                          "coordinates": [
+                              [ -122.26831823587418, 37.870920568422385 ],
+                              [ -122.26826995611191, 37.87070989434301 ],
+                              [ -122.26806476712227, 37.870724715654724 ],
+                              [ -122.26810097694396, 37.87093221370567 ],
+                              [ -122.26831823587418, 37.870920568422385 ]
+                          ]
+                        }
+                      }
+                    ],
+                    "polylines": [
+                      {
+                        "polyline": "kpcfF`ogiVCUCw@SAYCe@Cy@CI?",
+                        "valid_start_fmt_date": "2019-07-16",
+                        "valid_end_fmt_date": "2019-12-31"
+                      },{
+                        "polyline": "kpcfF`ogiVCUMNIDIDI@IBS@]@",
+                        "valid_start_fmt_date": "2019-07-16",
+                        "valid_end_fmt_date": "2019-12-31"
+                      }
+                    ]
                 },{
                     "id": "city_bus_short",
                     "name": "shuttle bus from downtown to cory",
                     "mode": "BUS",
                     "multiple_occupancy": true,
-                    "start_loc": {
+                    "start_loc": [
+                    {
                       "type": "Feature",
                       "properties": {
-                        "name": "Addison and Shattuck"
+                        "name": "Addison and Shattuck",
+                        "valid_start_fmt_date": "2019-07-16",
+                        "valid_end_fmt_date": "2019-12-31"
                       },
                       "geometry": {
                         "type": "Polygon",
@@ -236,6 +271,25 @@
                         ]    
                       }
                     },
+                    {
+                      "type": "Feature",
+                      "properties": {
+                        "name": "Addison and Shattuck",
+                        "valid_start_fmt_date": "2020-01-01",
+                        "valid_end_fmt_date": "2020-04-30"
+                      },
+                      "geometry": {
+                        "type": "Polygon",
+                        "coordinates": [
+                            [ -122.26831823587418, 37.870920568422385 ],
+                            [ -122.26826995611191, 37.87070989434301 ],
+                            [ -122.26806476712227, 37.870724715654724 ],
+                            [ -122.26810097694396, 37.87093221370567 ],
+                            [ -122.26831823587418, 37.870920568422385 ]
+                        ]
+                      }
+                    }
+                    ],
                     "end_loc": {
                         "type": "Feature",
                         "properties": {
@@ -254,7 +308,23 @@
                           ]
                         }
                     },
-                    "polyline": "aucfFdlgiVQ?G?M?????AUIgAAU??CW?GAOAECYC_@KiBCYNbCIuAASCYI@mAH??wAHU@??M?k@DcAF??i@BK@??M@Q@m@B??E@]@??WBQN??A[GeA??C[Ew@AGAYM_BC[GWIW??EMAK??EOCK??CMEQ??Bc@O_CYaEe@iHCKG[??AGC]CS??CMGu@Ca@Eq@K{AMiBAO??AOAMCc@"
+                    "polylines": [
+                      {
+                        "polyline": "aucfFdlgiVQ?G?M?????AUIgAAU??CW?GAOAECYC_@KiBCYNbCIuAASCYI@mAH??wAHU@??M?k@DcAF??i@BK@??M@Q@m@B??E@]@??WBQN??A[GeA??C[Ew@AGAYM_BC[GWIW??EMAK??EOCK??CMEQ??Bc@O_CYaEe@iHCKG[??AGC]CS??CMGu@Ca@Eq@K{AMiBAO??AOAMCc@",
+                        "valid_start_fmt_date": "2019-07-16",
+                        "valid_end_fmt_date": "2019-11-01"
+                      },
+                      {
+                        "polyline": "aucfFdlgiVY?a@?kAHyAJg@oHGw@W@k@DcAF??i@BK@??M@Q@m@B??E@]@??WBQN??A[GeA??C[Ew@AGAYM_BC[GWIW??EMAK??EOCK??CMEQ??Bc@O_CYaEe@iHCKG[??AGC]CS??CMGu@Ca@Eq@K{AMiBAO??AOAMCc@",
+                        "valid_start_fmt_date": "2019-11-02",
+                        "valid_end_fmt_date": "2019-12-31"
+                      },
+                      {
+                        "polyline": "sscfFpogiV??w@DM@??O@{CTM???CYEy@Ec@??AYSoCAE?K??O}BCQ??MW??M?k@DcAF??i@BK@??M@Q@m@B??E@]@??WBQN??A[??QyCAI??AWK{A??ACC[GWIW??EMAK??EOCK??CMEQ??Bc@??O_CYaE[eF??Mc@??IoAC]CS??CMGu@Ca@Eq@K{AEk@Eq@AKAO??AOAMCc@",
+                        "valid_start_fmt_date": "2020-01-01",
+                        "valid_end_fmt_date": "2020-04-30"
+                      }
+                    ]
                 }
             ]
         },
