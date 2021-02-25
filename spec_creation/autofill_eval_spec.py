@@ -272,14 +272,25 @@ def get_hidden_access_transfer_walk_segments(prev_l, l, default_start_fmt_date, 
         })
 
     if l is not None and "multiple_occupancy" in l and l["multiple_occupancy"] == True:
-        ret_list.append({
-            "id": "wait_for_%s" % (l["id"]),
-            "type": "WAITING",
-            "mode": "STOPPED",
-            "name": "Wait for %s at %s" %\
-                (l["mode"], l["start_loc"]["properties"]["name"]),
-            "loc": _add_temporal_ground_truth(l["start_loc"], default_start_fmt_date, default_end_fmt_date)
-        })
+        if isinstance(l["start_loc"], list):
+            for i, sl in enumerate(l["start_loc"]):
+                ret_list.append({
+                    "id": "wait_for_%s_%s" % (l["id"], i),
+                    "type": "WAITING",
+                    "mode": "STOPPED",
+                    "name": "Wait for %s at %s" %\
+                        (l["mode"], sl["properties"]["name"]),
+                    "loc": _add_temporal_ground_truth(sl, default_start_fmt_date, default_end_fmt_date)
+                })
+        else:
+            ret_list.append({
+                "id": "wait_for_%s" % l["id"],
+                "type": "WAITING",
+                "mode": "STOPPED",
+                "name": "Wait for %s at %s" %\
+                    (l["mode"], l["start_loc"]["properties"]["name"]),
+                "loc": _add_temporal_ground_truth(l["start_loc"], default_start_fmt_date, default_end_fmt_date)
+            })
 
     # return from the last two checks
     return ret_list
