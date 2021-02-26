@@ -262,14 +262,25 @@ def get_hidden_access_transfer_walk_segments(prev_l, l, default_start_fmt_date, 
         # NOTE: unlike the first two cases, we are NOT returning here
         # we will run the next check as well, because for most
         # transit transfers, there will be both a transfer and a stop
-        ret_list.append({
-            "id": "tt_%s_%s" % (prev_l["id"], l["id"]),
-            "type": "TRANSFER",
-            "mode": "WALKING",
-            "name": "Transfer between %s and %s at %s" %\
-                (prev_l["mode"], l["mode"], prev_l["end_loc"]["properties"]["name"]),
-            "loc": _add_temporal_ground_truth(l["start_loc"], default_start_fmt_date, default_end_fmt_date)
-        })
+        if isinstance(prev_l["end_loc"], list):
+            for i, el in enumerate(prev_l["end_loc"]):
+                ret_list.append({
+                    "id": "wait_for_%s_%s_%s" % (prev_l["id"], l["id"], i),
+                    "type": "WAITING",
+                    "mode": "STOPPED",
+                    "name": "Wait for %s at %s" %\
+                        (prev_l["mode"], l["mode"], el["properties"]["name"]),
+                    "loc": _add_temporal_ground_truth(el, default_start_fmt_date, default_end_fmt_date)
+                })
+        else:
+            ret_list.append({
+                "id": "tt_%s_%s" % (prev_l["id"], l["id"]),
+                "type": "TRANSFER",
+                "mode": "WALKING",
+                "name": "Transfer between %s and %s at %s" %\
+                    (prev_l["mode"], l["mode"], prev_l["end_loc"]["properties"]["name"]),
+                "loc": _add_temporal_ground_truth(l["start_loc"], default_start_fmt_date, default_end_fmt_date)
+            })
 
     if l is not None and "multiple_occupancy" in l and l["multiple_occupancy"] == True:
         if isinstance(l["start_loc"], list):
