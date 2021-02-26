@@ -83,7 +83,9 @@ def get_route_from_osrm(t, start_coords, end_coords):
             for wc in waypoint_coords:
                 waypoint_coords.append({
                     "valid_start_fmt_date": wc["properties"]["valid_start_fmt_date"],
+                    "valid_start_ts": arrow.get(wc["properties"]["valid_start_fmt_date"]).timestamp,
                     "valid_end_fmt_date": wc["properties"]["valid_end_fmt_date"],
+                    "valid_end_ts": arrow.get(wc["properties"]["valid_end_fmt_date"]).timestamp,
                     "coordinates": wc["geometry"]["coordinates"]
                 })
     else:
@@ -178,8 +180,15 @@ def _add_temporal_ground_truth(orig_loc, default_start_fmt_date, default_end_fmt
     for l in loc:
         if l["properties"].get("valid_start_fmt_date") is None:
             l["properties"]["valid_start_fmt_date"] = default_start_fmt_date
+            l["properties"]["valid_start_ts"] = arrow.get(default_start_fmt_date).timestamp
+        else:
+            l["properties"]["valid_start_ts"] = arrow.get(l["properties"]["valid_start_fmt_date"]).timestamp
+
         if l["properties"].get("valid_end_fmt_date") is None:
             l["properties"]["valid_end_fmt_date"] = default_end_fmt_date
+            l["properties"]["valid_end_ts"] = arrow.get(default_end_fmt_date).timestamp
+        else:
+            l["properties"]["valid_end_ts"] = arrow.get(l["properties"]["valid_end_fmt_date"]).timestamp
 
     return loc
 
@@ -197,7 +206,9 @@ def validate_and_fill_leg(orig_leg, default_start_fmt_date, default_end_fmt_date
                 "type": "Feature",
                 "properties": {
                     "valid_start_fmt_date": p["valid_start_fmt_date"],
-                    "valid_end_fmt_date": p["valid_end_fmt_date"]
+                    "valid_start_ts": arrow.get(p["valid_start_fmt_date"]).timestamp,
+                    "valid_end_fmt_date": p["valid_end_fmt_date"],
+                    "valid_end_ts": arrow.get(p["valid_end_fmt_date"]).timestamp
                 },
                 "geometry": {
                     "type": "LineString",
@@ -209,7 +220,9 @@ def validate_and_fill_leg(orig_leg, default_start_fmt_date, default_end_fmt_date
             "type": "Feature",
             "properties": {
                 "valid_start_fmt_date": default_start_fmt_date,
-                "valid_end_fmt_date": default_end_fmt_date
+                "valid_start_ts": arrow.get(default_start_fmt_date).timestamp,
+                "valid_end_fmt_date": default_end_fmt_date,
+                "valid_end_ts": arrow.get(default_end_fmt_date).timestamp
             },
             "geometry": {
                 "type": "LineString",
@@ -221,6 +234,7 @@ def validate_and_fill_leg(orig_leg, default_start_fmt_date, default_end_fmt_date
 
 
     t["route_coords"] = route_coords
+
     return t
 
 def get_hidden_access_transfer_walk_segments(prev_l, l, default_start_fmt_date, default_end_fmt_date):
