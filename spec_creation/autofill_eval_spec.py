@@ -83,7 +83,9 @@ def get_route_from_osrm(t, start_coords, end_coords):
             for wc in waypoint_coords:
                 waypoint_coords.append({
                     "valid_start_fmt_date": wc["properties"]["valid_start_fmt_date"],
+                    "valid_start_ts": arrow.get(wc["properties"]["valid_start_fmt_date"]).timestamp,
                     "valid_end_fmt_date": wc["properties"]["valid_end_fmt_date"],
+                    "valid_end_ts": arrow.get(wc["properties"]["valid_end_fmt_date"]).timestamp,
                     "coordinates": wc["geometry"]["coordinates"]
                 })
     else:
@@ -178,8 +180,15 @@ def _add_temporal_ground_truth(orig_loc, default_start_fmt_date, default_end_fmt
     for l in loc:
         if l["properties"].get("valid_start_fmt_date") is None:
             l["properties"]["valid_start_fmt_date"] = default_start_fmt_date
+            l["properties"]["valid_start_ts"] = arrow.get(default_start_fmt_date).timestamp
+        else:
+            l["properties"]["valid_start_ts"] = arrow.get(l["properties"]["valid_start_fmt_date"]).timestamp
+
         if l["properties"].get("valid_end_fmt_date") is None:
             l["properties"]["valid_end_fmt_date"] = default_end_fmt_date
+            l["properties"]["valid_end_ts"] = arrow.get(default_end_fmt_date).timestamp
+        else:
+            l["properties"]["valid_end_ts"] = arrow.get(l["properties"]["valid_end_fmt_date"]).timestamp
 
     return loc
 
@@ -197,7 +206,9 @@ def validate_and_fill_leg(orig_leg, default_start_fmt_date, default_end_fmt_date
                 "type": "Feature",
                 "properties": {
                     "valid_start_fmt_date": p["valid_start_fmt_date"],
-                    "valid_end_fmt_date": p["valid_end_fmt_date"]
+                    "valid_start_ts": arrow.get(p["valid_start_fmt_date"]).timestamp,
+                    "valid_end_fmt_date": p["valid_end_fmt_date"],
+                    "valid_end_ts": arrow.get(p["valid_end_fmt_date"]).timestamp
                 },
                 "geometry": {
                     "type": "LineString",
@@ -209,7 +220,9 @@ def validate_and_fill_leg(orig_leg, default_start_fmt_date, default_end_fmt_date
             "type": "Feature",
             "properties": {
                 "valid_start_fmt_date": default_start_fmt_date,
-                "valid_end_fmt_date": default_end_fmt_date
+                "valid_start_ts": arrow.get(default_start_fmt_date).timestamp,
+                "valid_end_fmt_date": default_end_fmt_date,
+                "valid_end_ts": arrow.get(default_end_fmt_date).timestamp
             },
             "geometry": {
                 "type": "LineString",
@@ -221,6 +234,7 @@ def validate_and_fill_leg(orig_leg, default_start_fmt_date, default_end_fmt_date
 
 
     t["route_coords"] = route_coords
+
     return t
 
 def get_hidden_access_transfer_walk_segments(prev_l, l, default_start_fmt_date, default_end_fmt_date):
@@ -262,14 +276,25 @@ def get_hidden_access_transfer_walk_segments(prev_l, l, default_start_fmt_date, 
         # NOTE: unlike the first two cases, we are NOT returning here
         # we will run the next check as well, because for most
         # transit transfers, there will be both a transfer and a stop
-        ret_list.append({
-            "id": "tt_%s_%s" % (prev_l["id"], l["id"]),
-            "type": "TRANSFER",
-            "mode": "WALKING",
-            "name": "Transfer between %s and %s at %s" %\
-                (prev_l["mode"], l["mode"], prev_l["end_loc"]["properties"]["name"]),
-            "loc": _add_temporal_ground_truth(l["start_loc"], default_start_fmt_date, default_end_fmt_date)
-        })
+        if isinstance(prev_l["end_loc"], list):
+            for i, el in enumerate(prev_l["end_loc"]):
+                ret_list.append({
+                    "id": "wait_for_%s_%s_%s" % (prev_l["id"], l["id"], i),
+                    "type": "WAITING",
+                    "mode": "STOPPED",
+                    "name": "Wait for %s at %s" %\
+                        (prev_l["mode"], l["mode"], el["properties"]["name"]),
+                    "loc": _add_temporal_ground_truth(el, default_start_fmt_date, default_end_fmt_date)
+                })
+        else:
+            ret_list.append({
+                "id": "tt_%s_%s" % (prev_l["id"], l["id"]),
+                "type": "TRANSFER",
+                "mode": "WALKING",
+                "name": "Transfer between %s and %s at %s" %\
+                    (prev_l["mode"], l["mode"], prev_l["end_loc"]["properties"]["name"]),
+                "loc": _add_temporal_ground_truth(l["start_loc"], default_start_fmt_date, default_end_fmt_date)
+            })
 
     if l is not None and "multiple_occupancy" in l and l["multiple_occupancy"] == True:
         if isinstance(l["start_loc"], list):
