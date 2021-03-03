@@ -53,113 +53,358 @@
             "id": "tracking_off_train_AO",
             "mode": "train",
             "start_loc": {
-                "osm_id": 4096800700,
-                "name": "First clipper Card reader on NB Caltrain platform"
+                "type": "Feature",
+                "properties": {
+                    "osm_id": 4096800700,
+                    "name": "First clipper Card reader on NB Caltrain platform"
+                },
+                "geometry": {
+                    "type": "Point"
+                }
             }, "end_loc": {
-                "osm_id": 3478331127,
-                "name": "Last clipper card reader before exiting to Townsend Street"
+                "type": "Feature",
+                "properties": {
+                    "osm_id": 3478331127,
+                    "name": "Last clipper card reader before exiting to Townsend Street"
+                },
+                "geometry": {
+                    "type": "Point"
+                }
             },
             "config": {"id": "STOP_TRACKING"}
         },{
             "id": "low_accuracy_train_AO",
             "mode": "train",
             "start_loc": {
-                "osm_id": 3478331127,
-                "name": "Last clipper card reader before exiting to Townsend Street"
+                "type": "Feature",
+                "properties": {
+                    "osm_id": 3478331127,
+                    "name": "Last clipper card reader before exiting to Townsend Street"
+                },
+                "geometry": {
+                    "type": "Point"
+                }
             }, "end_loc": {
-                "osm_id": 4096800700,
-                "name": "First clipper Card reader on NB Caltrain platform"
+                "type": "Feature",
+                "properties": {
+                    "osm_id": 4096800700,
+                    "name": "First clipper Card reader on NB Caltrain platform"
+                },
+                "geometry": {
+                    "type": "Point"
+                }
             },
             "config": {"id": "LAHFAO"}
         },{
             "id": "medium_accuracy_train_AO",
             "mode": "train",
             "start_loc": {
-                "osm_id": 3478331121,
-                "name": "Last clipper card reader before exiting to King Street"
+                "type": "Feature",
+                "properties": {
+                    "osm_id": 3478331121,
+                    "name": "Last clipper card reader before exiting to King Street"
+                },
+                "geometry": {
+                    "type": "Point"
+                }
             },
             "end_loc": {
-                "osm_id": 5994838201,
-                "name": "Map outside Berkeley BART"
+                "type": "Feature",
+                "properties": {
+                    "osm_id": 5994838201,
+                    "name": "Map outside Berkeley BART"
+                },
+                "geometry": {
+                    "type": "Point"
+                }
             },
             "config": {"id": "MAHFAO"}
         },{
             "id": "high_accuracy_train_AO",
             "mode": "train",
             "start_loc": {
-                "osm_id": 4096800700,
-                "name": "First clipper Card reader on NB Caltrain platform"
+                "type": "Feature",
+                "properties": {
+                    "osm_id": 4096800700,
+                    "name": "First clipper Card reader on NB Caltrain platform"
+                },
+                "geometry": {
+                    "type": "Point"
+                }
             },
             "end_loc": {
-                "osm_id": 3478331127,
-                "name": "Last clipper card reader before exiting to Townsend Street"
+                "type": "Feature",
+                "properties": {
+                    "osm_id": 3478331127,
+                    "name": "Last clipper card reader before exiting to Townsend Street"
+                },
+                "geometry": {
+                    "type": "Point"
+                }
             },
             "config": {"id": "HAHFAO"}
         }
     ],
     "sensing_settings": [
-        {"compare": ["HAHFDC", "HAMFDC"]},
-        {"compare": ["HAMFDC", "HALFDC"]},
-        {"compare": ["MAHFDC", "MAMFDC"]},
-        {"compare": ["MAMFDC", "LAHFDC"]},
-        {"compare": ["MALFDC", "LALFDC"]},
-        {"compare": ["HAHFAO", "HAMFAO"]},
-        {"compare": ["HAMFAO", "HALFAO"]},
-        {"compare": ["HAMFAO", "MAHFAO"]},
-        {"compare": ["HALFAO", "LAHFAO"]}
+        {"android": ["HAHFDC", "HAMFDC"], "ios": ["HAHFDC", "HAMFDC"]},
+        {"android": ["HAMFDC", "HALFDC"], "ios": ["HAMFDC", "HALFDC"]}
     ],
     "evaluation_trips": [
         {
-            "id": "short_walk_suburb",
-            "name": "Walk to Landels",
-            "mode": "WALKING",
-            "start_loc": {
-                "osm_id": 2630202881,
-                "name": "Shoreline and Latham"
-            }, "end_loc": {
-                "osm_id": 1615001118,
-                "name": "Entrance to Stevens Creek Trail at Landels School"
-            },
-            "route_waypoints": [272208711, 343270779, 343270132,
-                    65587153, 147451990, 1735909450]
-        },{
-            "id": "short_bike_suburb",
-            "name": "Bike from Landels",
-            "mode": "BICYCLING",
-            "start_loc": {
-                "osm_id": 1615001118,
-                "name": "Entrance to Stevens Creek Trail at Landels School"
-            }, "end_loc": {
-                "osm_id": 2630202881,
-                "name": "Shoreline and Latham"
-            },
-            "route_waypoints": [1735909450, 147451990, 65587153, 343270132,
-                343270779, 272208711]
-        },{
-            "id": "short_car_suburb_city_street",
-            "name": "Drive to Cubberley on City Streets",
+            "id": "suburb_drive",
             "mode": "CAR",
+            "name": "Drive from foothill to Mountain View",
             "start_loc": {
-                "osm_id": 2630202881,
-                "name": "Shoreline and Latham"
-            }, "end_loc": {
-                "osm_id": 6277202430,
-                "name": "Cubberley Parking Lot"
+                "type": "Feature",
+                "properties": {
+                    "name": "Foothill Parking Lot"
+                },
+                "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [
+                        [
+                            [ -122.13057607412338, 37.35985002429301 ],
+                            [ -122.13042318820953, 37.35959632453568 ],
+                            [ -122.13010132312775, 37.35946201255223 ],
+                            [ -122.12991356849669, 37.3596560186734 ],
+                            [ -122.13008791208267, 37.359871343561295 ],
+                            [ -122.13026762008667, 37.36000778673485 ],
+                            [ -122.13057607412338, 37.35985002429301 ]
+                        ]
+                    ]
+                }
             },
-            "route_waypoints": [272208711, 194934398, 65433851, 65433845, 6437064774, 65495783, 6277202430]
-        },{
-            "id": "short_car_suburb_freeway",
-            "name": "Drive from Cubberley on Freeway",
-            "mode": "CAR",
-            "start_loc": {
-                "osm_id": 6277202430,
-                "name": "Cubberley Parking Lot"
-            }, "end_loc": {
-                "osm_id": 2630202881,
-                "name": "Shoreline and Latham"
+            "end_loc": {
+                "type": "Feature",
+                "properties": {
+                    "name": "Mountain View Library"
+                },
+                "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [
+                        [
+                            [ -122.08355963230133, 37.39091642895306 ],
+                            [ -122.08428382873535, 37.38975713188671 ],
+                            [ -122.08383858203888, 37.389573859018185 ],
+                            [ -122.08340406417847, 37.390196132517175 ],
+                            [ -122.08311975002289, 37.39012793841312 ],
+                            [ -122.08280861377716, 37.390656441096894 ],
+                            [ -122.08355426788331, 37.39096757399895 ],
+                            [ -122.08355963230133, 37.39091642895306 ]
+                        ]
+                    ]
+                }
             },
-            "route_waypoints": [6277202430, 65495783, 6142971394, 6528664989, 699180658, 26031411, 6481192957, 4880766596, 6486460721]
-        }
+            "polyline": "ey_cFnqlhVa@VPb@Nb@Nb@Ph@BHPMLMLMJMJKFKBCJQ\\i@HQDQBS@a@@c@ASAQESGSy@yBGSGUESCWCO?SBMDKDGHKHOFODUBU?SCQAGCIIOMSIKKIKIEGk@a@GGCAa@]GGQKFOFe@Vq@HsDIs@GcBBQBKFODKBCLGHCFAH?J?@w@BmA?a@Aa@Ca@Ea@Ia@K_@GQCKAAGQUg@OWmDmEoBaCmA_BmB_CmBcCMOOQACGIY_@EGe@c@uE_Fy@u@_CoBe@a@OMIICAg@g@uBwByDoDsC}B{AcBKKMOAASSMQi@o@y@y@yBuBOOu@q@CCKKUUMKi@g@w@_@QI_Ay@QMKWo@e@i@c@QAKIQOYS_@YEEK]OO}@s@g@c@cA{@WUa@[CAUCHU@CNe@@EVgAL}@Bk@Bk@AaB?mU?C?O?U?aG@yY?c@?A?UFU@AFOJQNWHODUBY@_I?i@?c@@sD@wB?o@?OS?A?iBEC?IIGI???[?C@aE?iB@eD?uD@Q?g@?a@?o@?C?]A?W@MAG?kCS??cIBa@?UAg@?O?A?}A@{A?yD@yD@yD@????@_@I_@Uo@W[[SWIOEQAYAA?]Aa@GQGMEgB_AeAk@q@_@qBeAMGeCqASKu@a@SKOIQIOK[OAASIe@KKECAIE_@Qi@UMGi@Yc@SYQMIIEQKAAOIWMOIQIKGECCAMGSKwAw@SKKX]bAITM^CHKZeAvCCHITUn@ABCJMGAAyAu@ECYO{Ay@"
+        },
+        {
+            "id": "short_multimodal",
+            "name": "Bus to Foothilll",
+            "legs": [
+                {
+                    "id": "walk_to_bus_stop",
+                    "name": "Mountain View Library to #52 bus stop at El Camino/Castro",
+                    "mode": "WALKING",
+                    "start_loc": {
+                        "type": "Feature",
+                        "properties": {
+                            "name": "Mountain View Library"
+                        },
+                        "geometry": {
+                            "type": "Polygon",
+                            "coordinates": [
+                                [
+                                    [
+                                        -122.08355963230133,
+                                        37.39091642895306
+                                    ],
+                                    [
+                                        -122.08428382873535,
+                                        37.38975713188671
+                                    ],
+                                    [
+                                        -122.08383858203888,
+                                        37.389573859018185
+                                    ],
+                                    [
+                                        -122.08340406417847,
+                                        37.390196132517175
+                                    ],
+                                    [
+                                        -122.08311975002289,
+                                        37.39012793841312
+                                    ],
+                                    [
+                                        -122.08280861377716,
+                                        37.390656441096894
+                                    ],
+                                    [
+                                        -122.08355426788331,
+                                        37.39096757399895
+                                    ],
+                                    [
+                                        -122.08355963230133,
+                                        37.39091642895306
+                                    ]
+                                ]
+                            ]
+                        }
+                    },
+                    "end_loc": {
+                        "type": "Feature",
+                        "properties": {
+                            "name": "# 52 bus stop to Foothill College"
+                        },
+                        "geometry": {
+                            "type": "Polygon",
+                            "coordinates": [
+                                [
+                                    [
+                                        -122.07047581672668,
+                                        37.3884784746256
+                                    ],
+                                    [
+                                        -122.07036852836607,
+                                        37.388065037445536
+                                    ],
+                                    [
+                                        -122.06985890865326,
+                                        37.38810765994063
+                                    ],
+                                    [
+                                        -122.06974625587463,
+                                        37.38833355876014
+                                    ],
+                                    [
+                                        -122.06999838352203,
+                                        37.388585030230324
+                                    ],
+                                    [
+                                        -122.07047581672668,
+                                        37.3884784746256
+                                    ]
+                                ]
+                            ]
+                        }
+                    },
+                    "polyline": "{yecFnnchVjB`AXNDBxAt@@@LFBK@C??To@HUBIdAwCJ[BIL_@HU\\cA??JYRJ??vAv@RJLFB@DBJFPHNHVLNH@@PJHDLHXPb@Rh@XLFh@T^PHDB@JDMZQb@AFCDYr@A@??"
+                },{
+                    "id": "city_bus",
+                    "name": "Castro to Foothill",
+                    "mode": "BUS",
+                    "multiple_occupancy": true,
+                    "start_loc": {
+                        "type": "Feature",
+                        "properties": {
+                            "name": "#52 bus stop at Castro"
+                        },
+                        "geometry": {
+                            "type": "Polygon",
+                            "coordinates": [
+                                [
+                                    [ -122.08473175764084, 37.38614273772653 ],
+                                    [ -122.08421409130096, 37.38589978281263 ],
+                                    [ -122.08414971828459, 37.386091589389046 ],
+                                    [ -122.08459496498106, 37.38629192017829 ],
+                                    [ -122.08473175764084, 37.38614273772653 ]
+                                ]
+                            ]
+                        }
+                    },
+                    "end_loc": {
+                        "type": "Feature",
+                        "properties": {
+                            "name": "Foothill pool"
+                        },
+                        "geometry": {
+                            "type": "Polygon",
+                            "coordinates": [
+                                [
+                                    [ -122.12685048580168, 37.362440271054396 ],
+                                    [ -122.1265272796154, 37.362024558461364 ],
+                                    [ -122.12642133235931, 37.362132217584644 ],
+                                    [ -122.1267431974411, 37.36249996292995 ],
+                                    [ -122.12685048580168, 37.362440271054396 ]
+                                ]
+                            ]
+                        }
+                    },
+                    "polyline": "o~dcFdschV]|@Uj@k@vAa@bAQd@a@dAKTWp@a@dAKVQh@??Qd@EN??CD??O`@??GP??CHCD??A@??IR??EJ??EL??GNEJ??GLAB??IR??A@??GP??AB??CF??O\\??ABGPOb@Uf@Yv@y@rB[t@c@fAUl@Qf@KRM\\Sf@O\\w@rB_@|@[x@MXYp@KVIPYd@QX??GJY`@[b@OR??KLA@GHQR_@`@UTEDC@KJ??QP??P\\??JRTb@FPPR??lAD??T@XBP?H@V@??N@L?l@B??J@`@B??N@tADf@?PE??\\?R?p@@vB@rD?J?x@???x@???p@PNF\\THFBBNL??RB??^^JHnAlAZX\\\\xD~CpApAHFjAfAnBhB`Ax@BBFF^ZvBtBHFBDLJ??NNfBdB??zDvD??l@h@??jAjA??bDvChAfAn@n@DBJJPRPPh@f@XVdBbB\\\\dE`EnAfALLRN^`@XTp@l@NL??`@\\@@NN??NV@@pFtETH??DD^X??XRPNJH??HP??j@d@??VRRPTD??PL~@x@??TXJJ??~@~@@@LL??TT??JJJJXVPPTP??zBzBf@b@??h@p@JL@@LP??pCrCjCdCpG`G??j@f@^\\@@LL??nAdA`BrA??\\\\jFhF??d@j@@BDD??X`@??DFLNl@t@lEtF??R^??lCbD??vCnDPR??\\h@@@FJLT??FPL^JZF^F`@Bn@??A`@ATCRERET]v@ETCPCT?T??FbB??IT@fBErA??G^M\\??[VI@I?QKGICEEGiAcBKK??c@e@MIIEMCEAQAO?O@O@OBMDIFIFGHGJEPCPCV??E~@APELENGLEFw@j@"
+              },
+              {
+                "id": "campus_walk",
+                "name": "Walk on the Foothill campus",
+                "mode": "WALKING",
+                "start_loc": {
+                    "type": "Feature",
+                    "properties": {
+                        "name": "Foothill pool"
+                    },
+                    "geometry": {
+                        "type": "Polygon",
+                        "coordinates": [
+                            [
+                                [
+                                    -122.12685048580168,
+                                    37.362440271054396
+                                ],
+                                [
+                                    -122.1265272796154,
+                                    37.362024558461364
+                                ],
+                                [
+                                    -122.12642133235931,
+                                    37.362132217584644
+                                ],
+                                [
+                                    -122.1267431974411,
+                                    37.36249996292995
+                                ],
+                                [
+                                    -122.12685048580168,
+                                    37.362440271054396
+                                ]
+                            ]
+                        ]
+                    }
+                },
+                "end_loc": {
+                    "type": "Feature",
+                    "properties": {
+                        "name": "Foothill fountain"
+                    },
+                    "geometry": {
+                        "type": "Polygon",
+                        "coordinates": [
+                            [
+                                [
+                                    -122.12924435734747,
+                                    37.36135941352246
+                                ],
+                                [
+                                    -122.12901771068573,
+                                    37.36108013616577
+                                ],
+                                [
+                                    -122.12868243455887,
+                                    37.361213379309085
+                                ],
+                                [
+                                    -122.12891444563866,
+                                    37.361499051811045
+                                ],
+                                [
+                                    -122.12924435734747,
+                                    37.36135941352246
+                                ]
+                            ]
+                        ]
+                    }
+                },
+                "polyline": "mj`cFd{khVIHEGJIKHk@uAGOVQBFDHBHDH@BBFHRt@i@BFDHRRDDHFFJDJn@~AN`@L^_@Va@TOb@D\\Pb@JRF^Df@????f@xA????j@]ULUNg@yAEg@G_@KSQc@E]Nc@`@U^W"
+            }
+        ]
+      }
     ],
     "setup_notes": {
         "ios": [
