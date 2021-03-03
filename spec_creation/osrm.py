@@ -1,10 +1,12 @@
+import os
 import logging
 import json
 import requests
 import polyline.codec as pc
 
 try:
-    osrm_file = open("conf/net/ext_service/osrm.json")
+    osrm_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "osrm.json")
+    osrm_file = open(osrm_file_path)
     osrm_config = json.load(osrm_file)
     OSRM_HOST = osrm_config["routing_host"]
     OSRM_ROUTES = osrm_config["paths"]
