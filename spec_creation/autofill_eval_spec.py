@@ -45,7 +45,7 @@ def _fill_coords_from_id(loc):
             loc["geometry"]["coordinates"] = node_to_geojson_coords(loc["properties"]["osm_id"])
         elif loc["geometry"]["type"] == "Polygon":
             # get coords for way returns a tuple of (nodes, points)
-            loc["geometry"]["coordinates"] = [[coords_swap(c) for c in get_coords_for_way(loc["properties"]["osm_id"])[1]]]
+            loc["geometry"]["coordinates"] = [coords_swap(c) for c in get_coords_for_way(loc["properties"]["osm_id"])[1]]
     else:
         assert "coordinates" in loc["geometry"],\
             "Location %s does not have either an osmid or specified set of coordinates"
@@ -76,7 +76,18 @@ def get_route_from_osrm(t, start_coords, end_coords):
             }
         }
     elif "waypoint_coords" in t:
-        waypoint_coords = t["waypoint_coords"]["geometry"]["coordinates"]
+        if isinstance(t["waypoint_coords"], dict):
+            waypoint_coords = t["waypoint_coords"]["geometry"]["coordinates"]
+        else:
+            waypoint_coords = []
+            for wc in waypoint_coords:
+                waypoint_coords.append({
+                    "valid_start_fmt_date": wc["properties"]["valid_start_fmt_date"],
+                    "valid_start_ts": arrow.get(wc["properties"]["valid_start_fmt_date"]).timestamp,
+                    "valid_end_fmt_date": wc["properties"]["valid_end_fmt_date"],
+                    "valid_end_ts": arrow.get(wc["properties"]["valid_end_fmt_date"]).timestamp,
+                    "coordinates": wc["geometry"]["coordinates"]
+                })
     else:
         waypoint_coords = []
     logging.debug("waypoint_coords = %s..." % waypoint_coords[0:3])
@@ -85,7 +96,7 @@ def get_route_from_osrm(t, start_coords, end_coords):
     return route_coords
 
 def get_route_from_polyline(t):
-    return pl.PolylineCodec().decode(t["polyline"])
+    return pl.PolylineCodec().decode(t if isinstance(t, str) else t["polyline"])
 
 # Porting the perl script at
 # https://wiki.openstreetmap.org/wiki/Relations/Relations_to_GPX to python
@@ -151,63 +162,82 @@ def get_coords_for_relation(rid, start_node, end_node):
     assert start_index <= end_index, "Start index %d is before end %d" % (start_index, end_index)
     return coords_list[start_index:end_index+1]
 
-def get_route_from_relation(t):
+def get_route_from_relation(r):
     # get_coords_for_relation assumes that start and end are both nodes
-    return get_coords_for_relation(t["relation"]["relation_id"],
-        t["relation"]["start_node"], t["relation"]["end_node"])
+    return get_coords_for_relation(r["relation_id"], r["start_node"], r["end_node"])
 
-def validate_and_fill_leg(orig_leg):
-    # print(t)
+def _add_temporal_ground_truth(orig_loc, default_start_fmt_date, default_end_fmt_date):
+    # fill in timespan for which ground truth is valid (see issue #11)
+    # first, if loc is a dict, we need to convert loc to a list of dicts.
+    # otherwise, expect a list of dicts for each.
+
+    loc = copy.copy(orig_loc)
+
+    if isinstance(loc, dict):
+        loc = [loc]
+
+    # next, add dates if they do not exist
+    for l in loc:
+        if l["properties"].get("valid_start_fmt_date") is None:
+            l["properties"]["valid_start_fmt_date"] = default_start_fmt_date
+            l["properties"]["valid_start_ts"] = arrow.get(default_start_fmt_date).timestamp
+        else:
+            l["properties"]["valid_start_ts"] = arrow.get(l["properties"]["valid_start_fmt_date"]).timestamp
+
+        if l["properties"].get("valid_end_fmt_date") is None:
+            l["properties"]["valid_end_fmt_date"] = default_end_fmt_date
+            l["properties"]["valid_end_ts"] = arrow.get(default_end_fmt_date).timestamp
+        else:
+            l["properties"]["valid_end_ts"] = arrow.get(l["properties"]["valid_end_fmt_date"]).timestamp
+
+    return loc
+
+def validate_and_fill_leg(orig_leg, default_start_fmt_date, default_end_fmt_date):
     t = copy.copy(orig_leg)
     t["type"] = "TRAVEL"
-    # These are now almost certain to be polygons
-    # and probably user-drawn, not looked up from OSM
-    # so what we will get here is an geojson representation of a polygon
-    # TODO: Drop support for single point
-    start_polygon = _fill_coords_from_id(t["start_loc"])
-    end_polygon = _fill_coords_from_id(t["end_loc"])
-    print("Raw polygons: start = %s..., end = %s..." %
-        (start_polygon["geometry"]["coordinates"][0][0:3],
-         end_polygon["geometry"]["coordinates"][0][0:3]))
+    t["start_loc"] = _add_temporal_ground_truth(t["start_loc"], default_start_fmt_date, default_end_fmt_date)
+    t["end_loc"] = _add_temporal_ground_truth(t["end_loc"], default_start_fmt_date, default_end_fmt_date)
 
-    # there are three possible ways in which users can specify routes
-    # - waypoints from OSM, which we will map into coordinates and then
-    # move to step 2
-    # - list of coordinates, which we will use to find route coordinates
-    # using OSRM
-    # - a relation with start and end nodes, used only for public transit trips
-    # - a polyline, which we can get from external API calls such as OTP or Google Maps
-    # Right now, we leave the integrations unspecified because there is not
-    # much standardization other than with google maps
-    # For example, the VTA trip planner () clearly uses OTP
-    # () but the path (api/otp/plan?) is different from the one for our OTP
-    # integration (otp/routers/default/plan?)
-    # But once people figure out the underlying call, they can copy-paste the
-    # geometry into the spec.
-    if "polyline" in t:
-        route_coords = get_route_from_polyline(t)
-    elif "relation" in t:
-        route_coords = get_route_from_relation(t)
+    route_coords = []
+
+    if "polylines" in t:
+        for p in t["polylines"]:
+            route_coords.append({
+                "type": "Feature",
+                "properties": {
+                    "valid_start_fmt_date": p["valid_start_fmt_date"],
+                    "valid_start_ts": arrow.get(p["valid_start_fmt_date"]).timestamp,
+                    "valid_end_fmt_date": p["valid_end_fmt_date"],
+                    "valid_end_ts": arrow.get(p["valid_end_fmt_date"]).timestamp
+                },
+                "geometry": {
+                    "type": "LineString",
+                    "coordinates": [coords_swap(c) for c in get_route_from_polyline(p["polyline"])]
+                }
+            })
+    elif "polyline" in t:
+        route_coords.append({
+            "type": "Feature",
+            "properties": {
+                "valid_start_fmt_date": default_start_fmt_date,
+                "valid_start_ts": arrow.get(default_start_fmt_date).timestamp,
+                "valid_end_fmt_date": default_end_fmt_date,
+                "valid_end_ts": arrow.get(default_end_fmt_date).timestamp
+            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [coords_swap(c) for c in get_route_from_polyline(t)]
+            }
+        })
     else:
-        # We need to find a point within the polygon to pass to the routing engine
-        start_coords_shp = geo.Polygon(start_polygon["geometry"]["coordinates"][0]).representative_point()
-        start_coords = geo.mapping(start_coords_shp)["coordinates"]
-        end_coords_shp = geo.Polygon(end_polygon["geometry"]["coordinates"][0]).representative_point()
-        end_coords = geo.mapping(end_coords_shp)["coordinates"]
-        print("Representative_coords: start = %s, end = %s" % (start_coords, end_coords))
-        route_coords = get_route_from_osrm(t, start_coords, end_coords)
+        raise KeyError("'polyline' or 'polylines' structure not found in leg!")
 
-    t["route_coords"] = {
-        "type": "Feature",
-        "properties": {},
-        "geometry": {
-            "type": "LineString",
-            "coordinates": [coords_swap(rc) for rc in route_coords]
-        }
-    }
+
+    t["route_coords"] = route_coords
+
     return t
 
-def get_hidden_access_transfer_walk_segments(prev_l, l):
+def get_hidden_access_transfer_walk_segments(prev_l, l, default_start_fmt_date, default_end_fmt_date):
     # print("prev_l = %s, l = %s" % (prev_l, l))
     if prev_l is None and l["mode"] != "WALKING":
         # This is the first leg and is a vehicular trip,
@@ -219,7 +249,7 @@ def get_hidden_access_transfer_walk_segments(prev_l, l):
             "type": "ACCESS",
             "mode": "WALKING",
             "name": "Walk from the building to your vehicle",
-            "loc": l["start_loc"],
+            "loc": _add_temporal_ground_truth(l["start_loc"], default_start_fmt_date, default_end_fmt_date),
         }]
 
     if l is None and prev_l["mode"] != "WALKING":
@@ -232,7 +262,7 @@ def get_hidden_access_transfer_walk_segments(prev_l, l):
             "type": "ACCESS",
             "mode": "WALKING",
             "name": "Walk from your vehicle to the building",
-            "loc": prev_l["end_loc"]
+            "loc": _add_temporal_ground_truth(prev_l["end_loc"], default_start_fmt_date, default_end_fmt_date)
         }]
 
     # The order of the checks is important because we want the STOPPED to come
@@ -246,24 +276,46 @@ def get_hidden_access_transfer_walk_segments(prev_l, l):
         # NOTE: unlike the first two cases, we are NOT returning here
         # we will run the next check as well, because for most
         # transit transfers, there will be both a transfer and a stop
-        ret_list.append({
-            "id": "tt_%s_%s" % (prev_l["id"], l["id"]),
-            "type": "TRANSFER",
-            "mode": "WALKING",
-            "name": "Transfer between %s and %s at %s" %\
-                (prev_l["mode"], l["mode"], prev_l["end_loc"]["properties"]["name"]),
-            "loc": l["start_loc"]
-        })
+        if isinstance(prev_l["end_loc"], list):
+            for i, el in enumerate(prev_l["end_loc"]):
+                ret_list.append({
+                    "id": "wait_for_%s_%s_%s" % (prev_l["id"], l["id"], i),
+                    "type": "WAITING",
+                    "mode": "STOPPED",
+                    "name": "Wait for %s at %s" %\
+                        (prev_l["mode"], l["mode"], el["properties"]["name"]),
+                    "loc": _add_temporal_ground_truth(el, default_start_fmt_date, default_end_fmt_date)
+                })
+        else:
+            ret_list.append({
+                "id": "tt_%s_%s" % (prev_l["id"], l["id"]),
+                "type": "TRANSFER",
+                "mode": "WALKING",
+                "name": "Transfer between %s and %s at %s" %\
+                    (prev_l["mode"], l["mode"], prev_l["end_loc"]["properties"]["name"]),
+                "loc": _add_temporal_ground_truth(l["start_loc"], default_start_fmt_date, default_end_fmt_date)
+            })
 
     if l is not None and "multiple_occupancy" in l and l["multiple_occupancy"] == True:
-        ret_list.append({
-            "id": "wait_for_%s" % (l["id"]),
-            "type": "WAITING",
-            "mode": "STOPPED",
-            "name": "Wait for %s at %s" %\
-                (l["mode"], l["start_loc"]["properties"]["name"]),
-            "loc": l["start_loc"]
-        })
+        if isinstance(l["start_loc"], list):
+            for i, sl in enumerate(l["start_loc"]):
+                ret_list.append({
+                    "id": "wait_for_%s_%s" % (l["id"], i),
+                    "type": "WAITING",
+                    "mode": "STOPPED",
+                    "name": "Wait for %s at %s" %\
+                        (l["mode"], sl["properties"]["name"]),
+                    "loc": _add_temporal_ground_truth(sl, default_start_fmt_date, default_end_fmt_date)
+                })
+        else:
+            ret_list.append({
+                "id": "wait_for_%s" % l["id"],
+                "type": "WAITING",
+                "mode": "STOPPED",
+                "name": "Wait for %s at %s" %\
+                    (l["mode"], l["start_loc"]["properties"]["name"]),
+                "loc": _add_temporal_ground_truth(l["start_loc"], default_start_fmt_date, default_end_fmt_date)
+            })
 
     # return from the last two checks
     return ret_list
@@ -276,6 +328,10 @@ def has_duplicate_legs(trip):
 
 def validate_and_fill_eval_trips(curr_spec):
     modified_spec = copy.copy(curr_spec)
+
+    default_start_fmt_date = curr_spec["start_fmt_date"]
+    default_end_fmt_date = curr_spec["end_fmt_date"]
+
     eval_trips = modified_spec["evaluation_trips"]
     for t in eval_trips:
         if "legs" in t:
@@ -288,12 +344,12 @@ def validate_and_fill_eval_trips(curr_spec):
                 print("Filling leg %s" % l["id"])
                 # Add in shim legs like the ones to walk to/from your vehicle
                 # or to transfer between transit modes
-                shim_legs = get_hidden_access_transfer_walk_segments(prev_l, l)
+                shim_legs = get_hidden_access_transfer_walk_segments(prev_l, l, default_start_fmt_date, default_end_fmt_date)
                 print("Got shim legs %s, extending" % ([sl["id"] for sl in shim_legs]))
                 ret_leg_list.extend(shim_legs)
-                ret_leg_list.append(validate_and_fill_leg(l))
+                ret_leg_list.append(validate_and_fill_leg(l, default_start_fmt_date, default_end_fmt_date))
                 prev_l = l
-            shim_legs = get_hidden_access_transfer_walk_segments(prev_l, None)
+            shim_legs = get_hidden_access_transfer_walk_segments(prev_l, None, default_start_fmt_date, default_end_fmt_date)
             assert len(shim_legs) <= 1, "Last leg should not have a transfer shim"
             print("Got shim legs %s, extending" % ([sl["id"] for sl in shim_legs]))
             ret_leg_list.extend(shim_legs)
@@ -301,6 +357,7 @@ def validate_and_fill_eval_trips(curr_spec):
             # Let's check again after we have inserted the shim legs
             assert not has_duplicate_legs(t), \
                 "Found duplicate leg ids in trip %s" % t["id"]
+        
         else:
             print("Filling unimodal trip %s" % t["id"])
             # unimodal trip, let's add shims if necessary
@@ -314,12 +371,12 @@ def validate_and_fill_eval_trips(curr_spec):
             t["id"] = unmod_trip["id"]
             t["name"] = unmod_trip["name"]
             t["legs"] = []
-            before_shim_leg = get_hidden_access_transfer_walk_segments(None, unmod_trip)
+            before_shim_leg = get_hidden_access_transfer_walk_segments(None, unmod_trip, default_start_fmt_date, default_end_fmt_date)
             assert len(before_shim_leg) <= 1, "First leg should not have a transfer shim"
             print("Got shim legs %s, extending" % ([sl["id"] for sl in before_shim_leg]))
             t["legs"].extend(before_shim_leg)
-            t["legs"].append(validate_and_fill_leg(unmod_trip))
-            after_shim_leg = get_hidden_access_transfer_walk_segments(unmod_trip, None)
+            t["legs"].append(validate_and_fill_leg(unmod_trip, default_start_fmt_date, default_end_fmt_date))
+            after_shim_leg = get_hidden_access_transfer_walk_segments(unmod_trip, None, default_start_fmt_date, default_end_fmt_date)
             assert len(after_shim_leg) <= 1, "Last leg should not have a transfer shim"
             print("Got shim legs %s, extending" % ([sl["id"] for sl in after_shim_leg]))
             t["legs"].extend(after_shim_leg)
