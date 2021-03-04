@@ -277,15 +277,19 @@ def get_hidden_access_transfer_walk_segments(prev_l, l, default_start_fmt_date, 
         # we will run the next check as well, because for most
         # transit transfers, there will be both a transfer and a stop
         if isinstance(prev_l["end_loc"], list):
-            for i, el in enumerate(prev_l["end_loc"]):
-                ret_list.append({
-                    "id": "wait_for_%s_%s_%s" % (prev_l["id"], l["id"], i),
-                    "type": "WAITING",
-                    "mode": "STOPPED",
-                    "name": "Wait for %s at %s" %\
-                        (prev_l["mode"], l["mode"], el["properties"]["name"]),
-                    "loc": _add_temporal_ground_truth(el, default_start_fmt_date, default_end_fmt_date)
-                })
+            loc = _add_temporal_ground_truth(l["end_loc"][0], default_start_fmt_date, default_end_fmt_date)
+            if len(l["end_loc"]) > 1:
+                for sl in l["end_loc"][1:]:
+                    loc.append(_add_temporal_ground_truth(el, default_start_fmt_date, default_end_fmt_date)[0])
+
+            ret_list.append({
+                "id": "wait_for_%s_%s_%s" % (prev_l["id"], l["id"]),
+                "type": "WAITING",
+                "mode": "STOPPED",
+                "name": "Transfer between %s and %s at %s" %\
+                    (prev_l["mode"], l["mode"], " & ".join([el["properties"]["name"] for el in l["end_loc"]])),
+                "loc": loc
+            })
         else:
             ret_list.append({
                 "id": "tt_%s_%s" % (prev_l["id"], l["id"]),
@@ -298,15 +302,18 @@ def get_hidden_access_transfer_walk_segments(prev_l, l, default_start_fmt_date, 
 
     if l is not None and "multiple_occupancy" in l and l["multiple_occupancy"] == True:
         if isinstance(l["start_loc"], list):
-            for i, sl in enumerate(l["start_loc"]):
-                ret_list.append({
-                    "id": "wait_for_%s_%s" % (l["id"], i),
-                    "type": "WAITING",
-                    "mode": "STOPPED",
-                    "name": "Wait for %s at %s" %\
-                        (l["mode"], sl["properties"]["name"]),
-                    "loc": _add_temporal_ground_truth(sl, default_start_fmt_date, default_end_fmt_date)
-                })
+            loc = _add_temporal_ground_truth(l["start_loc"][0], default_start_fmt_date, default_end_fmt_date)
+            if len(l["start_loc"]) > 1:
+                for sl in l["start_loc"][1:]:
+                    loc.append(_add_temporal_ground_truth(sl, default_start_fmt_date, default_end_fmt_date)[0])
+
+            ret_list.append({
+                "id": "wait_for_%s" % l["id"],
+                "type": "WAITING",
+                "mode": "STOPPED",
+                "name": "Wait for %s at %s" % (l["mode"], " & ".join([sl["properties"]["name"] for sl in l["start_loc"]])),
+                "loc": loc
+            })
         else:
             ret_list.append({
                 "id": "wait_for_%s" % l["id"],
