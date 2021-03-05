@@ -133,6 +133,11 @@ class PhoneView:
     # We expect that transitions occur in pairs
     def transitions_to_ranges(transition_list, start_tt, end_tt, start_ti, end_ti,
             spec_end_ts):
+        # re-sort transitions into proper order -- START and STOP transitions must alternate
+        for i in range(0, len(transition_list), 2):
+            if "START" in transition_list[i]["transition"] and "START" in transition_list[i+1]["transition"] and "STOP" in transition_list[i+2]["transition"]:
+                transition_list[i+1], transition_list[i+2] = transition_list[i+2], transition_list[i+1]
+
         start_transitions = transition_list[::2]
         end_transitions = transition_list[1::2]
 
@@ -167,7 +172,7 @@ class PhoneView:
         range_list = []
         range_count_map = dict.fromkeys(unique_trip_ids, 0)
         for (s, e) in zip(start_transitions, end_transitions):
-            # print("------------------------------------- \n %s -> \n %s" % (s, e))
+            print("------------------------------------- \n %s -> \n %s" % (s, e))
             assert s["transition"] == start_tt or s["transition"] == start_ti, "Start transition has %s transition" % s["transition"]
             assert e["transition"] == end_tt or e["transition"] == end_ti, "Stop transition has %s transition" % s["transition"]
             assert s["trip_id"] == e["trip_id"], "trip_id mismatch! %s != %s" % (s["trip_id"], e["trip_id"])
