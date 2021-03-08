@@ -78,11 +78,23 @@ class SpecDetails:
     def fmt(self, ts, fmt_string):
         return arrow.get(ts).to(self.eval_tz).format(fmt_string)
 
-    def get_ground_truth_for_trip(self, trip_id):
-        tl = [t for t in self.curr_spec_entry["data"]["label"]["evaluation_trips"] if t["id"] == trip_id]
-        print(trip_id, len(tl), [t["id"] for t in tl])
+    def get_ground_truth_for_trip(self, trip_id, start_ts, end_ts):
+        tl = [t for t in self.curr_spec_entry["data"]["label"]["evaluation_trips"]
+              if t["id"] == trip_id]
         assert len(tl) == 1
-        return tl[0]
+        tl = tl[0]
+
+        for leg in tl["legs"]:
+            for key in ["loc", "start_loc", "end_loc", "route_coords"]:
+                if key in leg and isinstance(leg[key], list):
+                    within_ts = [x for x in leg[key]
+                                 if start_ts >= x["properties"]["valid_start_ts"]
+                                 and end_ts <= x["properties"]["valid_end_ts"]]
+                    assert len(within_ts) == 1, f"Invalid amount of {key} info for {leg['id']} between timestamps {start_ts} -> {end_ts}"
+                    leg[key] = within_ts[0]
+
+        return tl
+
 
     @staticmethod
     def get_concat_trajectories(trip):

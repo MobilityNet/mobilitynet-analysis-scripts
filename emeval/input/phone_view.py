@@ -133,6 +133,11 @@ class PhoneView:
     # We expect that transitions occur in pairs
     def transitions_to_ranges(transition_list, start_tt, end_tt, start_ti, end_ti,
             spec_end_ts):
+        # re-sort transitions into proper order -- START and STOP transitions must alternate
+        for i in range(0, len(transition_list)-2, 2):
+            if "START" in transition_list[i]["transition"] and "START" in transition_list[i+1]["transition"] and "STOP" in transition_list[i+2]["transition"]:
+                transition_list[i+1], transition_list[i+2] = transition_list[i+2], transition_list[i+1]
+
         start_transitions = transition_list[::2]
         end_transitions = transition_list[1::2]
 
