@@ -172,7 +172,7 @@ class PhoneView:
         range_list = []
         range_count_map = dict.fromkeys(unique_trip_ids, 0)
         for (s, e) in zip(start_transitions, end_transitions):
-            print("------------------------------------- \n %s -> \n %s" % (s, e))
+            # print("------------------------------------- \n %s -> \n %s" % (s, e))
             assert s["transition"] == start_tt or s["transition"] == start_ti, "Start transition has %s transition" % s["transition"]
             assert e["transition"] == end_tt or e["transition"] == end_ti, "Stop transition has %s transition" % s["transition"]
             assert s["trip_id"] == e["trip_id"], "trip_id mismatch! %s != %s" % (s["trip_id"], e["trip_id"])
