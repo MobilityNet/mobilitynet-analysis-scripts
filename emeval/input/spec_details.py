@@ -85,29 +85,13 @@ class SpecDetails:
         tl = tl[0]
 
         for leg in tl["legs"]:
-            if "route_coords" in leg and isinstance(leg["route_coords"], list):
-                route_coords = [r for r in leg["route_coords"]
-                                if r["properties"]["valid_start_ts"] <= start_ts and r["properties"]["valid_end_ts"] >= end_ts]
-                assert len(route_coords) == 1, f"Not enough route_coords info for {leg['id']} in between timestamps {start_ts} -> {end_ts}"
-                leg["route_coords"] = route_coords[0]
-
-            if "start_loc" in leg and isinstance(leg["start_loc"], list):
-                start_loc = [sl for sl in leg["start_loc"]
-                                if sl["properties"]["valid_start_ts"] <= start_ts and sl["properties"]["valid_end_ts"] >= end_ts]
-                assert len(start_loc) == 1, f"Not enough start_loc info for {leg['id']} in between timestamps {start_ts} -> {end_ts}"
-                leg["start_loc"] = start_loc[0]
-
-            if "end_loc" in leg and isinstance(leg["end_loc"], list):
-                end_loc = [el for el in leg["end_loc"]
-                                if el["properties"]["valid_start_ts"] <= start_ts and el["properties"]["valid_end_ts"] >= end_ts]
-                assert len(end_loc) == 1, f"Not enough end_loc info for {leg['id']} in between timestamps {start_ts} -> {end_ts}"
-                leg["end_loc"] = end_loc[0]
-
-            if "loc" in leg and isinstance(leg["loc"], list):
-                shim_loc = [l for l in leg["loc"]
-                                if l["properties"]["valid_start_ts"] <= start_ts and l["properties"]["valid_end_ts"] >= end_ts]
-                assert len(shim_loc) == 1, f"Not enough end_loc info for {leg['id']} in between timestamps {start_ts} -> {end_ts}"
-                leg["shim_loc"] = shim_loc[0]
+            for key in ["loc", "start_loc", "end_loc", "route_coords"]:
+                if key in leg and isinstance(leg[key], list):
+                    within_ts = [x for x in leg[key]
+                                 if start_ts >= x["properties"]["valid_start_ts"]
+                                 and end_ts <= x["properties"]["valid_end_ts"]]
+                    assert len(within_ts) == 1, f"Invalid amount of {key} info for {leg['id']} between timestamps {start_ts} -> {end_ts}"
+                    leg[key] = within_ts[0]
 
         return tl
 
