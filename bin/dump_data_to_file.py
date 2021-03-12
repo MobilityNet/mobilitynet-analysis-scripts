@@ -2,14 +2,13 @@ import requests
 import time
 import argparse
 import sys
-import arrow
 import json
 
 
 def retrieve_data_from_server(datastore_url, key, user, start_ts, end_ts):
     post_body = {
         "user": user,
-        "key_list": key,
+        "key_list": [key],
         "start_time": start_ts,
         "end_time": end_ts
     }
@@ -32,6 +31,7 @@ def retrieve_data_from_server(datastore_url, key, user, start_ts, end_ts):
         e["data"]["write_ts"] = e["metadata"]["write_ts"]
 
     print(f"Found {len(ret_list)} entries")
+    return ret_list
 
 
 def parse_args():
@@ -52,6 +52,12 @@ def parse_args():
 
 def main():
     args = parse_args()
+
+    # handle case where --key, etc are specified
+    if args.key:
+        data = retrieve_data_from_server(args.datastore_url, args.key, args.user, args.start_ts, args.end_ts)
+        with open(f"data_{'all' if args.spec_id is None else args.spec_id}_{args.key.replace('/', '~').replace('_', '-')}_{int(args.start_ts)}_{int(args.end_ts)}.json", "w") as f:
+            json.dump(data, f, indent=4)
 
     # TODO: add spec_details/phone_view logic
 
