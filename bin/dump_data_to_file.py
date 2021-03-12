@@ -1,11 +1,12 @@
 import requests
 import time
 import argparse
+import sys
 import arrow
 import json
 
 
-def retrieve_data_from_server(datastore_url, user, key, start_ts, end_ts):
+def retrieve_data_from_server(datastore_url, key, user, start_ts, end_ts):
     post_body = {
         "user": user,
         "key_list": key,
@@ -33,30 +34,26 @@ def retrieve_data_from_server(datastore_url, user, key, start_ts, end_ts):
     print(f"Found {len(ret_list)} entries")
 
 
-def main():
-    # parse command line arguments
+def parse_args():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--user", type=str, required=True)
-    parser.add_argument("--endpoint", type=str, required=True)
-    
     parser.add_argument("--datastore-url", type=str, default="http://localhost:8080")
-    parser.add_argument("--start-ts", type=float, default=0)
-    parser.add_argument("--end-ts", type=float, default=arrow.get().timestamp)
+    parser.add_argument("--spec-id", type=str)
+
+    # if one of these arguments is specified, the others in this group must also be specified
+    if any(arg in sys.argv for arg in ["--key", "--user", "--start-ts", "--end-ts"]):
+        parser.add_argument("--key", type=str, required=True)
+        parser.add_argument("--user", type=str, required=True)
+        parser.add_argument("--start-ts", type=float, required=True)
+        parser.add_argument("--end-ts", type=float, required=True)
     
-    args = parser.parse_args()
+    return parser.parse_args()
 
-    # make server call
-    data = retrieve_data_from_server(args.datastore_url, args.user, args.endpoint, args.start_ts, args.end_ts)
 
-    # dump to json file
-    out = args.endpoint.split("/")
-    out = f"{out[0]}~{'-'.join(out[1].split('_'))}"
-    out = f"data_{out}_{int(args.start_ts)}_{int(args.end_ts)}.json"
-    with open(out, "w") as f:
-        json.dump(data, f)
+def main():
+    args = parse_args()
 
-    # TODO: add support for filtering output by spec_id
+    # TODO: add spec_details/phone_view logic
 
 
 if __name__ == "__main__":
