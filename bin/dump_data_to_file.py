@@ -3,6 +3,27 @@ import time
 import argparse
 import sys
 import json
+import arrow
+
+
+DEFAULT_USER = "shankari@eecs.berkeley.edu"
+
+# modified SpecDetails class to keep track of spec details
+class Spec:
+    def __init__(self, spec):
+        self.spec = spec
+        self.spec_wrapper = self.spec["data"]
+        self.spec = self.spec_wrapper["label"]
+
+        print(f"Creating Spec object for spec_id {self.spec['name']}...")
+
+        self.start_ts = self.spec_wrapper["start_ts"]
+        self.end_ts = self.spec_wrapper["end_ts"]
+        self.timezone = self.spec["region"]["timezone"]
+
+        print(f"Evaluation ran from {arrow.get(self.start_ts).to(self.timezone)} -> {arrow.get(self.end_ts).to(self.timezone)}")
+
+        self.phones = self.spec["phones"]
 
 
 def retrieve_data_from_server(datastore_url, key, user, start_ts, end_ts):
@@ -54,13 +75,43 @@ def main():
     args = parse_args()
 
     # handle case where --key, etc are specified
-    if args.key:
-        data = retrieve_data_from_server(args.datastore_url, args.key, args.user, args.start_ts, args.end_ts)
-        with open(f"data_{'all' if args.spec_id is None else args.spec_id}_{args.key.replace('/', '~').replace('_', '-')}_{int(args.start_ts)}_{int(args.end_ts)}.json", "w") as f:
+    if "--key" in sys.argv:
+        data = retrieve_data_from_server(
+            args.datastore_url,
+            args.key,
+            args.user,
+            args.start_ts,
+            args.end_ts)
+
+        spec_id_str = "all" if args.spec_id is None else args.spec_id
+        key_str = args.key.replace("/", "~").replace("_", "-")
+        out_file = f"data_{spec_id_str}_{key_str}_{int(args.start_ts)}_{int(args.end_ts)}.json"
+
+        with open(out_file, "w") as f:
             json.dump(data, f, indent=4)
+        return
+    
+    # otherwise, build up phone view map
+    ## 1) get specified spec, or get all specs if spec isn't specified
+    specs = retrieve_data_from_server(
+        args.datastore_url,
+        "config/evaluation_spec",
+        DEFAULT_USER,
+        0,
+        arrow.get().timestamp)
+    if args.spec_id:
+        specs = [s for s in specs if s["data"]["label"]["id"] == args.spec_id]
 
-    # TODO: add spec_details/phone_view logic
+    # remove duplicate specs based on most recently written spec
+    s_dict = dict()
+    for s in specs:
+        spec_id = s["data"]["label"]["id"]
+        if (spec_id not in s_dict) or ((spec_id in s_dict) and (s["metadata"]["write_ts"] > s_dict[spec_id]["metadata"]["write_ts"])):
+            s_dict[spec_id] = s
 
+    ## 2) populate Spec objects (which consist of spec details) for each unique spec
+    specs = [Spec(s) for s in s_dict.values()]
+    print(len(specs))
 
 if __name__ == "__main__":
     main()
