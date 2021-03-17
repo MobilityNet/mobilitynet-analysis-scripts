@@ -6,8 +6,11 @@ import time
 import requests
 import shapely as shp
 import geojson as gj
+from abc import ABC, abstractmethod
+import json
 
-class SpecDetails:
+
+class SpecDetails(ABC):
     def __init__(self, datastore_url, author_email, spec_id):
         self.DATASTORE_URL = datastore_url
         self.AUTHOR_EMAIL = author_email
@@ -15,45 +18,16 @@ class SpecDetails:
         self.curr_spec_entry = self.get_current_spec()
         self.populate_spec_details(self.curr_spec_entry)
 
-    def retrieve_data_from_server(self, user_label, key_list, start_ts, end_ts):
-        post_msg = {
-            "user": user_label,
-            "key_list": key_list,
-            "start_time": start_ts,
-            "end_time": end_ts
-        }
-        print("About to retrieve messages using %s" % post_msg)
-        try:
-            response = requests.post(self.DATASTORE_URL+"/datastreams/find_entries/timestamp", json=post_msg)
-            print("response = %s" % response)
-            response.raise_for_status()
-            ret_list = response.json()["phone_data"]
-        except Exception as e:
-            print("Got %s error %s, retrying" % (type(e).__name__, e))
-            time.sleep(10)
-            response = requests.post(self.DATASTORE_URL+"/datastreams/find_entries/timestamp", json=post_msg)
-            print("response = %s" % response)
-            response.raise_for_status()
-            ret_list = response.json()["phone_data"]
-        # write_ts may not be the same as data.ts, specially in the case of
-        # transitions, where we first generate the data.ts in javascript and
-        # then pass it down to the native code to store
-        # normally, this doesn't matter because it is a microsecond difference, but
-        # it does matter in this case because we store several entries in quick
-        # succession and we want to find the entries within a particular range.
-        # Putting it into the "data" object makes the write_ts accessible in the
-        # subsequent dataframes, etc
-        for e in ret_list:
-            e["data"]["write_ts"] = e["metadata"]["write_ts"]
-        print("Found %d entries" % len(ret_list))
-        return ret_list
+    @abstractmethod
+    def retrieve_data(self, user, key_list, start_ts, end_ts):
+        pass
 
-    def retrieve_all_data_from_server(self, user_label, key_list):
-        return self.retrieve_data_from_server(user_label, key_list, 0,
+    def retrieve_all_data(self, user, key_list):
+        return self.retrieve_data(user, key_list, 0,
             arrow.get().timestamp)
 
     def get_current_spec(self):
-        all_spec_entry_list = self.retrieve_all_data_from_server(self.AUTHOR_EMAIL, ["config/evaluation_spec"])
+        all_spec_entry_list = self.retrieve_all_data(self.AUTHOR_EMAIL, ["config/evaluation_spec"])
         curr_spec_entry = None
         for s in all_spec_entry_list:
             if s["data"]["label"]["id"] == self.CURR_SPEC_ID:
@@ -138,4 +112,42 @@ class SpecDetails:
         else:
             gt_leg["loc"]["properties"]["style"] = {"color": "purple", "fillColor": "purple"}
             return gt_leg["loc"]
-        
+
+
+class ServerSpecDetails(SpecDetails):
+    def retrieve_data(self, user, key_list, start_ts, end_ts):
+        post_body = {
+            "user": user,
+            "key_list": key_list,
+            "start_time": start_ts,
+            "end_time": end_ts
+        }
+
+        print(f"Retrieving data for: {post_body=}")
+        try:
+            response = requests.post(f"{self.DATASTORE_URL}/datastreams/find_entries/timestamp", json=post_body)
+            print(f"{response=}")
+            response.raise_for_status()
+            data = response.json()["phone_data"]
+        except Exception as e:
+            print(f"Got {type(e).__name__}: {e}, retrying...")
+            time.sleep(10)
+            response = requests.post(f"{self.DATASTORE_URL}/datastreams/find_entries/timestamp", json=post_body)
+            print(f"{response=}")
+            response.raise_for_status()
+            data = response.json()["phone_data"]
+
+        for e in data:
+            e["data"]["write_ts"] = e["metadata"]["write_ts"]
+
+        # dump all API calls to JSON files
+        spec_id_str = "all" if not self.CURR_SPEC_ID else self.CURR_SPEC_ID.replace("_", "-")
+        key_str = "#".join([k.replace("/", "~").replace("_", "-") for k in key_list])
+        user_str = user.replace("@", "#").replace(".", "^")
+        out_file = f"data_{spec_id_str}_{key_str}_{user_str}_{int(start_ts)}_{int(end_ts)}.json"
+
+        with open(out_file, "w") as f:
+                json.dump(data, f, indent=4)
+
+        print(f"Found {len(data)} entries")
+        return data

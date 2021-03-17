@@ -18,6 +18,7 @@ class Spec:
         self.spec = spec
         self.spec_wrapper = self.spec["data"]
         self.spec = self.spec_wrapper["label"]
+        self.id = self.spec["id"]
 
         print(f"Creating Spec object for spec_id {self.spec['name']}...")
 
@@ -89,10 +90,10 @@ def get_specs():
 
 
 def fill_transitions(specs):
-    pv_maps = dict.fromkeys(specs)
+    pv_maps = dict.fromkeys([s.id for s in specs])
     for spec in specs:
-        pv_maps[spec] = copy.deepcopy(spec.phones)
-        for phone_os, phone_map in pv_maps[spec].items():
+        pv_maps[spec.id] = copy.deepcopy(spec.phones)
+        for phone_os, phone_map in pv_maps[spec.id].items():
             for phone_label in phone_map:
                 phone_map[phone_label] = {
                     "role": phone_map[phone_label],
@@ -102,7 +103,11 @@ def fill_transitions(specs):
     return pv_maps
 
 
-def build_phone_view_map():
+def _filter_transitions(key_prefix, start_tt, end_tt, start_ti, end_ti):
+
+
+
+def build_maps():
     # get specified spec, or get all specs if spec isn't specified
     specs = get_specs()
 
@@ -138,4 +143,4 @@ if __name__ == "__main__":
         retrieve_data_from_server(args.key, args.user, args.start_ts, args.end_ts)
     else:
         # run data dumping pipeline
-        build_phone_view_map()
+        build_maps()

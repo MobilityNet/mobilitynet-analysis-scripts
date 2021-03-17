@@ -92,7 +92,7 @@ class PhoneView:
             print("Reading data for %s phones" % phoneOS)
             for phone_label in phone_map:
                 print("Loading transitions for phone %s" % phone_label)
-                curr_phone_transitions = self.spec_details.retrieve_data_from_server(
+                curr_phone_transitions = self.spec_details.retrieve_data(
                     phone_label, ["manual/evaluation_transition"],
                     self.spec_details.eval_start_ts, self.spec_details.eval_end_ts)
                 curr_phone_role = phone_map[phone_label]
@@ -279,7 +279,7 @@ class PhoneView:
             for phone_label in phone_map:
                 curr_calibration_ranges = phone_map[phone_label]["{}_ranges".format(storage_key)]
                 for r in curr_calibration_ranges:
-                    battery_entries = self.spec_details.retrieve_data_from_server(phone_label, ["background/battery"], r["start_ts"], r["end_ts"])
+                    battery_entries = self.spec_details.retrieve_data(phone_label, ["background/battery"], r["start_ts"], r["end_ts"])
                     # ios entries before running the pipeline are marked with battery_level_ratio, which is a float from 0 ->1
                     # convert it to % to be consistent with android and easier to understand
                     if phoneOS == "ios":
@@ -301,7 +301,7 @@ class PhoneView:
 
         while not all_done:
             print("About to retrieve data for %s from %s -> %s" % (phone_label, curr_start_ts, end_ts))
-            curr_location_entries = self.spec_details.retrieve_data_from_server(phone_label, [key], curr_start_ts, end_ts)
+            curr_location_entries = self.spec_details.retrieve_data(phone_label, [key], curr_start_ts, end_ts)
             print("Retrieved %d entries with timestamps %s..." % (len(curr_location_entries), [cle["data"]["ts"] for cle in curr_location_entries[0:10]]))
             if len(curr_location_entries) == 0 or len(curr_location_entries) == 1:
                 all_done = True
@@ -350,7 +350,7 @@ class PhoneView:
 
                     while not all_done:
                         print("About to retrieve data for %s from %s -> %s" % (phone_label, curr_start_ts, r["end_ts"]))
-                        curr_motion_activity_entries = self.spec_details.retrieve_data_from_server(phone_label, ["background/motion_activity"], curr_start_ts, r["end_ts"])
+                        curr_motion_activity_entries = self.spec_details.retrieve_data(phone_label, ["background/motion_activity"], curr_start_ts, r["end_ts"])
                         print("Retrieved %d entries with timestamps %s..." % (len(curr_motion_activity_entries), [cle["metadata"]["write_ts"] for cle in curr_motion_activity_entries[0:10]]))
                         if len(curr_motion_activity_entries) == 0 or len(curr_motion_activity_entries) == 1 or len(curr_motion_activity_entries) == prev_retrieved_count:
                             all_done = True
@@ -373,7 +373,7 @@ class PhoneView:
             for phone_label in phone_map:
                 curr_calibration_ranges = phone_map[phone_label]["{}_ranges".format(storage_key)]
                 for r in curr_calibration_ranges:
-                    transition_entries = self.spec_details.retrieve_data_from_server(
+                    transition_entries = self.spec_details.retrieve_data(
                         phone_label, ["statemachine/transition"], r["start_ts"], r["end_ts"])
                     # ios entries before running the pipeline are marked with battery_level_ratio, which is a float from 0 ->1
                     # convert it to % to be consistent with android and easier to understand
