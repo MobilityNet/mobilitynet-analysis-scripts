@@ -1,37 +1,20 @@
 import requests
 import time
-import argparse
-import sys
-import json
 import arrow
-import copy
+import argparse
+import sys; sys.path.append("..")
+from emeval.input.spec_details import ServerSpecDetails
+from emeval.input.phone_view import PhoneView
 
 
-# instance variables for script
-SPEC_USER = "shankari@eecs.berkeley.edu"
+DEFAULT_SPEC_USER = "shankari@eecs.berkeley.edu"
 DATASTORE_URL = None
-SPEC_ID = None
 
-# modified SpecDetails class to keep track of spec details
-class Spec:
-    def __init__(self, spec):
-        self.spec = spec
-        self.spec_wrapper = self.spec["data"]
-        self.spec = self.spec_wrapper["label"]
-        self.id = self.spec["id"]
-
-        print(f"Creating Spec object for spec_id {self.spec['name']}...")
-
-        self.start_ts = self.spec_wrapper["start_ts"]
-        self.end_ts = self.spec_wrapper["end_ts"]
-        self.timezone = self.spec["region"]["timezone"]
-
-        print(f"Evaluation ran from {arrow.get(self.start_ts).to(self.timezone)} -> {arrow.get(self.end_ts).to(self.timezone)}")
-
-        self.phones = self.spec["phones"]
-
-
-def retrieve_data_from_server(key, user, start_ts, end_ts):
+def retrieve_data_from_server(user, key, start_ts, end_ts, spec_id="", dump=False):
+    """
+    Standalone function similar to ServerSpecDetails's implementation of retrieve_data.
+    Used when --key, --user, --start-ts, and --end-ts are specified & for retrieving all specs
+    """
     post_body = {
         "user": user,
         "key_list": [key],
@@ -56,63 +39,23 @@ def retrieve_data_from_server(key, user, start_ts, end_ts):
     for e in data:
         e["data"]["write_ts"] = e["metadata"]["write_ts"]
 
-    # dump all API calls to JSON files
-    spec_id_str = "all" if not SPEC_ID else SPEC_ID.replace("_", "-")
-    key_str = key.replace("/", "~").replace("_", "-")
-    user_str = user.replace("@", "#").replace(".", "^")
-    out_file = f"data_{spec_id_str}_{key_str}_{user_str}_{int(start_ts)}_{int(end_ts)}.json"
+    if dump:
+        spec_id_str = spec_id.replace("_", "-")
+        key_str = key.replace("/", "~").replace("_", "-")
+        user_str = user.replace("@", "#").replace(".", "^")
+        out_file = f"data_{spec_id_str}_{key_str}_{user_str}_{int(start_ts)}_{int(end_ts)}.json"
 
-    with open(out_file, "w") as f:
+        with open(out_file, "w") as f:
             json.dump(data, f, indent=4)
 
     print(f"Found {len(data)} entries")
     return data
 
 
-def get_specs():
-    specs = retrieve_data_from_server("config/evaluation_spec", SPEC_USER, 0, arrow.get().timestamp)
-    
-    # filter by spec_id if specified
-    if SPEC_ID:
-        specs = [s for s in specs if s["data"]["label"]["id"] == SPEC_ID]
-
-    # remove duplicate specs based on most recently written spec
-    s_dict = dict()
-    for s in specs:
-        s_id = s["data"]["label"]["id"]
-        if (s_id not in s_dict) or ((s_id in s_dict) and (s["metadata"]["write_ts"] > s_dict[s_id]["metadata"]["write_ts"])):
-            s_dict[s_id] = s
-
-    # populate Spec objects (which consist of spec details) for each unique spec
-    specs = [Spec(s) for s in s_dict.values()]
-    
-    return specs
-
-
-def fill_transitions(specs):
-    pv_maps = dict.fromkeys([s.id for s in specs])
-    for spec in specs:
-        pv_maps[spec.id] = copy.deepcopy(spec.phones)
-        for phone_os, phone_map in pv_maps[spec.id].items():
-            for phone_label in phone_map:
-                phone_map[phone_label] = {
-                    "role": phone_map[phone_label],
-                    "transitions": retrieve_data_from_server("manual/evaluation_transition", phone_label, spec.start_ts, spec.end_ts)
-                }
-
-    return pv_maps
-
-
-def _filter_transitions(key_prefix, start_tt, end_tt, start_ti, end_ti):
-
-
-
-def build_maps():
-    # get specified spec, or get all specs if spec isn't specified
-    specs = get_specs()
-
-    # fill transitions
-    pv_maps = fill_transitions(specs)
+def get_all_spec_ids():
+    spec_data = retrieve_data_from_server(DEFAULT_SPEC_USER, "config/evaluation_spec", 0, arrow.get().timestamp)
+    spec_ids = [s["data"]["label"]["id"] for s in spec_data]
+    return set(spec_ids)
 
 
 def parse_args():
@@ -133,14 +76,29 @@ def parse_args():
 
 if __name__ == "__main__":
     args = parse_args()
-    
-    # set script-level variables
-    DATASTORE_URL = args.datastore_url
-    SPEC_ID = args.spec_id
 
-    # handle case where --key, etc are specified
+    # set instance variables
+    DATASTORE_URL = args.datastore_url
+
+    # verify spec_id is valid if specified
+    spec_ids = get_all_spec_ids()
+    if args.spec_id:
+        assert args.spec_id in spec_ids, f"spec_id `{args.spec_id}` not found within current datastore instance"
+        spec_ids = [args.spec_id]
+
+    # if --key, etc are specified, just call the function above
     if "--key" in sys.argv:
-        retrieve_data_from_server(args.key, args.user, args.start_ts, args.end_ts)
+        for s_id in spec_ids:
+            retrieve_data_from_server(args.user, args.key, args.start_ts, args.end_ts, spec_id=s_id, dump=True)
     else:
-        # run data dumping pipeline
-        build_maps()
+        # create spec_details objects depending on flag specified
+        spec_detailss = [ServerSpecDetails(DATASTORE_URL, DEFAULT_SPEC_USER, s_id) for s_id in spec_ids]
+
+        # build and dump phone view maps
+        for sd in spec_detailss:
+            pv = PhoneView(sd)
+            for phone_os, phone_map in pv.map().items():
+                for phone_label, phone_detail_map in phone_map.items():
+                    for r in phone_detail_map["evaluation_ranges"]:
+                        print(r.keys())
+                        # TODO: figure out what keys to exactly dump

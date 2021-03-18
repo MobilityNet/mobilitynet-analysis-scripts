@@ -140,14 +140,5 @@ class ServerSpecDetails(SpecDetails):
         for e in data:
             e["data"]["write_ts"] = e["metadata"]["write_ts"]
 
-        # dump all API calls to JSON files
-        spec_id_str = "all" if not self.CURR_SPEC_ID else self.CURR_SPEC_ID.replace("_", "-")
-        key_str = "#".join([k.replace("/", "~").replace("_", "-") for k in key_list])
-        user_str = user.replace("@", "#").replace(".", "^")
-        out_file = f"data_{spec_id_str}_{key_str}_{user_str}_{int(start_ts)}_{int(end_ts)}.json"
-
-        with open(out_file, "w") as f:
-                json.dump(data, f, indent=4)
-
         print(f"Found {len(data)} entries")
         return data
