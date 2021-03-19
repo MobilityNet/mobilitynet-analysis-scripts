@@ -8,6 +8,7 @@ import shapely as shp
 import geojson as gj
 from abc import ABC, abstractmethod
 import json
+import os
 
 
 class SpecDetails(ABC):
@@ -160,3 +161,14 @@ class ServerSpecDetails(SpecDetails):
 
         print(f"Found {len(data)} entries")
         return data
+
+
+class FileSpecDetails(SpecDetails):
+    data = []
+    def retrieve_data(self, user, key_list, start_ts, end_ts):
+        for key in key_list:
+            data_file = f"data/{self.CURR_SPEC_ID}/{user}/{key.replace('/', '~')}/{start_ts}_{end_ts}.json"
+            assert os.path.isfile(data_file)
+            with open(data_file, "r") as f:
+                data.extend(json.load(f))
+    return data

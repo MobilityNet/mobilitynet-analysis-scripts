@@ -1,3 +1,5 @@
+import json
+import os
 import requests
 import time
 import arrow
@@ -10,7 +12,24 @@ from emeval.input.phone_view import PhoneView
 DEFAULT_SPEC_USER = "shankari@eecs.berkeley.edu"
 DATASTORE_URL = None
 
-def retrieve_data_from_server(user, key, start_ts, end_ts, spec_id="", dump=False):
+def dump_to_file(data, spec_id, user, key, start_ts, end_ts):
+    """
+    Dumped outputs are created recursively in folder relative to path of script.
+    """
+    key = key.replace("/", "~") # key could have a slash, replace with tilde
+
+    out_path = os.path.join("data", spec_id, user, key)
+    os.makedirs(out_path, exist_ok=True)
+
+    out_file = os.path.join(out_path, f"{start_ts}_{end_ts}.json")
+
+    print(f"Creating {out_file=}...")
+
+    with open(out_file, "w") as f:
+        json.dump(data, f, indent=4)
+
+
+def retrieve_data_from_server(user, key, start_ts, end_ts):
     """
     Standalone function similar to ServerSpecDetails's implementation of retrieve_data.
     Used when --key, --user, --start-ts, and --end-ts are specified & for retrieving all specs
@@ -38,15 +57,6 @@ def retrieve_data_from_server(user, key, start_ts, end_ts, spec_id="", dump=Fals
 
     for e in data:
         e["data"]["write_ts"] = e["metadata"]["write_ts"]
-
-    if dump:
-        spec_id_str = spec_id.replace("_", "-")
-        key_str = key.replace("/", "~").replace("_", "-")
-        user_str = user.replace("@", "#").replace(".", "^")
-        out_file = f"data_{spec_id_str}_{key_str}_{user_str}_{int(start_ts)}_{int(end_ts)}.json"
-
-        with open(out_file, "w") as f:
-            json.dump(data, f, indent=4)
 
     print(f"Found {len(data)} entries")
     return data
@@ -89,7 +99,8 @@ if __name__ == "__main__":
     # if --key, etc are specified, just call the function above
     if "--key" in sys.argv:
         for s_id in spec_ids:
-            retrieve_data_from_server(args.user, args.key, args.start_ts, args.end_ts, spec_id=s_id, dump=True)
+            data = retrieve_data_from_server(args.user, args.key, args.start_ts, args.end_ts)
+            dump_to_file(data, s_id, args.user, args.key, args.start_ts, args.end_ts)
     else:
         # create spec_details objects depending on flag specified
         spec_detailss = [ServerSpecDetails(DATASTORE_URL, DEFAULT_SPEC_USER, s_id) for s_id in spec_ids]
@@ -100,5 +111,5 @@ if __name__ == "__main__":
             for phone_os, phone_map in pv.map().items():
                 for phone_label, phone_detail_map in phone_map.items():
                     for r in phone_detail_map["evaluation_ranges"]:
-                        print(r)
-                        # TODO: figure out what keys to exactly dump
+                        for key in [k for k in r.keys() if "_entries" in k]:
+                            dump_to_file(r[key], sd.CURR_SPEC_ID, phone_label, key, r["start_ts"], r["end_ts"])
