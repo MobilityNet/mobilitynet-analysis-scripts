@@ -69,6 +69,25 @@ class SpecDetails(ABC):
 
         return tl
 
+    def read_until_done(self, phone_label, key, start_ts, end_ts):
+        all_done = False
+        location_entries = []
+        curr_start_ts = start_ts
+        prev_retrieved_count = 0
+
+        while not all_done:
+            print("About to retrieve data for %s from %s -> %s" % (phone_label, curr_start_ts, end_ts))
+            curr_location_entries = self.retrieve_data(phone_label, [key], curr_start_ts, end_ts)
+            print("Retrieved %d entries with timestamps %s..." % (len(curr_location_entries), [cle["data"]["ts"] for cle in curr_location_entries[0:10]]))
+            if len(curr_location_entries) == 0 or len(curr_location_entries) == 1:
+                all_done = True
+            else:
+                location_entries.extend(curr_location_entries)
+                new_start_ts = curr_location_entries[-1]["metadata"]["write_ts"]
+                assert new_start_ts > curr_start_ts
+                curr_start_ts = new_start_ts
+                prev_retrieved_count = len(curr_location_entries)
+        return location_entries
 
     @staticmethod
     def get_concat_trajectories(trip):
@@ -99,7 +118,6 @@ class SpecDetails(ABC):
             }
         else:
             return {"loc": shp.geometry.shape(gt_leg["loc"]["geometry"])}
-
 
     @classmethod
     def get_geojson_for_leg(cls, gt_leg):

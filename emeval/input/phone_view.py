@@ -293,36 +293,16 @@ class PhoneView:
                         battery_df["hr"] = (battery_df.ts-r["start_ts"])/3600.0
                     r["battery_df"] = battery_df
 
-    def _read_until_done(self, phone_label, key, start_ts, end_ts):
-        all_done = False
-        location_entries = []
-        curr_start_ts = start_ts
-        prev_retrieved_count = 0
-
-        while not all_done:
-            print("About to retrieve data for %s from %s -> %s" % (phone_label, curr_start_ts, end_ts))
-            curr_location_entries = self.spec_details.retrieve_data(phone_label, [key], curr_start_ts, end_ts)
-            print("Retrieved %d entries with timestamps %s..." % (len(curr_location_entries), [cle["data"]["ts"] for cle in curr_location_entries[0:10]]))
-            if len(curr_location_entries) == 0 or len(curr_location_entries) == 1:
-                all_done = True
-            else:
-                location_entries.extend(curr_location_entries)
-                new_start_ts = curr_location_entries[-1]["metadata"]["write_ts"]
-                assert new_start_ts > curr_start_ts
-                curr_start_ts = new_start_ts
-                prev_retrieved_count = len(curr_location_entries)
-        return location_entries
-
     def fill_location_df(self, storage_key):
         for phoneOS, phone_map in self.phone_view_map.items():
             print("Processing data for %s phones" % phoneOS)
             for phone_label in phone_map:
                 curr_calibration_ranges = phone_map[phone_label]["{}_ranges".format(storage_key)]
                 for r in curr_calibration_ranges:
-                    r["location_entries"] = self._read_until_done(phone_label,
+                    r["location_entries"] = self.spec_details.read_until_done(phone_label,
                         "background/location",
                         r["start_ts"], r["end_ts"])
-                    r["filtered_location_entries"] = self._read_until_done(
+                    r["filtered_location_entries"] = self.spec_details.read_until_done(
                         phone_label,
                         "background/filtered_location",
                         r["start_ts"], r["end_ts"])

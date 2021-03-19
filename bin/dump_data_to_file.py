@@ -100,5 +100,5 @@ if __name__ == "__main__":
             for phone_os, phone_map in pv.map().items():
                 for phone_label, phone_detail_map in phone_map.items():
                     for r in phone_detail_map["evaluation_ranges"]:
-                        print(r.keys())
+                        print(r)
                         # TODO: figure out what keys to exactly dump
