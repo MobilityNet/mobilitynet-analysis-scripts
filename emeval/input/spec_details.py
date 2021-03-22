@@ -7,17 +7,17 @@ import requests
 import shapely as shp
 import geojson as gj
 from abc import ABC, abstractmethod
-import json
-import os
 
 
 class SpecDetails(ABC):
-    def __init__(self, datastore_url, author_email, spec_id):
+    def __init__(self, datastore_url, author_email, spec_id=None):
         self.DATASTORE_URL = datastore_url
         self.AUTHOR_EMAIL = author_email
-        self.CURR_SPEC_ID = spec_id
-        self.curr_spec_entry = self.get_current_spec()
-        self.populate_spec_details(self.curr_spec_entry)
+        # make spec_id optional if instance is only being used to call retrieve_data
+        if spec_id:
+            self.CURR_SPEC_ID = spec_id
+            self.curr_spec_entry = self.get_current_spec()
+            self.populate_spec_details(self.curr_spec_entry)
 
     @abstractmethod
     def retrieve_data(self, user, key_list, start_ts, end_ts):
@@ -164,11 +164,11 @@ class ServerSpecDetails(SpecDetails):
 
 
 class FileSpecDetails(SpecDetails):
-    data = []
-    def retrieve_data(self, user, key_list, start_ts, end_ts):
+    def retrieve_data(self, user, key_list, start_ts, end_ts, root_dir="data"):
+        data = []
         for key in key_list:
-            data_file = f"data/{self.CURR_SPEC_ID}/{user}/{key.replace('/', '~')}/{start_ts}_{end_ts}.json"
+            data_file = f"{root_dir}/{self.CURR_SPEC_ID}/{user}/{key.replace('/', '~')}/{start_ts}_{end_ts}.json"
             assert os.path.isfile(data_file)
             with open(data_file, "r") as f:
                 data.extend(json.load(f))
-    return data
+        return data
