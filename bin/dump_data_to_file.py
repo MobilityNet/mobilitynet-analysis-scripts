@@ -38,6 +38,7 @@ def get_all_spec_ids(datastore_url, spec_user):
     """
     spec_data = ServerSpecDetails(datastore_url, spec_user).retrieve_data(spec_user, ["config/evaluation_spec"], 0, arrow.get().timestamp)
     spec_ids = [s["data"]["label"]["id"] for s in spec_data]
+
     return set(spec_ids)
 
 
@@ -95,6 +96,50 @@ def parse_args():
     return parser.parse_args()
 
 
+def run_full_pipeline(datastore_url, spec_user, spec_ids, out_dir):
+    print(f"Running full pipeline for {spec_ids[0] if len(spec_ids) == 1 else 'all specs in datastore'}...")
+
+    # collect ServerSpecDetails objects, dump specs
+    sds = []
+    for s_id in spec_ids:
+        sd = ServerSpecDetails(datastore_url, spec_user, s_id)
+        sds.append(sd)
+        dump_data_to_file(
+            sd.curr_spec_entry,
+            sd.CURR_SPEC_ID,
+            spec_user,
+            "config/evaluation_spec",
+            0,
+            sys.maxsize,
+            out_dir)
+
+    # build and dump phone view maps
+    for sd in sds:
+        pv = PhoneView(sd)
+        for phone_os, phone_map in pv.map().items():
+            for phone_label, phone_detail_map in phone_map.items():
+                for key in [k for k in phone_detail_map.keys() if "/" in k]:
+                    dump_data_to_file(
+                        phone_detail_map[key],
+                        sd.CURR_SPEC_ID,
+                        phone_label,
+                        key,
+                        sd.eval_start_ts,
+                        sd.eval_end_ts,
+                        out_dir)
+                for ranges in [phone_detail_map["calibration_ranges"], phone_detail_map["evaluation_ranges"]]:
+                    for r in ranges:
+                        for key in [k for k in r.keys() if "/" in k]:
+                            dump_data_to_file(
+                                r[key],
+                                sd.CURR_SPEC_ID,
+                                phone_label,
+                                key,
+                                r["start_ts"],
+                                r["end_ts"],
+                                out_dir)
+
+
 if __name__ == "__main__":
     args = parse_args()
 
@@ -108,7 +153,7 @@ if __name__ == "__main__":
     cond_req_args = ["--key", "--user", "--start-ts", "--end-ts"]
     for arg in cond_req_args:
         if arg in sys.argv:
-            assert set(a for a in cond_req_args if a != arg) <= set(sys.argv), "all of --key -user, --start-ts, and --end-ts must be specified"
+            assert set(a for a in cond_req_args if a != arg) <= set(sys.argv), "all of --key --user, --start-ts, and --end-ts must be specified"
 
     # if --key, etc are specified, just call retrieve_data from an anonymous ServerSpecDetails instance
     if "--key" in sys.argv:
@@ -116,20 +161,4 @@ if __name__ == "__main__":
             data = ServerSpecDetails(args.datastore_url, args.user).retrieve_data(args.user, [args.key], args.start_ts, args.end_ts)
             dump_data_to_file(data, s_id, args.user, args.key, args.start_ts, args.end_ts, args.out_dir)
     else:
-        # create spec_details objects depending on flag specified
-        print(f"Running full pipeline for {args.spec_id if args.spec_id else 'all specs in datastore'}...")
-
-        sds = []
-        for s_id in spec_ids:
-            sd = ServerSpecDetails(args.datastore_url, args.spec_user, s_id)
-            sds.append(sd)
-            dump_data_to_file(sd.curr_spec_entry, sd.CURR_SPEC_ID, args.spec_user, "config/evaluation_spec", 0, arrow.get().timestamp, args.out_dir)
-
-        # build and dump phone view maps
-        for sd in sds:
-            pv = PhoneView(sd)
-            for phone_os, phone_map in pv.map().items():
-                for phone_label, phone_detail_map in phone_map.items():
-                    for r in phone_detail_map["evaluation_ranges"]:
-                        for key in [k for k in r.keys() if "_entries" in k]:
-                            dump_data_to_file(r[key], sd.CURR_SPEC_ID, phone_label, key, r["start_ts"], r["end_ts"], args.out_dir)
+        run_full_pipeline(args.datastore_url, args.spec_user, spec_ids, args.out_dir)

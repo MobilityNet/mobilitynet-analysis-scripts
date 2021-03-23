@@ -7,6 +7,9 @@ import requests
 import shapely as shp
 import geojson as gj
 from abc import ABC, abstractmethod
+import os
+import json
+import sys
 
 
 class SpecDetails(ABC):
@@ -25,7 +28,7 @@ class SpecDetails(ABC):
 
     def retrieve_all_data(self, user, key_list):
         return self.retrieve_data(user, key_list, 0,
-            arrow.get().timestamp)
+            sys.maxsize)
 
     def get_current_spec(self):
         all_spec_entry_list = self.retrieve_all_data(self.AUTHOR_EMAIL, ["config/evaluation_spec"])
@@ -164,10 +167,10 @@ class ServerSpecDetails(SpecDetails):
 
 
 class FileSpecDetails(SpecDetails):
-    def retrieve_data(self, user, key_list, start_ts, end_ts, root_dir="data"):
+    def retrieve_data(self, user, key_list, start_ts, end_ts):
         data = []
         for key in key_list:
-            data_file = f"{root_dir}/{self.CURR_SPEC_ID}/{user}/{key.replace('/', '~')}/{start_ts}_{end_ts}.json"
+            data_file = f"{os.getcwd()}/data/{user}/{self.CURR_SPEC_ID}/{key.replace('/', '~')}/{start_ts}_{end_ts}.json"
             assert os.path.isfile(data_file)
             with open(data_file, "r") as f:
                 data.extend(json.load(f))
