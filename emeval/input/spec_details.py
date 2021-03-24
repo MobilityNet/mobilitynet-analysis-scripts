@@ -10,11 +10,12 @@ from abc import ABC, abstractmethod
 import os
 import json
 import sys
+import math
 
 
 class SpecDetails(ABC):
-    def __init__(self, datastore_url, author_email, spec_id=None):
-        self.DATASTORE_URL = datastore_url
+    def __init__(self, datastore_loc, author_email, spec_id=None):
+        self.DATASTORE_LOC = datastore_loc
         self.AUTHOR_EMAIL = author_email
         # make spec_id optional if instance is only being used to call retrieve_data
         if spec_id:
@@ -27,8 +28,7 @@ class SpecDetails(ABC):
         pass
 
     def retrieve_all_data(self, user, key_list):
-        return self.retrieve_data(user, key_list, 0,
-            sys.maxsize)
+        return self.retrieve_data(user, key_list, 0, sys.maxsize)
 
     def get_current_spec(self):
         all_spec_entry_list = self.retrieve_all_data(self.AUTHOR_EMAIL, ["config/evaluation_spec"])
@@ -147,14 +147,14 @@ class ServerSpecDetails(SpecDetails):
 
         print(f"Retrieving data for: {post_body=}")
         try:
-            response = requests.post(f"{self.DATASTORE_URL}/datastreams/find_entries/timestamp", json=post_body)
+            response = requests.post(f"{self.DATASTORE_LOC}/datastreams/find_entries/timestamp", json=post_body)
             print(f"{response=}")
             response.raise_for_status()
             data = response.json()["phone_data"]
         except Exception as e:
             print(f"Got {type(e).__name__}: {e}, retrying...")
             time.sleep(10)
-            response = requests.post(f"{self.DATASTORE_URL}/datastreams/find_entries/timestamp", json=post_body)
+            response = requests.post(f"{self.DATASTORE_LOC}/datastreams/find_entries/timestamp", json=post_body)
             print(f"{response=}")
             response.raise_for_status()
             data = response.json()["phone_data"]
@@ -170,8 +170,15 @@ class FileSpecDetails(SpecDetails):
     def retrieve_data(self, user, key_list, start_ts, end_ts):
         data = []
         for key in key_list:
-            data_file = f"{os.getcwd()}/data/{user}/{self.CURR_SPEC_ID}/{key.replace('/', '~')}/{start_ts}_{end_ts}.json"
-            assert os.path.isfile(data_file)
+            data_file = os.path.join(
+                os.getcwd(),
+                self.DATASTORE_LOC,
+                f"{user}/{self.CURR_SPEC_ID}/{key.replace('/', '~')}/{math.floor(start_ts)}_{math.ceil(end_ts)}.json")
+            assert os.path.isfile(data_file), f"not found: {data_file=}"
             with open(data_file, "r") as f:
-                data.extend(json.load(f))
+                d = json.load(f)
+                if isinstance(d, list):
+                    data.extend(d)
+                else:
+                    data.append(d)
         return data

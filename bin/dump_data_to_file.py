@@ -32,82 +32,45 @@ def dump_data_to_file(data, spec_id, user, key, start_ts, end_ts, out_dir):
         json.dump(data, f, indent=4)
 
 
-def get_all_spec_ids(datastore_url, spec_user):
+def make_call_to_server(datastore_url, author_email, user, key, start_ts, end_ts):
+    """
+    Makes a direct call to the E-Mission Server instance based on the specified user/key/start_ts/end_ts.
+    """
+    return ServerSpecDetails(datastore_url, author_email).retrieve_data(user, [key], start_ts, end_ts)
+
+
+def get_all_spec_ids(datastore_url, author_email):
     """
     Retrieves list of all spec_id's on E-Mission Server instance being used by script.
     """
-    spec_data = ServerSpecDetails(datastore_url, spec_user).retrieve_data(spec_user, ["config/evaluation_spec"], 0, arrow.get().timestamp)
+    spec_data = make_call_to_server(
+        datastore_url,
+        author_email,
+        author_email,
+        "config/evaluation_spec",
+        0,
+        sys.maxsize)
+
     spec_ids = [s["data"]["label"]["id"] for s in spec_data]
 
     return set(spec_ids)
 
 
-def parse_args():
+def run_full_pipeline(datastore_url, author_email, spec_ids, out_dir):
     """
-    Defines command line arguments for script.
+    Runs the full data retrieval pipeline in the event that a user/key/start_ts/end_ts combination isn't provided.
     """
-    parser = argparse.ArgumentParser(
-        description="Script that retrieves data from an E-Mission Server instance and dumps it into a hierarchical collection of JSON files.")
-
-    parser.add_argument("--out-dir",
-                        type=str,
-                        default="data",
-                        help="The name of the directory that data will be dumped to. Will be created if not already present. "
-                             "[default: data]")
-
-    parser.add_argument("--datastore-url",
-                        type=str,
-                        default="http://localhost:8080",
-                        help="The URL of the E-Mission Server instance from which data will be pulled. "
-                             "[default: http://localhost:8080]")
-    
-    parser.add_argument("--spec-user",
-                        type=str,
-                        default="shankari@eecs.berkeley.edu",
-                        help="The user associated with retrieving specs. "
-                             "[default: shankari@eecs.berkeley.edu]")
-    
-    parser.add_argument("--spec-id",
-                        type=str,
-                        help="The particular spec to retrieve data for. "
-                             "If not specified, data will be retrieved for all specs on the specified datastore instance.")
-
-    # if one of these arguments is specified, the others in this group must also be specified
-    parser.add_argument("--key",
-                        type=str,
-                        help="The time series key to be used if a single call to the E-Mission Server instance is to be made. "
-                             "--user, --start-ts, and --end-ts must also be specified.")
-    
-    parser.add_argument("--user",
-                        type=str,
-                        help="The user to be used if a single call to the E-Mission Server instance is to be made. "
-                             "--key, --start-ts, and --end-ts must also be specified.")
-    
-    parser.add_argument("--start-ts",
-                        type=float,
-                        help="The starting timestamp from which to pull data if a single call to the E-Mission Server instance is to be made. "
-                             "--key, --user, and --end-ts must also be specified.")
-    
-    parser.add_argument("--end-ts",
-                        type=float,
-                        help="The ending timestamp from which to pull data if a single call to the E-Mission Server instance is to be made. "
-                             "--key, --user, and --start-ts must also be specified.")
-    
-    return parser.parse_args()
-
-
-def run_full_pipeline(datastore_url, spec_user, spec_ids, out_dir):
     print(f"Running full pipeline for {spec_ids[0] if len(spec_ids) == 1 else 'all specs in datastore'}...")
 
     # collect ServerSpecDetails objects, dump specs
     sds = []
     for s_id in spec_ids:
-        sd = ServerSpecDetails(datastore_url, spec_user, s_id)
+        sd = ServerSpecDetails(datastore_url, author_email, s_id)
         sds.append(sd)
         dump_data_to_file(
             sd.curr_spec_entry,
             sd.CURR_SPEC_ID,
-            spec_user,
+            author_email,
             "config/evaluation_spec",
             0,
             sys.maxsize,
@@ -127,7 +90,7 @@ def run_full_pipeline(datastore_url, spec_user, spec_ids, out_dir):
                         sd.eval_start_ts,
                         sd.eval_end_ts,
                         out_dir)
-                for ranges in [phone_detail_map["calibration_ranges"], phone_detail_map["evaluation_ranges"]]:
+                for ranges in [phone_detail_map["evaluation_ranges"]]: #, phone_detail_map["calibration_ranges"]]:
                     for r in ranges:
                         for key in [k for k in r.keys() if "/" in k]:
                             dump_data_to_file(
@@ -140,25 +103,104 @@ def run_full_pipeline(datastore_url, spec_user, spec_ids, out_dir):
                                 out_dir)
 
 
+def parse_args():
+    """
+    Defines command line arguments for script.
+    """
+    parser = argparse.ArgumentParser(
+        description="Script that retrieves data from an E-Mission Server instance "
+                    "and dumps it into a hierarchical collection of JSON files.")
+
+    parser.add_argument("--out-dir",
+                        type=str,
+                        default="data",
+                        help="The name of the directory that data will be dumped to. "
+                             "Will be created if not already present. "
+                             "[default: data]")
+
+    parser.add_argument("--datastore-url",
+                        type=str,
+                        default="http://localhost:8080",
+                        help="The URL of the E-Mission Server instance from which data will be pulled. "
+                             "[default: http://localhost:8080]")
+    
+    parser.add_argument("--author-email",
+                        type=str,
+                        default="shankari@eecs.berkeley.edu",
+                        help="The user associated with retrieving specs. "
+                             "This is usually the email of a spec author. "
+                             "[default: shankari@eecs.berkeley.edu]")
+    
+    parser.add_argument("--spec-id",
+                        type=str,
+                        help="The particular spec to retrieve data for. "
+                             "If not specified, data will be retrieved for all specs "
+                             "on the specified datastore instance.")
+
+    # if one of these arguments is specified, the others in this group must also be specified
+    parser.add_argument("--key",
+                        type=str,
+                        help="The time series key to be used if a single call "
+                             "to the E-Mission Server instance is to be made. "
+                             "--user, --start-ts, and --end-ts must also be specified.")
+    
+    parser.add_argument("--user",
+                        type=str,
+                        help="The user to be used if a single call to the E-Mission Server instance is to be made. "
+                             "--key, --start-ts, and --end-ts must also be specified.")
+    
+    parser.add_argument("--start-ts",
+                        type=float,
+                        help="The starting timestamp from which to pull data if a single call "
+                             "to the E-Mission Server instance is to be made. "
+                             "--key, --user, and --end-ts must also be specified.")
+    
+    parser.add_argument("--end-ts",
+                        type=float,
+                        help="The ending timestamp from which to pull data if a single call "
+                             "to the E-Mission Server instance is to be made. "
+                             "--key, --user, and --start-ts must also be specified.")
+    
+    return parser.parse_args()
+
+
 if __name__ == "__main__":
     args = parse_args()
-
-    # verify spec_id is valid if specified
-    spec_ids = get_all_spec_ids(args.datastore_url, args.spec_user)
-    if args.spec_id:
-        assert args.spec_id in spec_ids, f"spec_id `{args.spec_id}` not found within current datastore instance"
-        spec_ids = [args.spec_id]
 
     # enforce that --key, --user, --start-ts, and --end-ts are all specifed if one of these arguments is specified
     cond_req_args = ["--key", "--user", "--start-ts", "--end-ts"]
     for arg in cond_req_args:
         if arg in sys.argv:
-            assert set(a for a in cond_req_args if a != arg) <= set(sys.argv), "all of --key --user, --start-ts, and --end-ts must be specified"
+            assert set(a for a in cond_req_args if a != arg) <= set(sys.argv),\
+                   "all of --key --user, --start-ts, and --end-ts must be specified"
+
+    # verify spec_id is valid if specified
+    spec_ids = get_all_spec_ids(args.datastore_url, args.author_email)
+    if args.spec_id:
+        assert args.spec_id in spec_ids,\
+               f"spec_id `{args.spec_id}` not found within current datastore instance"
+        
+        spec_ids = [args.spec_id]
 
     # if --key, etc are specified, just call retrieve_data from an anonymous ServerSpecDetails instance
-    if "--key" in sys.argv:
+    if args.key:
         for s_id in spec_ids:
-            data = ServerSpecDetails(args.datastore_url, args.user).retrieve_data(args.user, [args.key], args.start_ts, args.end_ts)
-            dump_data_to_file(data, s_id, args.user, args.key, args.start_ts, args.end_ts, args.out_dir)
+            data = make_call_to_server(
+                args.datastore_url,
+                args.author_email,
+                args.user,
+                args.key,
+                args.start_ts,
+                args.end_ts)
+            
+            dump_data_to_file(
+                data,
+                s_id,
+                args.user,
+                args.key,
+                args.start_ts,
+                args.end_ts,
+                args.out_dir)
+    
     else:
-        run_full_pipeline(args.datastore_url, args.spec_user, spec_ids, args.out_dir)
+        run_full_pipeline(args.datastore_url, args.author_email, spec_ids, args.out_dir)
