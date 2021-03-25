@@ -36,7 +36,7 @@ def make_call_to_server(datastore_url, author_email, user, key, start_ts, end_ts
     """
     Makes a direct call to the E-Mission Server instance based on the specified user/key/start_ts/end_ts.
     """
-    return ServerSpecDetails(datastore_url, author_email).retrieve_data(user, [key], start_ts, end_ts)
+    return ServerSpecDetails(datastore_url, author_email).retrieve_one_batch(user, [key], start_ts, end_ts)
 
 
 def get_all_spec_ids(datastore_url, author_email):
@@ -90,7 +90,7 @@ def run_full_pipeline(datastore_url, author_email, spec_ids, out_dir):
                         sd.eval_start_ts,
                         sd.eval_end_ts,
                         out_dir)
-                for ranges in [phone_detail_map["evaluation_ranges"]]: #, phone_detail_map["calibration_ranges"]]:
+                for ranges in [phone_detail_map["evaluation_ranges"], phone_detail_map["calibration_ranges"]]:
                     for r in ranges:
                         for key in [k for k in r.keys() if "/" in k]:
                             dump_data_to_file(

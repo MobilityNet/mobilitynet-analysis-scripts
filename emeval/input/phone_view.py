@@ -308,12 +308,12 @@ class PhoneView:
             for phone_label in phone_map:
                 curr_calibration_ranges = phone_map[phone_label]["{}_ranges".format(storage_key)]
                 for r in curr_calibration_ranges:
-                    r[BG_LOCATION] = self.spec_details.read_until_done(phone_label,
-                        BG_LOCATION,
+                    r[BG_LOCATION] = self.spec_details.retrieve_data(phone_label,
+                        [BG_LOCATION],
                         r["start_ts"], r["end_ts"])
-                    r[BG_FILTERED_LOCATION] = self.spec_details.read_until_done(
+                    r[BG_FILTERED_LOCATION] = self.spec_details.retrieve_data(
                         phone_label,
-                        BG_FILTERED_LOCATION,
+                        [BG_FILTERED_LOCATION],
                         r["start_ts"], r["end_ts"])
                     location_df = pd.DataFrame([e["data"] for e in
                         r[BG_LOCATION]])
@@ -332,27 +332,12 @@ class PhoneView:
             for phone_label in phone_map:
                 curr_calibration_ranges = phone_map[phone_label]["{}_ranges".format(storage_key)]
                 for r in curr_calibration_ranges:
-                    all_done = False
-                    motion_activity_entries = []
-                    curr_start_ts = r["start_ts"]
-                    prev_retrieved_count = 0
-
-                    while not all_done:
-                        print("About to retrieve data for %s from %s -> %s" % (phone_label, curr_start_ts, r["end_ts"]))
-                        curr_motion_activity_entries = self.spec_details.retrieve_data(phone_label, [BG_MOTION_ACTIVITY], curr_start_ts, r["end_ts"])
-                        print("Retrieved %d entries with timestamps %s..." % (len(curr_motion_activity_entries), [cle["metadata"]["write_ts"] for cle in curr_motion_activity_entries[0:10]]))
-                        if len(curr_motion_activity_entries) == 0 or len(curr_motion_activity_entries) == 1 or len(curr_motion_activity_entries) == prev_retrieved_count:
-                            all_done = True
-                        else:
-                            motion_activity_entries.extend(curr_motion_activity_entries)
-                            curr_start_ts = curr_motion_activity_entries[-1]["metadata"]["write_ts"]
-                            prev_retrieved_count = len(curr_motion_activity_entries)
-                    r[BG_MOTION_ACTIVITY] = motion_activity_entries
-                    motion_activity_df = pd.DataFrame([e["data"] for e in motion_activity_entries])
+                    r[BG_MOTION_ACTIVITY] = self.spec_details.retrieve_data(phone_label, [BG_MOTION_ACTIVITY], r["start_ts"], r["end_ts"])
+                    motion_activity_df = pd.DataFrame([e["data"] for e in r[BG_MOTION_ACTIVITY]])
                     if "ts" not in motion_activity_df.columns:
                         print("motion activity has not been processed, copying write_ts -> ts")
-                        motion_activity_df["ts"] = [e["metadata"]["write_ts"] for e in motion_activity_entries]
-                        motion_activity_df["fmt_time"] = [arrow.get(e["metadata"]["write_ts"]).to(self.spec_details.eval_tz) for e in motion_activity_entries]
+                        motion_activity_df["ts"] = [e["metadata"]["write_ts"] for e in r[BG_MOTION_ACTIVITY]]
+                        motion_activity_df["fmt_time"] = [arrow.get(e["metadata"]["write_ts"]).to(self.spec_details.eval_tz) for e in r[BG_MOTION_ACTIVITY]]
                     motion_activity_df["hr"] = (motion_activity_df.ts-r["start_ts"])/3600.0
                     r["motion_activity_df"] = motion_activity_df
 
