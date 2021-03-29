@@ -56,7 +56,7 @@ def get_all_spec_ids(datastore_url, author_email):
     return set(spec_ids)
 
 
-def run_full_pipeline(datastore_url, author_email, spec_ids, out_dir):
+def retrieve_all_data(datastore_url, author_email, spec_ids, out_dir):
     """
     Runs the full data retrieval pipeline in the event that a user/key/start_ts/end_ts combination isn't provided.
     """
@@ -203,4 +203,4 @@ if __name__ == "__main__":
                 args.out_dir)
     
     else:
-        run_full_pipeline(args.datastore_url, args.author_email, spec_ids, args.out_dir)
+        retrieve_all_data(args.datastore_url, args.author_email, spec_ids, args.out_dir)
