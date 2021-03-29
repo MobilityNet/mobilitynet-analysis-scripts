@@ -6,54 +6,32 @@ import time
 import requests
 import shapely as shp
 import geojson as gj
+from abc import ABC, abstractmethod
+import os
+import json
+import sys
+import math
 
-class SpecDetails:
-    def __init__(self, datastore_url, author_email, spec_id):
-        self.DATASTORE_URL = datastore_url
+
+class SpecDetails(ABC):
+    def __init__(self, datastore_loc, author_email, spec_id=None):
+        self.DATASTORE_LOC = datastore_loc
         self.AUTHOR_EMAIL = author_email
-        self.CURR_SPEC_ID = spec_id
-        self.curr_spec_entry = self.get_current_spec()
-        self.populate_spec_details(self.curr_spec_entry)
+        # make spec_id optional if instance is only being used to call retrieve_data
+        if spec_id:
+            self.CURR_SPEC_ID = spec_id
+            self.curr_spec_entry = self.get_current_spec()
+            self.populate_spec_details(self.curr_spec_entry)
 
-    def retrieve_data_from_server(self, user_label, key_list, start_ts, end_ts):
-        post_msg = {
-            "user": user_label,
-            "key_list": key_list,
-            "start_time": start_ts,
-            "end_time": end_ts
-        }
-        print("About to retrieve messages using %s" % post_msg)
-        try:
-            response = requests.post(self.DATASTORE_URL+"/datastreams/find_entries/timestamp", json=post_msg)
-            print("response = %s" % response)
-            response.raise_for_status()
-            ret_list = response.json()["phone_data"]
-        except Exception as e:
-            print("Got %s error %s, retrying" % (type(e).__name__, e))
-            time.sleep(10)
-            response = requests.post(self.DATASTORE_URL+"/datastreams/find_entries/timestamp", json=post_msg)
-            print("response = %s" % response)
-            response.raise_for_status()
-            ret_list = response.json()["phone_data"]
-        # write_ts may not be the same as data.ts, specially in the case of
-        # transitions, where we first generate the data.ts in javascript and
-        # then pass it down to the native code to store
-        # normally, this doesn't matter because it is a microsecond difference, but
-        # it does matter in this case because we store several entries in quick
-        # succession and we want to find the entries within a particular range.
-        # Putting it into the "data" object makes the write_ts accessible in the
-        # subsequent dataframes, etc
-        for e in ret_list:
-            e["data"]["write_ts"] = e["metadata"]["write_ts"]
-        print("Found %d entries" % len(ret_list))
-        return ret_list
+    @abstractmethod
+    def retrieve_data(self, user, key_list, start_ts, end_ts):
+        pass
 
-    def retrieve_all_data_from_server(self, user_label, key_list):
-        return self.retrieve_data_from_server(user_label, key_list, 0,
-            arrow.get().timestamp)
+    def retrieve_all_data(self, user, key_list):
+        return self.retrieve_data(user, key_list, 0, sys.maxsize)
 
     def get_current_spec(self):
-        all_spec_entry_list = self.retrieve_all_data_from_server(self.AUTHOR_EMAIL, ["config/evaluation_spec"])
+        all_spec_entry_list = self.retrieve_all_data(self.AUTHOR_EMAIL, ["config/evaluation_spec"])
         curr_spec_entry = None
         for s in all_spec_entry_list:
             if s["data"]["label"]["id"] == self.CURR_SPEC_ID:
@@ -95,7 +73,6 @@ class SpecDetails:
 
         return tl
 
-
     @staticmethod
     def get_concat_trajectories(trip):
         coords_list = []
@@ -126,7 +103,6 @@ class SpecDetails:
         else:
             return {"loc": shp.geometry.shape(gt_leg["loc"]["geometry"])}
 
-
     @classmethod
     def get_geojson_for_leg(cls, gt_leg):
         if gt_leg["type"] == "TRAVEL":
@@ -138,4 +114,71 @@ class SpecDetails:
         else:
             gt_leg["loc"]["properties"]["style"] = {"color": "purple", "fillColor": "purple"}
             return gt_leg["loc"]
-        
+
+
+class ServerSpecDetails(SpecDetails):
+    def retrieve_one_batch(self, user, key_list, start_ts, end_ts):
+        post_body = {
+            "user": user,
+            "key_list": key_list,
+            "start_time": start_ts,
+            "end_time": end_ts
+        }
+
+        print(f"Retrieving data for: {post_body=}")
+        try:
+            response = requests.post(f"{self.DATASTORE_LOC}/datastreams/find_entries/timestamp", json=post_body)
+            print(f"{response=}")
+            response.raise_for_status()
+            data = response.json()["phone_data"]
+        except Exception as e:
+            print(f"Got {type(e).__name__}: {e}, retrying...")
+            time.sleep(10)
+            response = requests.post(f"{self.DATASTORE_LOC}/datastreams/find_entries/timestamp", json=post_body)
+            print(f"{response=}")
+            response.raise_for_status()
+            data = response.json()["phone_data"]
+
+        for e in data:
+            e["data"]["write_ts"] = e["metadata"]["write_ts"]
+
+        print(f"Found {len(data)} entries")
+        return data
+
+    def retrieve_data(self, user, key_list, start_ts, end_ts):
+        all_done = False
+        location_entries = []
+        curr_start_ts = start_ts
+        prev_retrieved_count = 0
+
+        while not all_done:
+            print("Retrieving data for %s from %s -> %s" % (user, curr_start_ts, end_ts))
+            curr_location_entries = self.retrieve_one_batch(user, key_list, curr_start_ts, end_ts)
+            #print("Retrieved %d entries with timestamps %s..." % (len(curr_location_entries), [cle["data"]["ts"] for cle in curr_location_entries[0:10]]))
+            if len(curr_location_entries) == 0 or len(curr_location_entries) == 1:
+                all_done = True
+            else:
+                location_entries.extend(curr_location_entries)
+                new_start_ts = curr_location_entries[-1]["metadata"]["write_ts"]
+                assert new_start_ts > curr_start_ts
+                curr_start_ts = new_start_ts
+                prev_retrieved_count = len(curr_location_entries)
+        return location_entries
+
+
+class FileSpecDetails(SpecDetails):
+    def retrieve_data(self, user, key_list, start_ts, end_ts):
+        data = []
+        for key in key_list:
+            data_file = os.path.join(
+                os.getcwd(),
+                self.DATASTORE_LOC,
+                f"{user}/{self.CURR_SPEC_ID}/{key.replace('/', '~')}/{math.floor(start_ts)}_{math.ceil(end_ts)}.json")
+            assert os.path.isfile(data_file), f"not found: {data_file=}"
+            with open(data_file, "r") as f:
+                d = json.load(f)
+                if isinstance(d, list):
+                    data.extend(d)
+                else:
+                    data.append(d)
+        return data

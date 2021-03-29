@@ -33,7 +33,16 @@ import arrow
 import pandas as pd
 import emeval.validate.phone_view as evpv
 
+
 TIME_SYNC_FUZZ = 0 # seconds = 1 minute
+
+# keys
+EVAL_TRANSITION = "manual/evaluation_transition"
+BG_BATTERY = "background/battery"
+BG_LOCATION = "background/location"
+BG_FILTERED_LOCATION = "background/filtered_location"
+BG_MOTION_ACTIVITY = "background/motion_activity"
+SM_TRANSITION = "statemachine/transition"
 
 class PhoneView:
     def __init__(self, spec_details):
@@ -92,12 +101,12 @@ class PhoneView:
             print("Reading data for %s phones" % phoneOS)
             for phone_label in phone_map:
                 print("Loading transitions for phone %s" % phone_label)
-                curr_phone_transitions = self.spec_details.retrieve_data_from_server(
-                    phone_label, ["manual/evaluation_transition"],
+                curr_phone_transitions = self.spec_details.retrieve_data(
+                    phone_label, [EVAL_TRANSITION],
                     self.spec_details.eval_start_ts, self.spec_details.eval_end_ts)
                 curr_phone_role = phone_map[phone_label]
                 phone_map[phone_label] = {"role": curr_phone_role}
-                phone_map[phone_label]["transitions"] = curr_phone_transitions
+                phone_map[phone_label][EVAL_TRANSITION] = curr_phone_transitions
 
     """
     Inputs:
@@ -114,7 +123,7 @@ class PhoneView:
             print("Processing data for %s phones" % phoneOS)
             for phone_label in phone_map:
                 print("Processing transitions for phone %s" % phone_label)
-                curr_phone_transitions = [t["data"] for t in phone_map[phone_label]["transitions"]]
+                curr_phone_transitions = [t["data"] for t in phone_map[phone_label][EVAL_TRANSITION]]
                 # print(curr_phone_transitions)
                 curr_calibration_transitions = [t for t in curr_phone_transitions
                     if (t["transition"] in [start_tt, end_tt, start_ti, end_ti]) and
@@ -279,7 +288,7 @@ class PhoneView:
             for phone_label in phone_map:
                 curr_calibration_ranges = phone_map[phone_label]["{}_ranges".format(storage_key)]
                 for r in curr_calibration_ranges:
-                    battery_entries = self.spec_details.retrieve_data_from_server(phone_label, ["background/battery"], r["start_ts"], r["end_ts"])
+                    battery_entries = self.spec_details.retrieve_data(phone_label, [BG_BATTERY], r["start_ts"], r["end_ts"])
                     # ios entries before running the pipeline are marked with battery_level_ratio, which is a float from 0 ->1
                     # convert it to % to be consistent with android and easier to understand
                     if phoneOS == "ios":
@@ -287,31 +296,11 @@ class PhoneView:
                             if "battery_level_pct" not in e["data"]:
                                 e["data"]["battery_level_pct"] = e["data"]["battery_level_ratio"] * 100
                                 del e["data"]["battery_level_ratio"]
-                    r["battery_entries"] = battery_entries
+                    r[BG_BATTERY] = battery_entries
                     battery_df = pd.DataFrame([e["data"] for e in battery_entries])
                     if len(battery_df) > 0:
                         battery_df["hr"] = (battery_df.ts-r["start_ts"])/3600.0
                     r["battery_df"] = battery_df
-
-    def _read_until_done(self, phone_label, key, start_ts, end_ts):
-        all_done = False
-        location_entries = []
-        curr_start_ts = start_ts
-        prev_retrieved_count = 0
-
-        while not all_done:
-            print("About to retrieve data for %s from %s -> %s" % (phone_label, curr_start_ts, end_ts))
-            curr_location_entries = self.spec_details.retrieve_data_from_server(phone_label, [key], curr_start_ts, end_ts)
-            print("Retrieved %d entries with timestamps %s..." % (len(curr_location_entries), [cle["data"]["ts"] for cle in curr_location_entries[0:10]]))
-            if len(curr_location_entries) == 0 or len(curr_location_entries) == 1:
-                all_done = True
-            else:
-                location_entries.extend(curr_location_entries)
-                new_start_ts = curr_location_entries[-1]["metadata"]["write_ts"]
-                assert new_start_ts > curr_start_ts
-                curr_start_ts = new_start_ts
-                prev_retrieved_count = len(curr_location_entries)
-        return location_entries
 
     def fill_location_df(self, storage_key):
         for phoneOS, phone_map in self.phone_view_map.items():
@@ -319,17 +308,17 @@ class PhoneView:
             for phone_label in phone_map:
                 curr_calibration_ranges = phone_map[phone_label]["{}_ranges".format(storage_key)]
                 for r in curr_calibration_ranges:
-                    r["location_entries"] = self._read_until_done(phone_label,
-                        "background/location",
+                    r[BG_LOCATION] = self.spec_details.retrieve_data(phone_label,
+                        [BG_LOCATION],
                         r["start_ts"], r["end_ts"])
-                    r["filtered_location_entries"] = self._read_until_done(
+                    r[BG_FILTERED_LOCATION] = self.spec_details.retrieve_data(
                         phone_label,
-                        "background/filtered_location",
+                        [BG_FILTERED_LOCATION],
                         r["start_ts"], r["end_ts"])
                     location_df = pd.DataFrame([e["data"] for e in
-                        r["location_entries"]])
+                        r[BG_LOCATION]])
                     filtered_location_df = pd.DataFrame([e["data"] for e in
-                        r["filtered_location_entries"]])
+                        r[BG_FILTERED_LOCATION]])
                     if len(location_df) > 0:
                         location_df["hr"] = (location_df.ts-r["start_ts"])/3600.0
                     if len(filtered_location_df) > 0:
@@ -343,27 +332,12 @@ class PhoneView:
             for phone_label in phone_map:
                 curr_calibration_ranges = phone_map[phone_label]["{}_ranges".format(storage_key)]
                 for r in curr_calibration_ranges:
-                    all_done = False
-                    motion_activity_entries = []
-                    curr_start_ts = r["start_ts"]
-                    prev_retrieved_count = 0
-
-                    while not all_done:
-                        print("About to retrieve data for %s from %s -> %s" % (phone_label, curr_start_ts, r["end_ts"]))
-                        curr_motion_activity_entries = self.spec_details.retrieve_data_from_server(phone_label, ["background/motion_activity"], curr_start_ts, r["end_ts"])
-                        print("Retrieved %d entries with timestamps %s..." % (len(curr_motion_activity_entries), [cle["metadata"]["write_ts"] for cle in curr_motion_activity_entries[0:10]]))
-                        if len(curr_motion_activity_entries) == 0 or len(curr_motion_activity_entries) == 1 or len(curr_motion_activity_entries) == prev_retrieved_count:
-                            all_done = True
-                        else:
-                            motion_activity_entries.extend(curr_motion_activity_entries)
-                            curr_start_ts = curr_motion_activity_entries[-1]["metadata"]["write_ts"]
-                            prev_retrieved_count = len(curr_motion_activity_entries)
-                    r["motion_activity_entries"] = motion_activity_entries
-                    motion_activity_df = pd.DataFrame([e["data"] for e in motion_activity_entries])
+                    r[BG_MOTION_ACTIVITY] = self.spec_details.retrieve_data(phone_label, [BG_MOTION_ACTIVITY], r["start_ts"], r["end_ts"])
+                    motion_activity_df = pd.DataFrame([e["data"] for e in r[BG_MOTION_ACTIVITY]])
                     if "ts" not in motion_activity_df.columns:
                         print("motion activity has not been processed, copying write_ts -> ts")
-                        motion_activity_df["ts"] = [e["metadata"]["write_ts"] for e in motion_activity_entries]
-                        motion_activity_df["fmt_time"] = [arrow.get(e["metadata"]["write_ts"]).to(self.spec_details.eval_tz) for e in motion_activity_entries]
+                        motion_activity_df["ts"] = [e["metadata"]["write_ts"] for e in r[BG_MOTION_ACTIVITY]]
+                        motion_activity_df["fmt_time"] = [arrow.get(e["metadata"]["write_ts"]).to(self.spec_details.eval_tz) for e in r[BG_MOTION_ACTIVITY]]
                     motion_activity_df["hr"] = (motion_activity_df.ts-r["start_ts"])/3600.0
                     r["motion_activity_df"] = motion_activity_df
 
@@ -373,11 +347,11 @@ class PhoneView:
             for phone_label in phone_map:
                 curr_calibration_ranges = phone_map[phone_label]["{}_ranges".format(storage_key)]
                 for r in curr_calibration_ranges:
-                    transition_entries = self.spec_details.retrieve_data_from_server(
-                        phone_label, ["statemachine/transition"], r["start_ts"], r["end_ts"])
+                    transition_entries = self.spec_details.retrieve_data(
+                        phone_label, [SM_TRANSITION], r["start_ts"], r["end_ts"])
                     # ios entries before running the pipeline are marked with battery_level_ratio, which is a float from 0 ->1
                     # convert it to % to be consistent with android and easier to understand
-                    r["transition_entries"] = transition_entries
+                    r[SM_TRANSITION] = transition_entries
                     transition_df = pd.DataFrame([e["data"] for e in transition_entries])
                     if "ts" in transition_df.columns:
                         if "fmt_time" not in transition_df.columns:
@@ -418,7 +392,7 @@ class PhoneView:
 
     def fill_accuracy_control_trip_ranges(self):
         for phoneOS, phone_map in self.accuracy_control_maps.items():
-            curr_control_transitions = [t["data"] for t in phone_map["transitions"]] # from control phone
+            curr_control_transitions = [t["data"] for t in phone_map[EVAL_TRANSITION]] # from control phone
             curr_evaluation_ranges = phone_map["evaluation_ranges"] # from this phone
             trip_type_check = lambda t: t["transition"] in ["START_EVALUATION_TRIP", "STOP_EVALUATION_TRIP", 4, 5]
             trip_time_check = lambda t, r: t["ts"] >= r["start_ts"] and t["ts"] <= r["end_ts"]
@@ -441,7 +415,7 @@ class PhoneView:
 
     def fill_accuracy_control_section_ranges(self):
         for phoneOS, phone_map in self.accuracy_control_maps.items():
-            curr_control_transitions = [t["data"] for t in phone_map["transitions"]] # from control phone
+            curr_control_transitions = [t["data"] for t in phone_map[EVAL_TRANSITION]] # from control phone
             curr_evaluation_ranges = phone_map["evaluation_ranges"] # from this phone
             trip_type_check = lambda t: t["transition"] in ["START_EVALUATION_SECTION", "STOP_EVALUATION_SECTION", 6, 7]
             trip_time_check = lambda t, r: t["ts"] >= r["start_ts"] and t["ts"] <= r["end_ts"]

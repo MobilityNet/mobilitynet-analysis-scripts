@@ -25,24 +25,24 @@ def create_analysed_view(input_view, analysis_datastore, location_key, trip_key,
         (input_view.spec_details.CURR_SPEC_ID))
     asd = av.spec_details
     # Overwrite the result so that we can read from the analysis datastore
-    asd.DATASTORE_URL = analysis_datastore
+    asd.DATASTORE_LOC = analysis_datastore
     for phone_os, phone_map in av.map().items():
         print(15 * "=*")
         print(phone_os, phone_map.keys())
         for phone_label, phone_detail_map in phone_map.items():
             print(4 * ' ', 15 * "-*")
             print(4 * ' ', phone_label, phone_detail_map["role"], phone_detail_map.keys())
-            phone_detail_map["location_entries"] = av.spec_details.retrieve_data_from_server(
+            phone_detail_map["location_entries"] = av.spec_details.retrieve_data(
                 phone_label, [location_key], av.spec_details.eval_start_ts, arrow.now().timestamp)
             location_df = pd.DataFrame([e["data"] for e in phone_detail_map["location_entries"]])
             if len(location_df) > 0:
                 location_df["hr"] = (location_df.ts-r["start_ts"])/3600.0
             phone_detail_map["location_df"] = location_df
 
-            phone_detail_map["sensed_trip_ranges"] = av.spec_details.retrieve_data_from_server(
+            phone_detail_map["sensed_trip_ranges"] = av.spec_details.retrieve_data(
                 phone_label, [trip_key],
                 av.spec_details.eval_start_ts, arrow.now().timestamp)
-            phone_detail_map["sensed_section_ranges"] = av.spec_details.retrieve_data_from_server(
+            phone_detail_map["sensed_section_ranges"] = av.spec_details.retrieve_data(
                 phone_label, [section_key],
                 av.spec_details.eval_start_ts, arrow.now().timestamp)
 
