@@ -28,6 +28,9 @@ class SpecDetails(ABC):
         pass
 
     def retrieve_all_data(self, user, key_list):
+        # sys.maxsize is used for end_ts as opposed to arrow.get().timestamp (the current timestamp)
+        # as it is a constant. This is to ensure that a FileSpecDetails instance can find data with
+        # the largest specified time range.
         return self.retrieve_data(user, key_list, 0, sys.maxsize)
 
     def get_current_spec(self):
