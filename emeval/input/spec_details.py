@@ -99,12 +99,12 @@ class SpecDetails(ABC):
     def get_shapes_for_leg(gt_leg):
         if gt_leg["type"] == "TRAVEL":
             return {
-                "start_loc": shp.geometry.shape(gt_leg["start_loc"]["geometry"]),
-                "end_loc": shp.geometry.shape(gt_leg["end_loc"]["geometry"]),
-                "route": shp.geometry.shape(gt_leg['route_coords']['geometry'])
+                "start_loc": [shp.geometry.shape(sl["geometry"]) for sl in gt_leg["start_loc"]],
+                "end_loc": [shp.geometry.shape(el["geometry"]) for el in gt_leg["end_loc"]],
+                "route": [shp.geometry.shape(rc['geometry']) for rc in gt_leg['route_coords']]
             }
         else:
-            return {"loc": shp.geometry.shape(gt_leg["loc"]["geometry"])}
+            return {"loc": [shp.geometry.shape(l["geometry"]) for l in gt_leg["loc"]]}
 
     @classmethod
     def get_geojson_for_leg(cls, gt_leg):
