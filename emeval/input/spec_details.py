@@ -87,24 +87,33 @@ class SpecDetails(ABC):
         return gj.Feature(geometry=gj.LineString(coords_list),
             properties={"modes": modes_list})
 
-    def get_ground_truth_for_leg(self, trip_id, leg_id):
+    def get_ground_truth_for_leg(self, trip_id, leg_id, start_ts, end_ts):
         for t in self.curr_spec_entry["data"]["label"]["evaluation_trips"]:
             if t["id"] == trip_id:
                 ll = [l for l in t["legs"] if l["id"] == leg_id]
                 # print(leg_id, len(ll), [l["id"] for l in ll])
                 if len(ll) == 1:
-                    return ll[0]
+                    ll = ll[0]
+                    for key in ["loc", "start_loc", "end_loc", "route_coords"]:
+                        if key in ll and isinstance(ll[key], list):
+                            within_ts = [x for x in ll[key]
+                                         if start_ts >= x["properties"]["valid_start_ts"]
+                                         and end_ts <= x["properties"]["valid_end_ts"]]
+                            assert len(within_ts) == 1, f"Invalid amount of {key} info for {leg['id']} between timestamps {start_ts} -> {end_ts}"
+                            ll[key] = within_ts[0]
+                    return ll
+
 
     @staticmethod
     def get_shapes_for_leg(gt_leg):
         if gt_leg["type"] == "TRAVEL":
             return {
-                "start_loc": [shp.geometry.shape(sl["geometry"]) for sl in gt_leg["start_loc"]],
-                "end_loc": [shp.geometry.shape(el["geometry"]) for el in gt_leg["end_loc"]],
-                "route": [shp.geometry.shape(rc['geometry']) for rc in gt_leg['route_coords']]
+                "start_loc": shp.geometry.shape(gt_leg["start_loc"]["geometry"]),
+                "end_loc": shp.geometry.shape(gt_leg["end_loc"]["geometry"]),
+                "route": shp.geometry.shape(gt_leg["route_coords"]["geometry"])
             }
         else:
-            return {"loc": [shp.geometry.shape(l["geometry"]) for l in gt_leg["loc"]]}
+            return {"loc": shp.geometry.shape(gt_leg["loc"]["geometry"])}
 
     @classmethod
     def get_geojson_for_leg(cls, gt_leg):
