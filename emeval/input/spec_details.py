@@ -28,6 +28,9 @@ class SpecDetails(ABC):
         pass
 
     def retrieve_all_data(self, user, key_list):
+        # sys.maxsize is used for end_ts as opposed to arrow.get().timestamp (the current timestamp)
+        # as it is a constant. This is to ensure that a FileSpecDetails instance can find data with
+        # the largest specified time range.
         return self.retrieve_data(user, key_list, 0, sys.maxsize)
 
     def get_current_spec(self):
@@ -84,13 +87,22 @@ class SpecDetails(ABC):
         return gj.Feature(geometry=gj.LineString(coords_list),
             properties={"modes": modes_list})
 
-    def get_ground_truth_for_leg(self, trip_id, leg_id):
+    def get_ground_truth_for_leg(self, trip_id, leg_id, start_ts, end_ts):
         for t in self.curr_spec_entry["data"]["label"]["evaluation_trips"]:
             if t["id"] == trip_id:
                 ll = [l for l in t["legs"] if l["id"] == leg_id]
                 # print(leg_id, len(ll), [l["id"] for l in ll])
                 if len(ll) == 1:
-                    return ll[0]
+                    ll = ll[0]
+                    for key in ["loc", "start_loc", "end_loc", "route_coords"]:
+                        if key in ll and isinstance(ll[key], list):
+                            within_ts = [x for x in ll[key]
+                                         if start_ts >= x["properties"]["valid_start_ts"]
+                                         and end_ts <= x["properties"]["valid_end_ts"]]
+                            assert len(within_ts) == 1, f"Invalid amount of {key} info for {leg['id']} between timestamps {start_ts} -> {end_ts}"
+                            ll[key] = within_ts[0]
+                    return ll
+
 
     @staticmethod
     def get_shapes_for_leg(gt_leg):
@@ -98,7 +110,7 @@ class SpecDetails(ABC):
             return {
                 "start_loc": shp.geometry.shape(gt_leg["start_loc"]["geometry"]),
                 "end_loc": shp.geometry.shape(gt_leg["end_loc"]["geometry"]),
-                "route": shp.geometry.shape(gt_leg['route_coords']['geometry'])
+                "route": shp.geometry.shape(gt_leg["route_coords"]["geometry"])
             }
         else:
             return {"loc": shp.geometry.shape(gt_leg["loc"]["geometry"])}
