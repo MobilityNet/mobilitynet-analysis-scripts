@@ -9,7 +9,7 @@ def constant_valued_column(name: str, value, indices) -> pd.DataFrame:
 def tabularize_pv_map(pv_map: dict) -> dict:
     df_map = dict()
 
-    for phone_os, phones in pv.map().items():
+    for phone_os, phones in pv_map.items():
         for phone_label, phone_map in phones.items():
             pk = {"phone_label": phone_label, "role": phone_map["role"]}
             for r in (phone_map["calibration_ranges"] + phone_map["evaluation_ranges"]):
@@ -24,7 +24,8 @@ def tabularize_pv_map(pv_map: dict) -> dict:
                     curr_pk.update({k: v for k, v in r.items()
                                     if not (isinstance(v, pd.DataFrame) or isinstance(v, list) or isinstance(v, dict))})
 
-                    updated_df = df.assign(**curr_pk)
+                    updated_df = df.assign(**curr_pk).rename(
+                        columns={"start_ts": "gt_start_ts", "end_ts": "gt_end_ts", "duration": "gt_duration"})
 
                     if r in phone_map["evaluation_ranges"]:
                         for etr in r["evaluation_trip_ranges"]:
@@ -34,12 +35,18 @@ def tabularize_pv_map(pv_map: dict) -> dict:
                                         [updated_df,
                                          constant_valued_column("trip_range_id", etr["trip_id"], etr[df_label].index),
                                          constant_valued_column("trip_range_id_base", etr["trip_id_base"], etr[df_label].index),
-                                         constant_valued_column("trip_range_run", etr["trip_run"], etr[df_label].index)],
+                                         constant_valued_column("trip_range_run", etr["trip_run"], etr[df_label].index),
+                                         constant_valued_column("trip_range_gt_start_ts", etr["start_ts"], etr[df_label].index),
+                                         constant_valued_column("trip_range_gt_end_ts", etr["end_ts"], etr[df_label].index),
+                                         constant_valued_column("trip_range_gt_duration", etr["duration"], etr[df_label].index)],
                                         axis=1)
                                 else:
                                     updated_df.at[etr[df_label].index, "trip_range_id"] = etr["trip_id"]
                                     updated_df.at[etr[df_label].index, "trip_range_id_base"] = etr["trip_id_base"]
                                     updated_df.at[etr[df_label].index, "trip_range_run"] = etr["trip_run"]
+                                    updated_df.at[etr[df_label].index, "trip_range_gt_start_ts"] = etr["start_ts"]
+                                    updated_df.at[etr[df_label].index, "trip_range_gt_end_ts"] = etr["end_ts"]
+                                    updated_df.at[etr[df_label].index, "trip_range_gt_duration"] = etr["duration"]
 
                             for esr in etr["evaluation_section_ranges"]:
                                 if df_label in esr:
@@ -48,12 +55,18 @@ def tabularize_pv_map(pv_map: dict) -> dict:
                                             [updated_df,
                                              constant_valued_column("trip_section_id", esr["trip_id"], esr[df_label].index),
                                              constant_valued_column("trip_section_id_base", esr["trip_id_base"], esr[df_label].index),
-                                             constant_valued_column("trip_section_run", esr["trip_run"], esr[df_label].index)],
+                                             constant_valued_column("trip_section_run", esr["trip_run"], esr[df_label].index),
+                                             constant_valued_column("trip_section_gt_start_ts", esr["start_ts"], esr[df_label].index),
+                                             constant_valued_column("trip_section_gt_end_ts", esr["end_ts"], esr[df_label].index),
+                                             constant_valued_column("trip_section_gt_duration", esr["duration"], esr[df_label].index)],
                                             axis=1)
                                     else:
                                         updated_df.at[esr[df_label].index, "trip_section_id"] = esr["trip_id"]
                                         updated_df.at[esr[df_label].index, "trip_section_id_base"] = esr["trip_id_base"]
                                         updated_df.at[esr[df_label].index, "trip_section_run"] = esr["trip_run"]
+                                        updated_df.at[esr[df_label].index, "trip_section_gt_start_ts"] = esr["start_ts"]
+                                        updated_df.at[esr[df_label].index, "trip_section_gt_end_ts"] = esr["end_ts"]
+                                        updated_df.at[esr[df_label].index, "trip_section_gt_duration"] = esr["duration"]
 
                     for ts_col in [c for c in updated_df.columns.tolist() if "ts" in c]:
                         updated_df[ts_col] = updated_df[ts_col].astype(float)
