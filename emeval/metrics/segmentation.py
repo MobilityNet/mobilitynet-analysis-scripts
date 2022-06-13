@@ -251,7 +251,7 @@ def fill_sensed_section_ranges(pv):
                     
                     last_section = tr["evaluation_section_ranges"][-1]
                     last_section_gt = pv.spec_details.get_ground_truth_for_leg(
-                        tr["trip_id_base"], last_section["trip_id_base"])
+                        tr["trip_id_base"], last_section["trip_id_base"], tr["start_ts"], tr["end_ts"])
                     if last_section_gt["mode"] == "WALKING":
                         # For trip that end in walking, we need to include still transitions as valid
                         # otherwise, there is no end transition from walking to a valid mode
