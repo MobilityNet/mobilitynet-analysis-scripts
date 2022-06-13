@@ -87,7 +87,7 @@ class SpecDetails(ABC):
         return gj.Feature(geometry=gj.LineString(coords_list),
             properties={"modes": modes_list})
 
-    def get_ground_truth_for_leg(self, trip_id, leg_id, start_ts, end_ts):
+    def get_ground_truth_for_leg(self, trip_id, leg_id, start_ts=-1, end_ts=2**32):
         for t in self.curr_spec_entry["data"]["label"]["evaluation_trips"]:
             if t["id"] == trip_id:
                 ll = [l for l in t["legs"] if l["id"] == leg_id]
@@ -99,7 +99,7 @@ class SpecDetails(ABC):
                             within_ts = [x for x in ll[key]
                                          if start_ts >= x["properties"]["valid_start_ts"]
                                          and end_ts <= x["properties"]["valid_end_ts"]]
-                            assert len(within_ts) == 1, f"Invalid amount of {key} info for {leg['id']} between timestamps {start_ts} -> {end_ts}"
+                            assert len(within_ts) == 1, f"Invalid amount of {key} info for {leg_id['id']} between timestamps {start_ts} -> {end_ts}"
                             ll[key] = within_ts[0]
                     return ll
 
