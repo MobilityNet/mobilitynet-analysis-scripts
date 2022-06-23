@@ -45,7 +45,6 @@ def create_analysed_view(input_view, analysis_datastore, location_key, trip_key,
             phone_detail_map["sensed_section_ranges"] = av.spec_details.retrieve_data(
                 phone_label, [section_key],
                 av.spec_details.eval_start_ts, arrow.now().timestamp())
-
             for r in phone_detail_map["evaluation_ranges"]:
                 # moved down here from commented out line above
                 if len(location_df) > 0:
