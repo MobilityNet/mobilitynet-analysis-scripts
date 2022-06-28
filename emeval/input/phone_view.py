@@ -144,8 +144,12 @@ class PhoneView:
             spec_end_ts):
         # re-sort transitions into proper order -- START and STOP transitions must alternate
         for i in range(0, len(transition_list)-2, 2):
-            if "START" in transition_list[i]["transition"] and "START" in transition_list[i+1]["transition"] and "STOP" in transition_list[i+2]["transition"]:
-                transition_list[i+1], transition_list[i+2] = transition_list[i+2], transition_list[i+1]
+            try:
+                if "START" in transition_list[i]["transition"] and "START" in transition_list[i+1]["transition"] and "STOP" in transition_list[i+2]["transition"]:
+                    transition_list[i+1], transition_list[i+2] = transition_list[i+2], transition_list[i+1]
+            except: 
+                if transition_list[i]["transition"] % 2 == 0 and transition_list[i+1]["transition"] % 2 ==0 and transition_list[i+2]["transition"] % 2 == 1:
+                    transition_list[i+1], transition_list[i+2] = transition_list[i+2], transition_list[i+1]
 
         start_transitions = transition_list[::2]
         end_transitions = transition_list[1::2]
