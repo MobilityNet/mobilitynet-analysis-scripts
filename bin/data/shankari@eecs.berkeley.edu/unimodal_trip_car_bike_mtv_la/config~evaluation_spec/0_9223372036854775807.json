@@ -1,0 +1,1462 @@
+{
+    "_id": {
+        "$oid": "5e5ffd3722ab29840bfd8e59"
+    },
+    "metadata": {
+        "key": "config/evaluation_spec",
+        "platform": "script",
+        "write_ts": 1583349047.508296,
+        "time_zone": "America/Los_Angeles",
+        "type": "message"
+    },
+    "user_id": {
+        "$uuid": "3b2facc3fbc84404b6e8eba132717985"
+    },
+    "data": {
+        "start_ts": 1563606000,
+        "end_ts": 1588204800,
+        "label": {
+            "fmt_version": 1,
+            "id": "unimodal_trip_car_bike_mtv_la",
+            "name": "Round trip car and bike trip in the South Bay",
+            "region": {
+                "osm_id": 2157162589,
+                "name": "San Francisco Bay Area",
+                "timezone": "America/Los_Angeles"
+            },
+            "start_fmt_date": "2019-07-20",
+            "end_fmt_date": "2020-04-30",
+            "phones": {
+                "android": {
+                    "ucb-sdb-android-1": "accuracy_control",
+                    "ucb-sdb-android-2": "evaluation_0",
+                    "ucb-sdb-android-3": "evaluation_1",
+                    "ucb-sdb-android-4": "power_control"
+                },
+                "ios": {
+                    "ucb-sdb-ios-1": "accuracy_control",
+                    "ucb-sdb-ios-2": "evaluation_0",
+                    "ucb-sdb-ios-3": "evaluation_1",
+                    "ucb-sdb-ios-4": "power_control"
+                }
+            },
+            "calibration_tests": [],
+            "sensing_settings": [
+                {
+                    "android": {
+                        "compare": [
+                            "HAHFDC",
+                            "HAMFDC"
+                        ],
+                        "name": "HAHFDC v/s HAMFDC",
+                        "sensing_configs": [
+                            {
+                                "id": "HAHFDC",
+                                "name": "High accuracy High Frequency Duty Cycling",
+                                "sensing_config": {
+                                    "is_duty_cycling": true,
+                                    "accuracy": [
+                                        "PRIORITY_HIGH_ACCURACY",
+                                        "kCLLocationAccuracyBest"
+                                    ],
+                                    "filter": 1
+                                }
+                            },
+                            {
+                                "id": "HAMFDC",
+                                "name": "High accuracy Medium Frequency Duty Cycling",
+                                "sensing_config": {
+                                    "is_duty_cycling": true,
+                                    "accuracy": [
+                                        "PRIORITY_HIGH_ACCURACY",
+                                        "kCLLocationAccuracyBest"
+                                    ],
+                                    "filter": 30
+                                }
+                            }
+                        ]
+                    },
+                    "ios": {
+                        "compare": [
+                            "HAHFDC",
+                            "MAHFDC"
+                        ],
+                        "name": "HAHFDC v/s MAHFDC",
+                        "sensing_configs": [
+                            {
+                                "id": "HAHFDC",
+                                "name": "High accuracy High Frequency Duty Cycling",
+                                "sensing_config": {
+                                    "is_duty_cycling": true,
+                                    "accuracy": [
+                                        "PRIORITY_HIGH_ACCURACY",
+                                        "kCLLocationAccuracyBest"
+                                    ],
+                                    "filter": 1
+                                }
+                            },
+                            {
+                                "id": "MAHFDC",
+                                "name": "Medium accuracy High Frequency Duty Cycling",
+                                "sensing_config": {
+                                    "is_duty_cycling": true,
+                                    "accuracy": [
+                                        "PRIORITY_BALANCED_POWER_ACCURACY",
+                                        "kCLLocationAccuracyHundredMeters"
+                                    ],
+                                    "filter": 1
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    "android": {
+                        "compare": [
+                            "HAHFDC",
+                            "MAHFDC"
+                        ],
+                        "name": "HAHFDC v/s MAHFDC",
+                        "sensing_configs": [
+                            {
+                                "id": "HAHFDC",
+                                "name": "High accuracy High Frequency Duty Cycling",
+                                "sensing_config": {
+                                    "is_duty_cycling": true,
+                                    "accuracy": [
+                                        "PRIORITY_HIGH_ACCURACY",
+                                        "kCLLocationAccuracyBest"
+                                    ],
+                                    "filter": 1
+                                }
+                            },
+                            {
+                                "id": "MAHFDC",
+                                "name": "Medium accuracy High Frequency Duty Cycling",
+                                "sensing_config": {
+                                    "is_duty_cycling": true,
+                                    "accuracy": [
+                                        "PRIORITY_BALANCED_POWER_ACCURACY",
+                                        "kCLLocationAccuracyHundredMeters"
+                                    ],
+                                    "filter": 1
+                                }
+                            }
+                        ]
+                    },
+                    "ios": {
+                        "compare": [
+                            "HAHFDC",
+                            "HAMFDC"
+                        ],
+                        "name": "HAHFDC v/s HAMFDC",
+                        "sensing_configs": [
+                            {
+                                "id": "HAHFDC",
+                                "name": "High accuracy High Frequency Duty Cycling",
+                                "sensing_config": {
+                                    "is_duty_cycling": true,
+                                    "accuracy": [
+                                        "PRIORITY_HIGH_ACCURACY",
+                                        "kCLLocationAccuracyBest"
+                                    ],
+                                    "filter": 1
+                                }
+                            },
+                            {
+                                "id": "HAMFDC",
+                                "name": "High accuracy Medium Frequency Duty Cycling",
+                                "sensing_config": {
+                                    "is_duty_cycling": true,
+                                    "accuracy": [
+                                        "PRIORITY_HIGH_ACCURACY",
+                                        "kCLLocationAccuracyBest"
+                                    ],
+                                    "filter": 30
+                                }
+                            }
+                        ]
+                    }
+                }
+            ],
+            "evaluation_trips": [
+                {
+                    "id": "suburb_city_driving_weekend",
+                    "name": "Mountain View Library to Los Altos Library",
+                    "legs": [
+                        {
+                            "id": "walk_start",
+                            "type": "ACCESS",
+                            "mode": "WALKING",
+                            "name": "Walk from the building to your vehicle",
+                            "loc": {
+                                "type": "Feature",
+                                "properties": {
+                                    "name": "Mountain View Library"
+                                },
+                                "geometry": {
+                                    "type": "Polygon",
+                                    "coordinates": [
+                                        [
+                                            [
+                                                -122.08355963230133,
+                                                37.39091642895306
+                                            ],
+                                            [
+                                                -122.08428382873535,
+                                                37.38975713188671
+                                            ],
+                                            [
+                                                -122.08383858203888,
+                                                37.389573859018185
+                                            ],
+                                            [
+                                                -122.08340406417847,
+                                                37.390196132517175
+                                            ],
+                                            [
+                                                -122.08311975002289,
+                                                37.39012793841312
+                                            ],
+                                            [
+                                                -122.08280861377716,
+                                                37.390656441096894
+                                            ],
+                                            [
+                                                -122.08355426788331,
+                                                37.39096757399895
+                                            ],
+                                            [
+                                                -122.08355963230133,
+                                                37.39091642895306
+                                            ]
+                                        ]
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "id": "suburb_city_driving_weekend",
+                            "name": "Mountain View Library to Los Altos Library",
+                            "mode": "CAR",
+                            "start_loc": {
+                                "type": "Feature",
+                                "properties": {
+                                    "name": "Mountain View Library"
+                                },
+                                "geometry": {
+                                    "type": "Polygon",
+                                    "coordinates": [
+                                        [
+                                            [
+                                                -122.08355963230133,
+                                                37.39091642895306
+                                            ],
+                                            [
+                                                -122.08428382873535,
+                                                37.38975713188671
+                                            ],
+                                            [
+                                                -122.08383858203888,
+                                                37.389573859018185
+                                            ],
+                                            [
+                                                -122.08340406417847,
+                                                37.390196132517175
+                                            ],
+                                            [
+                                                -122.08311975002289,
+                                                37.39012793841312
+                                            ],
+                                            [
+                                                -122.08280861377716,
+                                                37.390656441096894
+                                            ],
+                                            [
+                                                -122.08355426788331,
+                                                37.39096757399895
+                                            ],
+                                            [
+                                                -122.08355963230133,
+                                                37.39091642895306
+                                            ]
+                                        ]
+                                    ]
+                                }
+                            },
+                            "end_loc": {
+                                "type": "Feature",
+                                "properties": {
+                                    "name": "Los Altos Library"
+                                },
+                                "geometry": {
+                                    "type": "Polygon",
+                                    "coordinates": [
+                                        [
+                                            [
+                                                -122.11386322975159,
+                                                37.38049489802194
+                                            ],
+                                            [
+                                                -122.11184084415436,
+                                                37.380465059248614
+                                            ],
+                                            [
+                                                -122.11121588945387,
+                                                37.38046932193125
+                                            ],
+                                            [
+                                                -122.1110925078392,
+                                                37.38069950643352
+                                            ],
+                                            [
+                                                -122.11075991392136,
+                                                37.38147104563061
+                                            ],
+                                            [
+                                                -122.11254894733428,
+                                                37.381462520378996
+                                            ],
+                                            [
+                                                -122.11279034614562,
+                                                37.38109593364228
+                                            ],
+                                            [
+                                                -122.11386322975159,
+                                                37.38109593364228
+                                            ],
+                                            [
+                                                -122.11386322975159,
+                                                37.38049489802194
+                                            ]
+                                        ]
+                                    ]
+                                }
+                            },
+                            "polyline": "ayecF~nchVrAp@\\RhB~@}AhEEJ{@~BY^UXSZbB`BpBlArAp@dB|@fAXPF^LRH^Dl@@r@EZ?HH@f@Qh@Ql@ABADST_@Ra@fAzBh@v@P`@H@@d@`@f@FxAAElZJ^FT?rEYAoAB@X^v@RRTTfChCxD~CxAxA~DhDbAbABBb@`@|BzBFFBBbIzHd@b@hAdAfDzClAlAh@j@PP?^?vO?vAQ?iDA?~L?RB~Y}AAcB?cECDm@?oA",
+                            "type": "TRAVEL",
+                            "route_coords": {
+                                "type": "Feature",
+                                "properties": {},
+                                "geometry": {
+                                    "type": "LineString",
+                                    "coordinates": [
+                                        [
+                                            -122.08384,
+                                            37.39041
+                                        ],
+                                        [
+                                            -122.08409,
+                                            37.38999
+                                        ],
+                                        [
+                                            -122.08419,
+                                            37.38984
+                                        ],
+                                        [
+                                            -122.08451,
+                                            37.38931
+                                        ],
+                                        [
+                                            -122.08552,
+                                            37.38978
+                                        ],
+                                        [
+                                            -122.08558,
+                                            37.38981
+                                        ],
+                                        [
+                                            -122.08622,
+                                            37.39011
+                                        ],
+                                        [
+                                            -122.08638,
+                                            37.39024
+                                        ],
+                                        [
+                                            -122.08651,
+                                            37.39035
+                                        ],
+                                        [
+                                            -122.08665,
+                                            37.39045
+                                        ],
+                                        [
+                                            -122.08714,
+                                            37.38995
+                                        ],
+                                        [
+                                            -122.08753,
+                                            37.38938
+                                        ],
+                                        [
+                                            -122.08778,
+                                            37.38896
+                                        ],
+                                        [
+                                            -122.08809,
+                                            37.38845
+                                        ],
+                                        [
+                                            -122.08822,
+                                            37.38809
+                                        ],
+                                        [
+                                            -122.08826,
+                                            37.388
+                                        ],
+                                        [
+                                            -122.08833,
+                                            37.38784
+                                        ],
+                                        [
+                                            -122.08838,
+                                            37.38774
+                                        ],
+                                        [
+                                            -122.08841,
+                                            37.38758
+                                        ],
+                                        [
+                                            -122.08842,
+                                            37.38735
+                                        ],
+                                        [
+                                            -122.08839,
+                                            37.38709
+                                        ],
+                                        [
+                                            -122.08839,
+                                            37.38695
+                                        ],
+                                        [
+                                            -122.08844,
+                                            37.3869
+                                        ],
+                                        [
+                                            -122.08864,
+                                            37.38689
+                                        ],
+                                        [
+                                            -122.08885,
+                                            37.38698
+                                        ],
+                                        [
+                                            -122.08908,
+                                            37.38707
+                                        ],
+                                        [
+                                            -122.0891,
+                                            37.38708
+                                        ],
+                                        [
+                                            -122.08913,
+                                            37.38709
+                                        ],
+                                        [
+                                            -122.08924,
+                                            37.38719
+                                        ],
+                                        [
+                                            -122.08934,
+                                            37.38735
+                                        ],
+                                        [
+                                            -122.0897,
+                                            37.38752
+                                        ],
+                                        [
+                                            -122.08991,
+                                            37.3869
+                                        ],
+                                        [
+                                            -122.09,
+                                            37.38662
+                                        ],
+                                        [
+                                            -122.09005,
+                                            37.38645
+                                        ],
+                                        [
+                                            -122.09006,
+                                            37.38644
+                                        ],
+                                        [
+                                            -122.09023,
+                                            37.38625
+                                        ],
+                                        [
+                                            -122.09027,
+                                            37.38605
+                                        ],
+                                        [
+                                            -122.09026,
+                                            37.3856
+                                        ],
+                                        [
+                                            -122.09465,
+                                            37.38563
+                                        ],
+                                        [
+                                            -122.09481,
+                                            37.38557
+                                        ],
+                                        [
+                                            -122.09492,
+                                            37.38553
+                                        ],
+                                        [
+                                            -122.09598,
+                                            37.38553
+                                        ],
+                                        [
+                                            -122.09597,
+                                            37.38566
+                                        ],
+                                        [
+                                            -122.09599,
+                                            37.38606
+                                        ],
+                                        [
+                                            -122.09612,
+                                            37.38605
+                                        ],
+                                        [
+                                            -122.0964,
+                                            37.38589
+                                        ],
+                                        [
+                                            -122.0965,
+                                            37.38579
+                                        ],
+                                        [
+                                            -122.09661,
+                                            37.38568
+                                        ],
+                                        [
+                                            -122.0973,
+                                            37.385
+                                        ],
+                                        [
+                                            -122.0981,
+                                            37.38407
+                                        ],
+                                        [
+                                            -122.09855,
+                                            37.38362
+                                        ],
+                                        [
+                                            -122.0994,
+                                            37.38266
+                                        ],
+                                        [
+                                            -122.09974,
+                                            37.38232
+                                        ],
+                                        [
+                                            -122.09976,
+                                            37.3823
+                                        ],
+                                        [
+                                            -122.09993,
+                                            37.38212
+                                        ],
+                                        [
+                                            -122.10055,
+                                            37.38149
+                                        ],
+                                        [
+                                            -122.10059,
+                                            37.38145
+                                        ],
+                                        [
+                                            -122.10061,
+                                            37.38143
+                                        ],
+                                        [
+                                            -122.10219,
+                                            37.37981
+                                        ],
+                                        [
+                                            -122.10237,
+                                            37.37962
+                                        ],
+                                        [
+                                            -122.10272,
+                                            37.37925
+                                        ],
+                                        [
+                                            -122.1035,
+                                            37.37841
+                                        ],
+                                        [
+                                            -122.10389,
+                                            37.37802
+                                        ],
+                                        [
+                                            -122.10411,
+                                            37.37781
+                                        ],
+                                        [
+                                            -122.1042,
+                                            37.37772
+                                        ],
+                                        [
+                                            -122.10436,
+                                            37.37772
+                                        ],
+                                        [
+                                            -122.10704,
+                                            37.37772
+                                        ],
+                                        [
+                                            -122.10748,
+                                            37.37772
+                                        ],
+                                        [
+                                            -122.10748,
+                                            37.37781
+                                        ],
+                                        [
+                                            -122.10747,
+                                            37.37866
+                                        ],
+                                        [
+                                            -122.10971,
+                                            37.37866
+                                        ],
+                                        [
+                                            -122.10981,
+                                            37.37866
+                                        ],
+                                        [
+                                            -122.11413,
+                                            37.37864
+                                        ],
+                                        [
+                                            -122.11412,
+                                            37.37911
+                                        ],
+                                        [
+                                            -122.11412,
+                                            37.37961
+                                        ],
+                                        [
+                                            -122.1141,
+                                            37.38059
+                                        ],
+                                        [
+                                            -122.11387,
+                                            37.38056
+                                        ],
+                                        [
+                                            -122.11347,
+                                            37.38056
+                                        ]
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "id": "walk_end",
+                            "type": "ACCESS",
+                            "mode": "WALKING",
+                            "name": "Walk from your vehicle to the building",
+                            "loc": {
+                                "type": "Feature",
+                                "properties": {
+                                    "name": "Los Altos Library"
+                                },
+                                "geometry": {
+                                    "type": "Polygon",
+                                    "coordinates": [
+                                        [
+                                            [
+                                                -122.11386322975159,
+                                                37.38049489802194
+                                            ],
+                                            [
+                                                -122.11184084415436,
+                                                37.380465059248614
+                                            ],
+                                            [
+                                                -122.11121588945387,
+                                                37.38046932193125
+                                            ],
+                                            [
+                                                -122.1110925078392,
+                                                37.38069950643352
+                                            ],
+                                            [
+                                                -122.11075991392136,
+                                                37.38147104563061
+                                            ],
+                                            [
+                                                -122.11254894733428,
+                                                37.381462520378996
+                                            ],
+                                            [
+                                                -122.11279034614562,
+                                                37.38109593364228
+                                            ],
+                                            [
+                                                -122.11386322975159,
+                                                37.38109593364228
+                                            ],
+                                            [
+                                                -122.11386322975159,
+                                                37.38049489802194
+                                            ]
+                                        ]
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "id": "suburb_bicycling",
+                    "name": "Los Altos Library to Mountain View Library",
+                    "legs": [
+                        {
+                            "id": "walk_start",
+                            "type": "ACCESS",
+                            "mode": "WALKING",
+                            "name": "Walk from the building to your vehicle",
+                            "loc": {
+                                "type": "Feature",
+                                "properties": {
+                                    "name": "Los Altos Library"
+                                },
+                                "geometry": {
+                                    "type": "Polygon",
+                                    "coordinates": [
+                                        [
+                                            [
+                                                -122.11386322975159,
+                                                37.38049489802194
+                                            ],
+                                            [
+                                                -122.11184084415436,
+                                                37.380465059248614
+                                            ],
+                                            [
+                                                -122.11121588945387,
+                                                37.38046932193125
+                                            ],
+                                            [
+                                                -122.1110925078392,
+                                                37.38069950643352
+                                            ],
+                                            [
+                                                -122.11075991392136,
+                                                37.38147104563061
+                                            ],
+                                            [
+                                                -122.11254894733428,
+                                                37.381462520378996
+                                            ],
+                                            [
+                                                -122.11279034614562,
+                                                37.38109593364228
+                                            ],
+                                            [
+                                                -122.11386322975159,
+                                                37.38109593364228
+                                            ],
+                                            [
+                                                -122.11386322975159,
+                                                37.38049489802194
+                                            ]
+                                        ]
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "id": "suburb_bicycling",
+                            "name": "Los Altos Library to Mountain View Library",
+                            "mode": "BICYCLING",
+                            "start_loc": {
+                                "type": "Feature",
+                                "properties": {
+                                    "name": "Los Altos Library"
+                                },
+                                "geometry": {
+                                    "type": "Polygon",
+                                    "coordinates": [
+                                        [
+                                            [
+                                                -122.11386322975159,
+                                                37.38049489802194
+                                            ],
+                                            [
+                                                -122.11184084415436,
+                                                37.380465059248614
+                                            ],
+                                            [
+                                                -122.11121588945387,
+                                                37.38046932193125
+                                            ],
+                                            [
+                                                -122.1110925078392,
+                                                37.38069950643352
+                                            ],
+                                            [
+                                                -122.11075991392136,
+                                                37.38147104563061
+                                            ],
+                                            [
+                                                -122.11254894733428,
+                                                37.381462520378996
+                                            ],
+                                            [
+                                                -122.11279034614562,
+                                                37.38109593364228
+                                            ],
+                                            [
+                                                -122.11386322975159,
+                                                37.38109593364228
+                                            ],
+                                            [
+                                                -122.11386322975159,
+                                                37.38049489802194
+                                            ]
+                                        ]
+                                    ]
+                                }
+                            },
+                            "end_loc": {
+                                "type": "Feature",
+                                "properties": {
+                                    "name": "Mountain View Library"
+                                },
+                                "geometry": {
+                                    "type": "Polygon",
+                                    "coordinates": [
+                                        [
+                                            [
+                                                -122.08355963230133,
+                                                37.39091642895306
+                                            ],
+                                            [
+                                                -122.08428382873535,
+                                                37.38975713188671
+                                            ],
+                                            [
+                                                -122.08383858203888,
+                                                37.389573859018185
+                                            ],
+                                            [
+                                                -122.08340406417847,
+                                                37.390196132517175
+                                            ],
+                                            [
+                                                -122.08311975002289,
+                                                37.39012793841312
+                                            ],
+                                            [
+                                                -122.08280861377716,
+                                                37.390656441096894
+                                            ],
+                                            [
+                                                -122.08355426788331,
+                                                37.39096757399895
+                                            ],
+                                            [
+                                                -122.08355963230133,
+                                                37.39091642895306
+                                            ]
+                                        ]
+                                    ]
+                                }
+                            },
+                            "polyline": "_|ccFdhihV?sCGUIBMB_@@OCUUEA@oCg@??eC?u@IKFS@iEBwLM[CW@yF@_AByA@_C@}DCoEAoCGI?mEMSLSGG}B{Bc@a@CCcAcA_EiDyAyAyD_DgCiCUUSSAKAM?I@EBEFEFGXSZA?sEGUK_@DmZyA@g@Ge@a@AAa@Iw@Qs@O[IUECAA?QE??HS?ADIN_@BEDGFED?DCDCDGHOFIPm@Pi@Ag@II[?s@Dm@A_@EFa@OC??]GUIIEe@UIE??]OGEUM??WMCAWM??_Bu@_BaA??QOs@s@AA[]?@TYX_@z@_CDK|AiEiB_A]SsAq@",
+                            "type": "TRAVEL",
+                            "route_coords": {
+                                "type": "Feature",
+                                "properties": {},
+                                "geometry": {
+                                    "type": "LineString",
+                                    "coordinates": [
+                                        [
+                                            -122.11347,
+                                            37.38064
+                                        ],
+                                        [
+                                            -122.11273,
+                                            37.38064
+                                        ],
+                                        [
+                                            -122.11262,
+                                            37.38068
+                                        ],
+                                        [
+                                            -122.11264,
+                                            37.38073
+                                        ],
+                                        [
+                                            -122.11266,
+                                            37.3808
+                                        ],
+                                        [
+                                            -122.11267,
+                                            37.38096
+                                        ],
+                                        [
+                                            -122.11265,
+                                            37.38104
+                                        ],
+                                        [
+                                            -122.11254,
+                                            37.38115
+                                        ],
+                                        [
+                                            -122.11253,
+                                            37.38118
+                                        ],
+                                        [
+                                            -122.11181,
+                                            37.38117
+                                        ],
+                                        [
+                                            -122.11181,
+                                            37.38137
+                                        ],
+                                        [
+                                            -122.11114,
+                                            37.38137
+                                        ],
+                                        [
+                                            -122.11087,
+                                            37.38137
+                                        ],
+                                        [
+                                            -122.11081,
+                                            37.38142
+                                        ],
+                                        [
+                                            -122.11071,
+                                            37.38138
+                                        ],
+                                        [
+                                            -122.1097,
+                                            37.38137
+                                        ],
+                                        [
+                                            -122.1075,
+                                            37.38135
+                                        ],
+                                        [
+                                            -122.10736,
+                                            37.38142
+                                        ],
+                                        [
+                                            -122.10724,
+                                            37.38144
+                                        ],
+                                        [
+                                            -122.10599,
+                                            37.38143
+                                        ],
+                                        [
+                                            -122.10567,
+                                            37.38142
+                                        ],
+                                        [
+                                            -122.10522,
+                                            37.3814
+                                        ],
+                                        [
+                                            -122.10458,
+                                            37.38139
+                                        ],
+                                        [
+                                            -122.10363,
+                                            37.38138
+                                        ],
+                                        [
+                                            -122.10259,
+                                            37.3814
+                                        ],
+                                        [
+                                            -122.10187,
+                                            37.38141
+                                        ],
+                                        [
+                                            -122.10182,
+                                            37.38145
+                                        ],
+                                        [
+                                            -122.10079,
+                                            37.38145
+                                        ],
+                                        [
+                                            -122.10069,
+                                            37.38152
+                                        ],
+                                        [
+                                            -122.10059,
+                                            37.38145
+                                        ],
+                                        [
+                                            -122.10055,
+                                            37.38149
+                                        ],
+                                        [
+                                            -122.09993,
+                                            37.38212
+                                        ],
+                                        [
+                                            -122.09976,
+                                            37.3823
+                                        ],
+                                        [
+                                            -122.09974,
+                                            37.38232
+                                        ],
+                                        [
+                                            -122.0994,
+                                            37.38266
+                                        ],
+                                        [
+                                            -122.09855,
+                                            37.38362
+                                        ],
+                                        [
+                                            -122.0981,
+                                            37.38407
+                                        ],
+                                        [
+                                            -122.0973,
+                                            37.385
+                                        ],
+                                        [
+                                            -122.09661,
+                                            37.38568
+                                        ],
+                                        [
+                                            -122.0965,
+                                            37.38579
+                                        ],
+                                        [
+                                            -122.0964,
+                                            37.38589
+                                        ],
+                                        [
+                                            -122.09634,
+                                            37.3859
+                                        ],
+                                        [
+                                            -122.09627,
+                                            37.38591
+                                        ],
+                                        [
+                                            -122.09622,
+                                            37.38591
+                                        ],
+                                        [
+                                            -122.09619,
+                                            37.3859
+                                        ],
+                                        [
+                                            -122.09616,
+                                            37.38588
+                                        ],
+                                        [
+                                            -122.09613,
+                                            37.38584
+                                        ],
+                                        [
+                                            -122.09609,
+                                            37.3858
+                                        ],
+                                        [
+                                            -122.09599,
+                                            37.38567
+                                        ],
+                                        [
+                                            -122.09598,
+                                            37.38553
+                                        ],
+                                        [
+                                            -122.09492,
+                                            37.38553
+                                        ],
+                                        [
+                                            -122.09481,
+                                            37.38557
+                                        ],
+                                        [
+                                            -122.09465,
+                                            37.38563
+                                        ],
+                                        [
+                                            -122.09026,
+                                            37.3856
+                                        ],
+                                        [
+                                            -122.09027,
+                                            37.38605
+                                        ],
+                                        [
+                                            -122.09023,
+                                            37.38625
+                                        ],
+                                        [
+                                            -122.09006,
+                                            37.38644
+                                        ],
+                                        [
+                                            -122.09005,
+                                            37.38645
+                                        ],
+                                        [
+                                            -122.09,
+                                            37.38662
+                                        ],
+                                        [
+                                            -122.08991,
+                                            37.3869
+                                        ],
+                                        [
+                                            -122.08983,
+                                            37.38716
+                                        ],
+                                        [
+                                            -122.08978,
+                                            37.3873
+                                        ],
+                                        [
+                                            -122.08975,
+                                            37.38741
+                                        ],
+                                        [
+                                            -122.08974,
+                                            37.38743
+                                        ],
+                                        [
+                                            -122.08974,
+                                            37.38744
+                                        ],
+                                        [
+                                            -122.08971,
+                                            37.38753
+                                        ],
+                                        [
+                                            -122.08971,
+                                            37.38753
+                                        ],
+                                        [
+                                            -122.08961,
+                                            37.38748
+                                        ],
+                                        [
+                                            -122.0896,
+                                            37.38748
+                                        ],
+                                        [
+                                            -122.08955,
+                                            37.38745
+                                        ],
+                                        [
+                                            -122.08939,
+                                            37.38737
+                                        ],
+                                        [
+                                            -122.08936,
+                                            37.38735
+                                        ],
+                                        [
+                                            -122.08932,
+                                            37.38732
+                                        ],
+                                        [
+                                            -122.08929,
+                                            37.38728
+                                        ],
+                                        [
+                                            -122.08929,
+                                            37.38725
+                                        ],
+                                        [
+                                            -122.08927,
+                                            37.38722
+                                        ],
+                                        [
+                                            -122.08925,
+                                            37.38719
+                                        ],
+                                        [
+                                            -122.08921,
+                                            37.38716
+                                        ],
+                                        [
+                                            -122.08913,
+                                            37.38711
+                                        ],
+                                        [
+                                            -122.08908,
+                                            37.38707
+                                        ],
+                                        [
+                                            -122.08885,
+                                            37.38698
+                                        ],
+                                        [
+                                            -122.08864,
+                                            37.38689
+                                        ],
+                                        [
+                                            -122.08844,
+                                            37.3869
+                                        ],
+                                        [
+                                            -122.08839,
+                                            37.38695
+                                        ],
+                                        [
+                                            -122.08839,
+                                            37.38709
+                                        ],
+                                        [
+                                            -122.08842,
+                                            37.38735
+                                        ],
+                                        [
+                                            -122.08841,
+                                            37.38758
+                                        ],
+                                        [
+                                            -122.08838,
+                                            37.38774
+                                        ],
+                                        [
+                                            -122.08821,
+                                            37.3877
+                                        ],
+                                        [
+                                            -122.08819,
+                                            37.38778
+                                        ],
+                                        [
+                                            -122.08819,
+                                            37.38778
+                                        ],
+                                        [
+                                            -122.08815,
+                                            37.38793
+                                        ],
+                                        [
+                                            -122.0881,
+                                            37.38804
+                                        ],
+                                        [
+                                            -122.08807,
+                                            37.38809
+                                        ],
+                                        [
+                                            -122.08796,
+                                            37.38828
+                                        ],
+                                        [
+                                            -122.08793,
+                                            37.38833
+                                        ],
+                                        [
+                                            -122.08793,
+                                            37.38833
+                                        ],
+                                        [
+                                            -122.08785,
+                                            37.38848
+                                        ],
+                                        [
+                                            -122.08782,
+                                            37.38852
+                                        ],
+                                        [
+                                            -122.08775,
+                                            37.38863
+                                        ],
+                                        [
+                                            -122.08775,
+                                            37.38863
+                                        ],
+                                        [
+                                            -122.08768,
+                                            37.38875
+                                        ],
+                                        [
+                                            -122.08767,
+                                            37.38877
+                                        ],
+                                        [
+                                            -122.0876,
+                                            37.38889
+                                        ],
+                                        [
+                                            -122.0876,
+                                            37.38889
+                                        ],
+                                        [
+                                            -122.08733,
+                                            37.38937
+                                        ],
+                                        [
+                                            -122.087,
+                                            37.38985
+                                        ],
+                                        [
+                                            -122.087,
+                                            37.38985
+                                        ],
+                                        [
+                                            -122.08692,
+                                            37.38994
+                                        ],
+                                        [
+                                            -122.08666,
+                                            37.3902
+                                        ],
+                                        [
+                                            -122.08665,
+                                            37.39021
+                                        ],
+                                        [
+                                            -122.0865,
+                                            37.39035
+                                        ],
+                                        [
+                                            -122.08651,
+                                            37.39035
+                                        ],
+                                        [
+                                            -122.08638,
+                                            37.39024
+                                        ],
+                                        [
+                                            -122.08622,
+                                            37.39011
+                                        ],
+                                        [
+                                            -122.08558,
+                                            37.38981
+                                        ],
+                                        [
+                                            -122.08552,
+                                            37.38978
+                                        ],
+                                        [
+                                            -122.08451,
+                                            37.38931
+                                        ],
+                                        [
+                                            -122.08419,
+                                            37.38984
+                                        ],
+                                        [
+                                            -122.08409,
+                                            37.38999
+                                        ],
+                                        [
+                                            -122.08384,
+                                            37.39041
+                                        ]
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "id": "walk_end",
+                            "type": "ACCESS",
+                            "mode": "WALKING",
+                            "name": "Walk from your vehicle to the building",
+                            "loc": {
+                                "type": "Feature",
+                                "properties": {
+                                    "name": "Mountain View Library"
+                                },
+                                "geometry": {
+                                    "type": "Polygon",
+                                    "coordinates": [
+                                        [
+                                            [
+                                                -122.08355963230133,
+                                                37.39091642895306
+                                            ],
+                                            [
+                                                -122.08428382873535,
+                                                37.38975713188671
+                                            ],
+                                            [
+                                                -122.08383858203888,
+                                                37.389573859018185
+                                            ],
+                                            [
+                                                -122.08340406417847,
+                                                37.390196132517175
+                                            ],
+                                            [
+                                                -122.08311975002289,
+                                                37.39012793841312
+                                            ],
+                                            [
+                                                -122.08280861377716,
+                                                37.390656441096894
+                                            ],
+                                            [
+                                                -122.08355426788331,
+                                                37.39096757399895
+                                            ],
+                                            [
+                                                -122.08355963230133,
+                                                37.39091642895306
+                                            ]
+                                        ]
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                }
+            ],
+            "setup_notes": {
+                "ios": [
+                    "Initial iOS versions: ucb.sdb.ios.1: 9.3; ucb.sdb.ios.2: 11.2.1; ucb.sdb.ios.3: 9.3; ucb.sdb.ios.4: 10.3.2",
+                    "iOS does not support incremental updates, so will need to update everything to the most recent iOS 12",
+                    "update to 12.3.1",
+                    "Erase all data and settings",
+                    "English, United States",
+                    "Set up manually",
+                    "Connect to WiFi",
+                    "Disabled: Touch ID, Automatic updates, Wallet, iCloud Keychain, Siri, Screen Time, Analytics",
+                    "Enabled: Location services",
+                    "Sign in with Apple ID",
+                    "Turn off updates from the app store",
+                    "Login to gmail through the mail app",
+                    "phone #2 turned out to have 50% battery health. Replaced battery",
+                    "turned on _do not disturb_ for consistency with android"
+                ],
+                "android": [
+                    "factory data reset (still at version 6.0.1)",
+                    "English, United States",
+                    "Connect to WiFi",
+                    "Sign in with google account",
+                    "Don't back up data, enable google location service, improve location accuracy, don't send diagnostic data",
+                    "Not setting up: payment info, other email",
+                    "Don't restore; set up password",
+                    "Don't enable Google Now",
+                    "Don't accept update to 7",
+                    "If prompted, add number",
+                    "Turn off app auto-updates; 35 apps can be updated.; Update only the _Android System Webview_ manually",
+                    "phone #3 is persistently stuck at an older version of google play services, although I follow the same procedure. and the older version is too old for the app.  So one-time update of all 35 apps.",
+                    "even after the update, phone #3 has a different UI than the others. A/B testing?",
+                    "got phone call on android 4, which turned on the screen and got the phone out of doze mode, turned on _do not disturb_",
+                    "installed custom apk with native changes to better support reading battery level at the start and end of range. Installed OI File Manager + allowed installing apps from unknown sources. Retained the app, since it was consistent across all phones, but reverted settings changes before further testing. Had to give Chrome storage permission, and while reverting that, discovered that it also had location permission!! but I didn't change it because it was the default. I am fairly sure I don't recall being asked for location permissions from Chrome, but yeah right, it was already pre-installed, wasn't it."
+                ]
+            }
+        },
+        "write_ts": 1583349047.508296
+    }
+}
