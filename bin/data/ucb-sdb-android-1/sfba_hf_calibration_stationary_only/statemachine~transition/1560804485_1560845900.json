@@ -1,0 +1,46 @@
+[
+    {
+        "_id": {
+            "$oid": "5d07fc85b88f219ca05affae"
+        },
+        "metadata": {
+            "key": "statemachine/transition",
+            "platform": "android",
+            "read_ts": 0,
+            "time_zone": "America/Los_Angeles",
+            "type": "message",
+            "write_ts": 1560804485.585
+        },
+        "user_id": {
+            "$uuid": "6a2dbafdef1e404cb61e506b8935dca4"
+        },
+        "data": {
+            "currState": "local.state.waiting_for_trip_start",
+            "transition": "local.transition.stop_tracking",
+            "ts": 1560804485.584,
+            "write_ts": 1560804485.585
+        }
+    },
+    {
+        "_id": {
+            "$oid": "5d086ae6b88f219ca05b52bb"
+        },
+        "metadata": {
+            "key": "statemachine/transition",
+            "platform": "android",
+            "read_ts": 0,
+            "time_zone": "America/Los_Angeles",
+            "type": "message",
+            "write_ts": 1560804486.555
+        },
+        "user_id": {
+            "$uuid": "6a2dbafdef1e404cb61e506b8935dca4"
+        },
+        "data": {
+            "currState": "local.state.tracking_stopped",
+            "transition": "local.transition.start_tracking",
+            "ts": 1560804486.554,
+            "write_ts": 1560804486.555
+        }
+    }
+]
