@@ -1,0 +1,121 @@
+{
+    "_id": {
+        "$oid": "5d5c8e05b88f219ca0d5f4cb"
+    },
+    "metadata": {
+        "key": "config/evaluation_spec",
+        "platform": "script",
+        "write_ts": 1566346757.185667,
+        "time_zone": "America/Los_Angeles",
+        "type": "message"
+    },
+    "user_id": {
+        "$uuid": "3b2facc3fbc84404b6e8eba132717985"
+    },
+    "data": {
+        "start_ts": 1563433200,
+        "end_ts": 1569826800,
+        "label": {
+            "fmt_version": 1,
+            "id": "sfba_med_freq_calibration_stationary_only",
+            "name": "Calibration for medium frequencies only",
+            "region": {
+                "osm_id": 2157162589,
+                "name": "San Francisco Bay Area",
+                "timezone": "America/Los_Angeles"
+            },
+            "start_fmt_date": "2019-07-18",
+            "end_fmt_date": "2019-09-30",
+            "phones": {
+                "android": {
+                    "ucb-sdb-android-1": "accuracy_control",
+                    "ucb-sdb-android-2": "evaluation_0",
+                    "ucb-sdb-android-3": "evaluation_1",
+                    "ucb-sdb-android-4": "power_control"
+                },
+                "ios": {
+                    "ucb-sdb-ios-1": "accuracy_control",
+                    "ucb-sdb-ios-2": "evaluation_0",
+                    "ucb-sdb-ios-3": "evaluation_1",
+                    "ucb-sdb-ios-4": "power_control"
+                }
+            },
+            "calibration_tests": [
+                {
+                    "id": "100m_balanced_accuracy_medium_freq_stationary",
+                    "mode": null,
+                    "start_loc": null,
+                    "end_loc": null,
+                    "config": {
+                        "id": "MAMFAO",
+                        "name": "Medium accuracy Medium Frequency Always On",
+                        "sensing_config": {
+                            "is_duty_cycling": false,
+                            "accuracy": [
+                                "PRIORITY_BALANCED_POWER_ACCURACY",
+                                "kCLLocationAccuracyHundredMeters"
+                            ],
+                            "filter": 30
+                        }
+                    }
+                },
+                {
+                    "id": "best_high_accuracy_medium_freq_stationary",
+                    "mode": null,
+                    "start_loc": null,
+                    "end_loc": null,
+                    "config": {
+                        "id": "HAMFAO",
+                        "name": "High accuracy Medium Frequency Always On",
+                        "sensing_config": {
+                            "is_duty_cycling": false,
+                            "accuracy": [
+                                "PRIORITY_HIGH_ACCURACY",
+                                "kCLLocationAccuracyBest"
+                            ],
+                            "filter": 30
+                        }
+                    }
+                }
+            ],
+            "sensing_settings": [],
+            "evaluation_trips": [],
+            "setup_notes": {
+                "ios": [
+                    "Initial iOS versions: ucb.sdb.ios.1: 9.3; ucb.sdb.ios.2: 11.2.1; ucb.sdb.ios.3: 9.3; ucb.sdb.ios.4: 10.3.2",
+                    "iOS does not support incremental updates, so will need to update everything to the most recent iOS 12",
+                    "update to 12.3.1",
+                    "Erase all data and settings",
+                    "English, United States",
+                    "Set up manually",
+                    "Connect to WiFi",
+                    "Disabled: Touch ID, Automatic updates, Wallet, iCloud Keychain, Siri, Screen Time, Analytics",
+                    "Enabled: Location services",
+                    "Sign in with Apple ID",
+                    "Turn off updates from the app store",
+                    "Login to gmail through the mail app",
+                    "phone #2 turned out to have 50% battery health. Replaced battery",
+                    "turned on _do not disturb_ for consistency with android"
+                ],
+                "android": [
+                    "factory data reset (still at version 6.0.1)",
+                    "English, United States",
+                    "Connect to WiFi",
+                    "Sign in with google account",
+                    "Don't back up data, enable google location service, improve location accuracy, don't send diagnostic data",
+                    "Not setting up: payment info, other email",
+                    "Don't restore; set up password",
+                    "Don't enable Google Now",
+                    "Don't accept update to 7",
+                    "If prompted, add number",
+                    "Turn off app auto-updates; 35 apps can be updated.; Update only the _Android System Webview_ manually",
+                    "phone #3 is persistently stuck at an older version of google play services, although I follow the same procedure. and the older version is too old for the app.  So one-time update of all 35 apps.",
+                    "even after the update, phone #3 has a different UI than the others. A/B testing?",
+                    "got phone call on android 4, which turned on the screen and got the phone out of doze mode, turned on _do not disturb_",
+                    "installed custom apk with native changes to better support reading battery level at the start and end of range. Installed OI File Manager + allowed installing apps from unknown sources. Retained the app, since it was consistent across all phones, but reverted settings changes before further testing. Had to give Chrome storage permission, and while reverting that, discovered that it also had location permission!! but I didn't change it because it was the default. I am fairly sure I don't recall being asked for location permissions from Chrome, but yeah right, it was already pre-installed, wasn't it."
+                ]
+            }
+        },
+        "write_ts": 1566346757.185667
+    }
+}

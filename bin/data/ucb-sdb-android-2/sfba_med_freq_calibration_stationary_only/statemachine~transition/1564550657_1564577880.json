@@ -1,0 +1,68 @@
+[
+    {
+        "_id": {
+            "$oid": "5d412ef7b88f219ca0aef93f"
+        },
+        "metadata": {
+            "key": "statemachine/transition",
+            "platform": "android",
+            "read_ts": 0,
+            "time_zone": "America/Los_Angeles",
+            "type": "message",
+            "write_ts": 1564550658.136
+        },
+        "user_id": {
+            "$uuid": "1377b14507144a139a1edbc0dcd6fafe"
+        },
+        "data": {
+            "currState": "local.state.ongoing_trip",
+            "transition": "local.transition.stop_tracking",
+            "ts": 1564550658.134,
+            "write_ts": 1564550658.136
+        }
+    },
+    {
+        "_id": {
+            "$oid": "5d412ef7b88f219ca0aef943"
+        },
+        "metadata": {
+            "key": "statemachine/transition",
+            "platform": "android",
+            "read_ts": 0,
+            "time_zone": "America/Los_Angeles",
+            "type": "message",
+            "write_ts": 1564550658.266
+        },
+        "user_id": {
+            "$uuid": "1377b14507144a139a1edbc0dcd6fafe"
+        },
+        "data": {
+            "currState": "local.state.ongoing_trip",
+            "transition": "local.transition.start_tracking",
+            "ts": 1564550658.265,
+            "write_ts": 1564550658.266
+        }
+    },
+    {
+        "_id": {
+            "$oid": "5d412ef7b88f219ca0aef947"
+        },
+        "metadata": {
+            "key": "statemachine/transition",
+            "platform": "android",
+            "read_ts": 0,
+            "time_zone": "America/Los_Angeles",
+            "type": "message",
+            "write_ts": 1564550659.153
+        },
+        "user_id": {
+            "$uuid": "1377b14507144a139a1edbc0dcd6fafe"
+        },
+        "data": {
+            "currState": "local.state.tracking_stopped",
+            "transition": "local.transition.start_tracking",
+            "ts": 1564550659.151,
+            "write_ts": 1564550659.153
+        }
+    }
+]
