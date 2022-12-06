@@ -54,7 +54,7 @@ Restart & Clear Output).
 1. **UI-only:**
     1. Download the notebook (Download -> ipynb)
     1. Upload the notebook using the GitHub UI (Upload Files, next to Clone or Download)
-1. **CLI only:** Follow the [instructions on github](https://help.github.com/en/articles/creating-a-pull-request) - i.e.
+1. **CLI only:** Follow the [instructions on github](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request) - i.e.
     1. Create a new branch (e.g. `$ git checkout -b`)
     1. Commit the new notebook (e.g. `$ git add` and `$ git commit`)
     1. Push and generate pull request 
