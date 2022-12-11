@@ -59,7 +59,7 @@ def retrieve_analysis_data(raw_dir, datastore_url, author_email, spec_ids, out_d
     for s_id in spec_ids:
         sd = eisd.FileSpecDetails(raw_dir, author_email, s_id)
         pv = eipv.PhoneView(sd)
-        asd = eisd.ServerSpecDetails(datastore_url, author_email, s_id)
+        asd = eisd.ServerSpecDetails(datastore_url, author_email)
 
         ANALYSED_RESULT_KEYS=[
             ("segmentation/raw_trip", "data.start_ts"),
