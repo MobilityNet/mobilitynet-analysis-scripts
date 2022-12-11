@@ -129,10 +129,11 @@ class SpecDetails(ABC):
 
 
 class ServerSpecDetails(SpecDetails):
-    def retrieve_one_batch(self, user, key_list, start_ts, end_ts):
+    def retrieve_one_batch(self, user, key_list, start_ts, end_ts, key_time="metadata.write_ts"):
         post_body = {
             "user": user,
             "key_list": key_list,
+            "key_time": key_time,
             "start_time": start_ts,
             "end_time": end_ts
         }
@@ -157,7 +158,7 @@ class ServerSpecDetails(SpecDetails):
         print(f"Found {len(data)} entries")
         return data
 
-    def retrieve_data(self, user, key_list, start_ts, end_ts):
+    def retrieve_data(self, user, key_list, start_ts, end_ts, key_time="metadata.write_ts"):
         all_done = False
         location_entries = []
         curr_start_ts = start_ts
@@ -165,7 +166,7 @@ class ServerSpecDetails(SpecDetails):
 
         while not all_done:
             print("Retrieving data for %s from %s -> %s" % (user, curr_start_ts, end_ts))
-            curr_location_entries = self.retrieve_one_batch(user, key_list, curr_start_ts, end_ts)
+            curr_location_entries = self.retrieve_one_batch(user, key_list, curr_start_ts, end_ts, key_time)
             #print("Retrieved %d entries with timestamps %s..." % (len(curr_location_entries), [cle["data"]["ts"] for cle in curr_location_entries[0:10]]))
             if len(curr_location_entries) == 0 or len(curr_location_entries) == 1:
                 all_done = True
