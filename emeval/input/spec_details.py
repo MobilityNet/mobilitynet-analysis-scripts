@@ -24,6 +24,10 @@ class SpecDetails(ABC):
             self.populate_spec_details(self.curr_spec_entry)
 
     @abstractmethod
+    def get_all_spec_ids(self):
+        pass
+
+    @abstractmethod
     def retrieve_data(self, user, key_list, start_ts, end_ts):
         pass
 
@@ -129,6 +133,14 @@ class SpecDetails(ABC):
 
 
 class ServerSpecDetails(SpecDetails):
+    def get_all_spec_ids(self):
+        spec_data = self.retrieve_one_batch(self.AUTHOR_EMAIL,
+            ["config/evaluation_spec"],
+            0, sys.maxsize)
+        spec_ids = [s["data"]["label"]["id"] for s in spec_data]
+
+        return set(spec_ids)
+
     def retrieve_one_batch(self, user, key_list, start_ts, end_ts, key_time="metadata.write_ts"):
         post_body = {
             "user": user,
@@ -180,6 +192,12 @@ class ServerSpecDetails(SpecDetails):
 
 
 class FileSpecDetails(SpecDetails):
+    def get_all_spec_ids(self):
+        spec_dir = os.path.join(os.getcwd(), self.DATASTORE_LOC, self.AUTHOR_EMAIL)
+        all_specs = os.listdir(spec_dir) 
+        print(all_specs)
+        return all_specs
+
     def retrieve_data(self, user, key_list, start_ts, end_ts):
         data = []
         for key in key_list:

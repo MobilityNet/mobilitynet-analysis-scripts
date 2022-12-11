@@ -33,31 +33,21 @@ def dump_data_to_file(data, spec_id, user, key, start_ts, end_ts, out_dir):
     with open(out_file, "w") as f:
         json.dump(data, f, indent=4)
 
-
 def make_call_to_server(datastore_url, author_email, user, key, start_ts, end_ts):
     """
     Makes a direct call to the E-Mission Server instance based on the specified user/key/start_ts/end_ts.
     """
     return eisd.ServerSpecDetails(datastore_url, author_email).retrieve_one_batch(user, [key], start_ts, end_ts)
 
+def download_analysed(args):
+    fsd = eisd.FileSpecDetails(args.raw_dir, args.author_email)
+    spec_ids = fsd.get_all_spec_ids()
+    if args.spec_id:
+        assert args.spec_id in spec_ids,\
+               f"spec_id `{args.spec_id}` not found within current datastore instance"
 
-def get_all_spec_ids(datastore_url, author_email):
-    """
-    Retrieves list of all spec_id's on E-Mission Server instance being used by script.
-    """
-    spec_data = make_call_to_server(
-        datastore_url,
-        author_email,
-        author_email,
-        "config/evaluation_spec",
-        0,
-        sys.maxsize)
+        spec_ids = [args.spec_id]
 
-    spec_ids = [s["data"]["label"]["id"] for s in spec_data]
-
-    return set(spec_ids)
-
-def download_analysed(args, spec_ids):
     print(f"download_analysed called with {args}")
     retrieve_analysis_data(args.raw_dir, args.datastore_url, args.author_email, spec_ids, args.out_dir+"/"+args.analysis_tag)
 
@@ -103,7 +93,14 @@ def retrieve_analysis_data(raw_dir, datastore_url, author_email, spec_ids, out_d
                                 padded_end_ts,
                                 out_dir)
 
-def download_raw_subset(args, spec_ids):
+def download_raw_subset(args):
+    ssd = eisd.ServerSpecDetails(args.datastore_url, args.author_email)
+    spec_ids = ssd.get_all_spec_ids()
+    if args.spec_id:
+        assert args.spec_id in spec_ids,\
+               f"spec_id `{args.spec_id}` not found within current datastore instance"
+
+        spec_ids = [args.spec_id]
     for s_id in spec_ids:
         data = make_call_to_server(
             args.datastore_url,
@@ -122,7 +119,14 @@ def download_raw_subset(args, spec_ids):
             args.end_ts,
             args.out_dir)
 
-def download_raw(args, spec_ids):
+def download_raw(args):
+    ssd = eisd.ServerSpecDetails(args.datastore_url, args.author_email)
+    spec_ids = ssd.get_all_spec_ids()
+    if args.spec_id:
+        assert args.spec_id in spec_ids,\
+               f"spec_id `{args.spec_id}` not found within current datastore instance"
+
+        spec_ids = [args.spec_id]
     retrieve_all_data(args.datastore_url, args.author_email, spec_ids, args.out_dir)
 
 def retrieve_all_data(datastore_url, author_email, spec_ids, out_dir):
@@ -246,7 +250,7 @@ def parse_args():
                         help="Tag the analysed data as being for the specified branch/algorithm."
                              "Required to avoid inadvertent overwrites"
                              "Will be appended to out_dir before data is stored")
-    parser_analysed.add_argument("--raw-dir",
+    parser_analysed.add_argument("--raw_dir",
                         type=str,
                         default="data",
                         help="Location where the raw data has already been downloaded."
@@ -260,11 +264,4 @@ if __name__ == "__main__":
     args = parse_args()
 
     # verify spec_id is valid if specified
-    spec_ids = get_all_spec_ids(args.datastore_url, args.author_email)
-    if args.spec_id:
-        assert args.spec_id in spec_ids,\
-               f"spec_id `{args.spec_id}` not found within current datastore instance"
-        
-        spec_ids = [args.spec_id]
-
-    args.func(args, spec_ids)
+    args.func(args)
