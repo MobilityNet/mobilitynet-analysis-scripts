@@ -1,0 +1,540 @@
+[
+    {
+        "_id": {
+            "$oid": "6393dc6711f52925005573a9"
+        },
+        "user_id": {
+            "$uuid": "34d4e435ae5b429f8f5e7f27a3bfa8cf"
+        },
+        "metadata": {
+            "key": "analysis/inferred_section",
+            "platform": "server",
+            "write_ts": 1670634531.725868,
+            "time_zone": "America/Los_Angeles",
+            "write_local_dt": {
+                "year": 2022,
+                "month": 12,
+                "day": 9,
+                "hour": 17,
+                "minute": 8,
+                "second": 51,
+                "weekday": 4,
+                "timezone": "America/Los_Angeles"
+            },
+            "write_fmt_time": "2022-12-09T17:08:51.725868-08:00"
+        },
+        "data": {
+            "source": "SmoothedHighConfidenceMotion",
+            "trip_id": {
+                "$oid": "6393dc2311f5292500555beb"
+            },
+            "start_ts": 1564334507.338,
+            "start_local_dt": {
+                "year": 2019,
+                "month": 7,
+                "day": 28,
+                "hour": 10,
+                "minute": 21,
+                "second": 47,
+                "weekday": 6,
+                "timezone": "America/Los_Angeles"
+            },
+            "start_fmt_time": "2019-07-28T10:21:47.338000-07:00",
+            "start_loc": {
+                "type": "Point",
+                "coordinates": [
+                    -122.0863531,
+                    37.3902883
+                ]
+            },
+            "end_ts": 1564335142.0,
+            "end_local_dt": {
+                "year": 2019,
+                "month": 7,
+                "day": 28,
+                "hour": 10,
+                "minute": 32,
+                "second": 22,
+                "weekday": 6,
+                "timezone": "America/Los_Angeles"
+            },
+            "end_fmt_time": "2019-07-28T10:32:22-07:00",
+            "end_loc": {
+                "type": "Point",
+                "coordinates": [
+                    -122.1136207,
+                    37.3806117
+                ]
+            },
+            "duration": 634.6619999408722,
+            "speeds": [
+                0.0,
+                5.619073229808506,
+                4.194468079058843,
+                4.010245203235511,
+                3.1130601141969763,
+                3.904423097277576,
+                5.878813764288513,
+                6.196353218347373,
+                4.027825753332456,
+                8.550090059040093,
+                10.634637457693621,
+                9.75219446175515,
+                8.675983578886704,
+                7.9938525103813385,
+                5.305920527027948,
+                6.4223208992444905,
+                10.040481552288334,
+                6.227772427872251,
+                2.1437428229781754,
+                1.934734471016704,
+                0.4381847449319599,
+                1.4097017007787902,
+                1.5242974353629313
+            ],
+            "distances": [
+                0.0,
+                168.57219689425517,
+                125.83404237176529,
+                120.30735609706534,
+                93.39180342590929,
+                117.13269291832728,
+                176.3644129286554,
+                185.8905965504212,
+                120.83477259997368,
+                256.5027017712028,
+                319.0391237308086,
+                292.5658338526545,
+                260.27950736660114,
+                239.81557531144014,
+                159.17761581083843,
+                192.6696269773347,
+                301.21444656865003,
+                186.83317283616753,
+                64.31228468934526,
+                58.04203413050112,
+                13.145542347958797,
+                42.29105102336371,
+                7.10627455353362
+            ],
+            "distance": 3501.322664756773,
+            "sensed_mode": 5,
+            "cleaned_section": {
+                "$oid": "6393dc2311f5292500555bec"
+            },
+            "write_ts": 1670634531.725868
+        }
+    },
+    {
+        "_id": {
+            "$oid": "6393dc6711f52925005573ab"
+        },
+        "user_id": {
+            "$uuid": "34d4e435ae5b429f8f5e7f27a3bfa8cf"
+        },
+        "metadata": {
+            "key": "analysis/inferred_section",
+            "platform": "server",
+            "write_ts": 1670634532.2350101,
+            "time_zone": "America/Los_Angeles",
+            "write_local_dt": {
+                "year": 2022,
+                "month": 12,
+                "day": 9,
+                "hour": 17,
+                "minute": 8,
+                "second": 52,
+                "weekday": 4,
+                "timezone": "America/Los_Angeles"
+            },
+            "write_fmt_time": "2022-12-09T17:08:52.235010-08:00"
+        },
+        "data": {
+            "source": "SmoothedHighConfidenceMotion",
+            "trip_id": {
+                "$oid": "6393dc2411f5292500555c04"
+            },
+            "start_ts": 1564339820.1247344,
+            "start_local_dt": {
+                "year": 2019,
+                "month": 7,
+                "day": 28,
+                "hour": 11,
+                "minute": 50,
+                "second": 20,
+                "weekday": 6,
+                "timezone": "America/Phoenix"
+            },
+            "start_fmt_time": "2019-07-28T11:50:20.124734-07:00",
+            "start_loc": {
+                "type": "Point",
+                "coordinates": [
+                    -122.1136207,
+                    37.3806117
+                ]
+            },
+            "end_ts": 1564340487.0,
+            "end_local_dt": {
+                "year": 2019,
+                "month": 7,
+                "day": 28,
+                "hour": 12,
+                "minute": 1,
+                "second": 27,
+                "weekday": 6,
+                "timezone": "America/Los_Angeles"
+            },
+            "end_fmt_time": "2019-07-28T12:01:27-07:00",
+            "end_loc": {
+                "type": "Point",
+                "coordinates": [
+                    -122.08960718,
+                    37.38701191
+                ]
+            },
+            "duration": 666.8752655982971,
+            "speeds": [
+                0.0,
+                1.3048016816813528,
+                3.66873124284055,
+                3.3386217207325335,
+                2.076226849233498,
+                4.070610271072446,
+                3.635786877232177,
+                3.5964459754813927,
+                2.7786234400492535,
+                5.114131897871998,
+                5.320018740273017,
+                4.047567341696907,
+                2.4684954889691326,
+                4.272950965079678,
+                5.7871281981652585,
+                3.5908730877809276,
+                3.9533598807916226,
+                3.327439078846657,
+                3.567936673760537,
+                3.620678980723989,
+                3.7669926841984287,
+                3.190447829584082,
+                3.5914476949204928,
+                3.7431354852300225
+            ],
+            "distances": [
+                0.0,
+                39.14405045044058,
+                110.0619372852165,
+                100.158651621976,
+                62.28680547700494,
+                122.11830813217338,
+                109.07360631696531,
+                107.89337926444178,
+                83.35870320147761,
+                153.42395693615993,
+                159.60056220819052,
+                121.4270202509072,
+                74.05486466907398,
+                128.18852895239036,
+                173.61384594495775,
+                107.72619263342783,
+                118.60079642374868,
+                99.8231723653997,
+                107.03810021281612,
+                108.62036942171967,
+                113.00978052595286,
+                95.71343488752247,
+                107.74343084761479,
+                25.73505063136717
+            ],
+            "distance": 2428.4145486609455,
+            "sensed_mode": 2,
+            "end_stop": {
+                "$oid": "6393dc2411f5292500555c25"
+            },
+            "cleaned_section": {
+                "$oid": "6393dc2411f5292500555c06"
+            },
+            "write_ts": 1670634532.2350101
+        }
+    },
+    {
+        "_id": {
+            "$oid": "6393dc6711f52925005573ad"
+        },
+        "user_id": {
+            "$uuid": "34d4e435ae5b429f8f5e7f27a3bfa8cf"
+        },
+        "metadata": {
+            "key": "analysis/inferred_section",
+            "platform": "server",
+            "write_ts": 1670634532.2856388,
+            "time_zone": "America/Los_Angeles",
+            "write_local_dt": {
+                "year": 2022,
+                "month": 12,
+                "day": 9,
+                "hour": 17,
+                "minute": 8,
+                "second": 52,
+                "weekday": 4,
+                "timezone": "America/Los_Angeles"
+            },
+            "write_fmt_time": "2022-12-09T17:08:52.285639-08:00"
+        },
+        "data": {
+            "source": "SmoothedHighConfidenceMotion",
+            "trip_id": {
+                "$oid": "6393dc2411f5292500555c04"
+            },
+            "start_ts": 1564340517.0,
+            "start_local_dt": {
+                "year": 2019,
+                "month": 7,
+                "day": 28,
+                "hour": 12,
+                "minute": 1,
+                "second": 57,
+                "weekday": 6,
+                "timezone": "America/Los_Angeles"
+            },
+            "start_fmt_time": "2019-07-28T12:01:57-07:00",
+            "start_loc": {
+                "type": "Point",
+                "coordinates": [
+                    -122.08892358,
+                    37.38717432
+                ]
+            },
+            "end_ts": 1564340517.0,
+            "end_local_dt": {
+                "year": 2019,
+                "month": 7,
+                "day": 28,
+                "hour": 12,
+                "minute": 1,
+                "second": 57,
+                "weekday": 6,
+                "timezone": "America/Los_Angeles"
+            },
+            "end_fmt_time": "2019-07-28T12:01:57-07:00",
+            "end_loc": {
+                "type": "Point",
+                "coordinates": [
+                    -122.08892358,
+                    37.38717432
+                ]
+            },
+            "duration": 0.0,
+            "speeds": [
+                0.0
+            ],
+            "distances": [
+                0.0
+            ],
+            "distance": 0.0,
+            "sensed_mode": 1,
+            "start_stop": {
+                "$oid": "6393dc2411f5292500555c25"
+            },
+            "end_stop": {
+                "$oid": "6393dc2411f5292500555c26"
+            },
+            "cleaned_section": {
+                "$oid": "6393dc2411f5292500555c1e"
+            },
+            "write_ts": 1670634532.2856388
+        }
+    },
+    {
+        "_id": {
+            "$oid": "6393dc6711f52925005573af"
+        },
+        "user_id": {
+            "$uuid": "34d4e435ae5b429f8f5e7f27a3bfa8cf"
+        },
+        "metadata": {
+            "key": "analysis/inferred_section",
+            "platform": "server",
+            "write_ts": 1670634532.351669,
+            "time_zone": "America/Los_Angeles",
+            "write_local_dt": {
+                "year": 2022,
+                "month": 12,
+                "day": 9,
+                "hour": 17,
+                "minute": 8,
+                "second": 52,
+                "weekday": 4,
+                "timezone": "America/Los_Angeles"
+            },
+            "write_fmt_time": "2022-12-09T17:08:52.351669-08:00"
+        },
+        "data": {
+            "source": "SmoothedHighConfidenceMotion",
+            "trip_id": {
+                "$oid": "6393dc2411f5292500555c04"
+            },
+            "start_ts": 1564340548.0,
+            "start_local_dt": {
+                "year": 2019,
+                "month": 7,
+                "day": 28,
+                "hour": 12,
+                "minute": 2,
+                "second": 28,
+                "weekday": 6,
+                "timezone": "America/Los_Angeles"
+            },
+            "start_fmt_time": "2019-07-28T12:02:28-07:00",
+            "start_loc": {
+                "type": "Point",
+                "coordinates": [
+                    -122.08835943,
+                    37.38725044
+                ]
+            },
+            "end_ts": 1564340638.0,
+            "end_local_dt": {
+                "year": 2019,
+                "month": 7,
+                "day": 28,
+                "hour": 12,
+                "minute": 3,
+                "second": 58,
+                "weekday": 6,
+                "timezone": "America/Los_Angeles"
+            },
+            "end_fmt_time": "2019-07-28T12:03:58-07:00",
+            "end_loc": {
+                "type": "Point",
+                "coordinates": [
+                    -122.08811841,
+                    37.38784967
+                ]
+            },
+            "duration": 90.0,
+            "speeds": [
+                0.0,
+                1.6062283956216752,
+                1.6271745184127568,
+                0.2577743599803079
+            ],
+            "distances": [
+                0.0,
+                48.18685186865026,
+                48.8152355523827,
+                7.733230799409236
+            ],
+            "distance": 104.73531822044221,
+            "sensed_mode": 1,
+            "start_stop": {
+                "$oid": "6393dc2411f5292500555c26"
+            },
+            "cleaned_section": {
+                "$oid": "6393dc2411f5292500555c20"
+            },
+            "write_ts": 1670634532.351669
+        }
+    },
+    {
+        "_id": {
+            "$oid": "6393dc6711f52925005573b1"
+        },
+        "user_id": {
+            "$uuid": "34d4e435ae5b429f8f5e7f27a3bfa8cf"
+        },
+        "metadata": {
+            "key": "analysis/inferred_section",
+            "platform": "server",
+            "write_ts": 1670634532.664294,
+            "time_zone": "America/Los_Angeles",
+            "write_local_dt": {
+                "year": 2022,
+                "month": 12,
+                "day": 9,
+                "hour": 17,
+                "minute": 8,
+                "second": 52,
+                "weekday": 4,
+                "timezone": "America/Los_Angeles"
+            },
+            "write_fmt_time": "2022-12-09T17:08:52.664294-08:00"
+        },
+        "data": {
+            "source": "SmoothedHighConfidenceMotion",
+            "trip_id": {
+                "$oid": "6393dc2411f5292500555c27"
+            },
+            "start_ts": 1564340728.0,
+            "start_local_dt": {
+                "year": 2019,
+                "month": 7,
+                "day": 28,
+                "hour": 12,
+                "minute": 5,
+                "second": 28,
+                "weekday": 6,
+                "timezone": "America/Los_Angeles"
+            },
+            "start_fmt_time": "2019-07-28T12:05:28-07:00",
+            "start_loc": {
+                "type": "Point",
+                "coordinates": [
+                    -122.08811841,
+                    37.38784967
+                ]
+            },
+            "end_ts": 1564341000.0,
+            "end_local_dt": {
+                "year": 2019,
+                "month": 7,
+                "day": 28,
+                "hour": 12,
+                "minute": 10,
+                "second": 0,
+                "weekday": 6,
+                "timezone": "America/Los_Angeles"
+            },
+            "end_fmt_time": "2019-07-28T12:10:00-07:00",
+            "end_loc": {
+                "type": "Point",
+                "coordinates": [
+                    -122.0837157,
+                    37.3905477
+                ]
+            },
+            "duration": 272.0,
+            "speeds": [
+                0.0,
+                3.1186890691137497,
+                3.1186759336037837,
+                3.118662797906634,
+                3.1186496621323427,
+                3.118636526205131,
+                1.6119161130039108,
+                0.5160493095845047,
+                0.38037932821201803,
+                0.18431701140695156,
+                0.18431702132524383
+            ],
+            "distances": [
+                0.0,
+                93.56067207341249,
+                93.56027800811351,
+                93.55988393719902,
+                93.55948986397028,
+                93.55909578615393,
+                48.35748339011732,
+                15.48147928753514,
+                11.411379846360541,
+                5.529510342208547,
+                0.36863404265048766
+            ],
+            "distance": 548.9479065777214,
+            "sensed_mode": 1,
+            "cleaned_section": {
+                "$oid": "6393dc2411f5292500555c29"
+            },
+            "write_ts": 1670634532.664294
+        }
+    }
+]

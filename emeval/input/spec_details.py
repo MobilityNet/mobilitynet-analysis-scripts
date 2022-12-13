@@ -24,6 +24,10 @@ class SpecDetails(ABC):
             self.populate_spec_details(self.curr_spec_entry)
 
     @abstractmethod
+    def get_all_spec_ids(self):
+        pass
+
+    @abstractmethod
     def retrieve_data(self, user, key_list, start_ts, end_ts):
         pass
 
@@ -129,10 +133,19 @@ class SpecDetails(ABC):
 
 
 class ServerSpecDetails(SpecDetails):
-    def retrieve_one_batch(self, user, key_list, start_ts, end_ts):
+    def get_all_spec_ids(self):
+        spec_data = self.retrieve_one_batch(self.AUTHOR_EMAIL,
+            ["config/evaluation_spec"],
+            0, sys.maxsize)
+        spec_ids = [s["data"]["label"]["id"] for s in spec_data]
+
+        return set(spec_ids)
+
+    def retrieve_one_batch(self, user, key_list, start_ts, end_ts, key_time="metadata.write_ts"):
         post_body = {
             "user": user,
             "key_list": key_list,
+            "key_time": key_time,
             "start_time": start_ts,
             "end_time": end_ts
         }
@@ -157,7 +170,7 @@ class ServerSpecDetails(SpecDetails):
         print(f"Found {len(data)} entries")
         return data
 
-    def retrieve_data(self, user, key_list, start_ts, end_ts):
+    def retrieve_data(self, user, key_list, start_ts, end_ts, key_time="metadata.write_ts"):
         all_done = False
         location_entries = []
         curr_start_ts = start_ts
@@ -165,13 +178,20 @@ class ServerSpecDetails(SpecDetails):
 
         while not all_done:
             print("Retrieving data for %s from %s -> %s" % (user, curr_start_ts, end_ts))
-            curr_location_entries = self.retrieve_one_batch(user, key_list, curr_start_ts, end_ts)
+            curr_location_entries = self.retrieve_one_batch(user, key_list, curr_start_ts, end_ts, key_time)
             #print("Retrieved %d entries with timestamps %s..." % (len(curr_location_entries), [cle["data"]["ts"] for cle in curr_location_entries[0:10]]))
             if len(curr_location_entries) == 0 or len(curr_location_entries) == 1:
+                # we have only one entry in response to the query
+                # so we set the location entries to it
+                # otherwise, we will not return anything in this case
+                # https://github.com/MobilityNet/mobilitynet.github.io/issues/31#issuecomment-1345965784
+                if len(location_entries) == 0 and len(curr_location_entries) == 1:
+                    location_entries = curr_location_entries
                 all_done = True
             else:
                 location_entries.extend(curr_location_entries)
-                new_start_ts = curr_location_entries[-1]["metadata"]["write_ts"]
+                key_time_split = key_time.split(".")
+                new_start_ts = curr_location_entries[-1][key_time_split[0]][key_time_split[1]]
                 assert new_start_ts > curr_start_ts
                 curr_start_ts = new_start_ts
                 prev_retrieved_count = len(curr_location_entries)
@@ -179,6 +199,12 @@ class ServerSpecDetails(SpecDetails):
 
 
 class FileSpecDetails(SpecDetails):
+    def get_all_spec_ids(self):
+        spec_dir = os.path.join(os.getcwd(), self.DATASTORE_LOC, self.AUTHOR_EMAIL)
+        all_specs = os.listdir(spec_dir) 
+        print(all_specs)
+        return all_specs
+
     def retrieve_data(self, user, key_list, start_ts, end_ts):
         data = []
         for key in key_list:
