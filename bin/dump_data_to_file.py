@@ -80,8 +80,8 @@ def retrieve_analysis_data(raw_dir, datastore_url, author_email, spec_ids, out_d
                             print(f"Dumping key {key} for key_time = {key_time} and phone {phone_label}")
                             padded_start_ts = r["start_ts"] - THIRTY_MIN
                             padded_end_ts = r["end_ts"] + THIRTY_MIN
-                            print(f"original range = {arrow.get(r['start_ts'])} -> {arrow.get(r['end_ts'])},"
-                                  f"padded range = {arrow.get(padded_start_ts)} -> {arrow.get(padded_end_ts)}")
+                            print(f"original range = {arrow.get(r['start_ts']).to(sd.eval_tz)} -> {arrow.get(r['end_ts']).to(sd.eval_tz)},"
+                                  f"padded range = {arrow.get(padded_start_ts).to(sd.eval_tz)} -> {arrow.get(padded_end_ts).to(sd.eval_tz)}")
                             raw_data = asd.retrieve_data(phone_label, [key],
                                 padded_start_ts, padded_end_ts, key_time)
                             dump_data_to_file(
