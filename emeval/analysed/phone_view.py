@@ -6,18 +6,18 @@ import emeval.input.phone_view as eipv
 THIRTY_MIN = 30 * 60
 
 def _copy_subset_range(r, tr, key, fuzz_factor = 0):
-    print("Before filtering, trips = %s" % [(sr["data"]["start_fmt_time"], sr["data"]["end_fmt_time"]) for sr in r[key]])
+    print("Before filtering, trips = %s" % [(sr["start_fmt_time"], sr["end_fmt_time"]) for sr in r[key]])
     print("Filter range = %s -> %s" % 
         (arrow.get(tr["start_ts"]).to("America/Los_Angeles"),
          arrow.get(tr["end_ts"]).to("America/Los_Angeles")))
     if len(r[key]) > 0:
         tr[key] = [re for re in r[key]
-            if tr["start_ts"] - fuzz_factor <= (re["data"]["start_ts"]) and
-                re["data"]["end_ts"] <= (tr["end_ts"] + fuzz_factor)]
+            if tr["start_ts"] - fuzz_factor <= (re["start_ts"]) and
+                re["end_ts"] <= (tr["end_ts"] + fuzz_factor)]
     else:
         # since there is no data, we don't need to select a subset
         tr[key] = r[key]
-    print("After filtering, trips = %s" % [sr["data"]["start_fmt_time"] for sr in tr[key]])
+    print("After filtering, trips = %s" % [sr["start_fmt_time"] for sr in tr[key]])
 
 def create_analysed_view(input_view, analysis_spec, location_key, trip_key, section_key):
     av = copy.deepcopy(input_view)
@@ -48,13 +48,13 @@ def create_analysed_view(input_view, analysis_spec, location_key, trip_key, sect
                     location_df["hr"] = (location_df.ts-r["start_ts"])/3600.0
                 r["location_df"] = location_df
 
-                r["sensed_trip_ranges"] = av.spec_details.retrieve_data(
+                r["sensed_trip_ranges"] = [st["data"] for st in av.spec_details.retrieve_data(
                     phone_label, [trip_key],
-                    padded_start_ts, padded_end_ts)
+                    padded_start_ts, padded_end_ts)]
 
-                r["sensed_section_ranges"] = av.spec_details.retrieve_data(
+                r["sensed_section_ranges"] = [ss["data"] for ss in av.spec_details.retrieve_data(
                     phone_label, [section_key],
-                    padded_start_ts, padded_end_ts)
+                    padded_start_ts, padded_end_ts)]
 
                 for tr in r["evaluation_trip_ranges"]:
                     query = eipv.PhoneView._query_for_seg(tr)
