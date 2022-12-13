@@ -1,0 +1,77 @@
+[
+    {
+        "_id": {
+            "$oid": "63969ea2b10cfb28033e533b"
+        },
+        "user_id": {
+            "$uuid": "7ed804906853433d9d20838fe4d3d71b"
+        },
+        "metadata": {
+            "key": "segmentation/raw_untracked",
+            "platform": "server",
+            "write_ts": 1670815394.7502878,
+            "time_zone": "America/Los_Angeles",
+            "write_local_dt": {
+                "year": 2022,
+                "month": 12,
+                "day": 11,
+                "hour": 19,
+                "minute": 23,
+                "second": 14,
+                "weekday": 6,
+                "timezone": "America/Los_Angeles"
+            },
+            "write_fmt_time": "2022-12-11T19:23:14.750288-08:00"
+        },
+        "data": {
+            "source": "DwellSegmentationDistFilter",
+            "start_ts": 1564109951.124861,
+            "start_local_dt": {
+                "year": 2019,
+                "month": 7,
+                "day": 25,
+                "hour": 19,
+                "minute": 59,
+                "second": 6,
+                "weekday": 3,
+                "timezone": "America/Los_Angeles"
+            },
+            "start_fmt_time": "2019-07-25T19:59:06.124861-07:00",
+            "start_place": {
+                "$oid": "63969ea2b10cfb28033e5338"
+            },
+            "start_loc": {
+                "type": "Point",
+                "coordinates": [
+                    -122.08330639616413,
+                    37.389540107818604
+                ]
+            },
+            "end_ts": 1564154572.964088,
+            "end_local_dt": {
+                "year": 2019,
+                "month": 7,
+                "day": 26,
+                "hour": 8,
+                "minute": 22,
+                "second": 52,
+                "weekday": 4,
+                "timezone": "America/Los_Angeles"
+            },
+            "end_fmt_time": "2019-07-26T08:22:52.964088-07:00",
+            "end_place": {
+                "$oid": "63969ea2b10cfb28033e533c"
+            },
+            "end_loc": {
+                "type": "Point",
+                "coordinates": [
+                    -122.07684398730179,
+                    37.39423889170452
+                ]
+            },
+            "duration": 44621.839226961136,
+            "distance": 773.9079544568948,
+            "write_ts": 1670815394.7502878
+        }
+    }
+]
