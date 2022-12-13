@@ -1,0 +1,188 @@
+[
+    {
+        "_id": {
+            "$oid": "63969f46b10cfb28033e9041"
+        },
+        "user_id": {
+            "$uuid": "7ed804906853433d9d20838fe4d3d71b"
+        },
+        "metadata": {
+            "key": "analysis/confirmed_trip",
+            "platform": "server",
+            "write_ts": 1670815556.5026681,
+            "time_zone": "America/Los_Angeles",
+            "write_local_dt": {
+                "year": 2022,
+                "month": 12,
+                "day": 11,
+                "hour": 19,
+                "minute": 25,
+                "second": 56,
+                "weekday": 6,
+                "timezone": "America/Los_Angeles"
+            },
+            "write_fmt_time": "2022-12-11T19:25:56.502668-08:00"
+        },
+        "data": {
+            "source": "DwellSegmentationDistFilter",
+            "end_ts": 1567272267.9900584,
+            "end_local_dt": {
+                "year": 2019,
+                "month": 8,
+                "day": 31,
+                "hour": 10,
+                "minute": 24,
+                "second": 27,
+                "weekday": 5,
+                "timezone": "America/Los_Angeles"
+            },
+            "end_fmt_time": "2019-08-31T10:24:27.990058-07:00",
+            "end_loc": {
+                "type": "Point",
+                "coordinates": [
+                    -122.11356651049304,
+                    37.38087864130491
+                ]
+            },
+            "raw_trip": {
+                "$oid": "63969ea4b10cfb28033e537f"
+            },
+            "start_ts": 1567272046.525764,
+            "start_local_dt": {
+                "year": 2019,
+                "month": 8,
+                "day": 31,
+                "hour": 10,
+                "minute": 20,
+                "second": 46,
+                "weekday": 5,
+                "timezone": "America/Los_Angeles"
+            },
+            "start_fmt_time": "2019-08-31T10:20:46.525764-07:00",
+            "start_loc": {
+                "type": "Point",
+                "coordinates": [
+                    -122.11385838671978,
+                    37.38052111505911
+                ]
+            },
+            "duration": 221.46429443359375,
+            "distance": 201.507083789095,
+            "start_place": {
+                "$oid": "63969f37b10cfb28033e8aae"
+            },
+            "end_place": {
+                "$oid": "63969f37b10cfb28033e8aaf"
+            },
+            "cleaned_trip": {
+                "$oid": "63969f0fb10cfb28033e6b5a"
+            },
+            "inferred_labels": [],
+            "inferred_trip": {
+                "$oid": "63969f43b10cfb28033e8f13"
+            },
+            "expectation": {
+                "to_label": true
+            },
+            "confidence_threshold": 0.55,
+            "expected_trip": {
+                "$oid": "63969f44b10cfb28033e8fdb"
+            },
+            "user_input": {},
+            "write_ts": 1670815556.5026681
+        }
+    },
+    {
+        "_id": {
+            "$oid": "63969f46b10cfb28033e9042"
+        },
+        "user_id": {
+            "$uuid": "7ed804906853433d9d20838fe4d3d71b"
+        },
+        "metadata": {
+            "key": "analysis/confirmed_trip",
+            "platform": "server",
+            "write_ts": 1670815556.505023,
+            "time_zone": "America/Los_Angeles",
+            "write_local_dt": {
+                "year": 2022,
+                "month": 12,
+                "day": 11,
+                "hour": 19,
+                "minute": 25,
+                "second": 56,
+                "weekday": 6,
+                "timezone": "America/Los_Angeles"
+            },
+            "write_fmt_time": "2022-12-11T19:25:56.505023-08:00"
+        },
+        "data": {
+            "source": "DwellSegmentationDistFilter",
+            "end_ts": 1567277639.9244208,
+            "end_local_dt": {
+                "year": 2019,
+                "month": 8,
+                "day": 31,
+                "hour": 11,
+                "minute": 53,
+                "second": 59,
+                "weekday": 5,
+                "timezone": "America/Los_Angeles"
+            },
+            "end_fmt_time": "2019-08-31T11:53:59.924421-07:00",
+            "end_loc": {
+                "type": "Point",
+                "coordinates": [
+                    -122.08342907704456,
+                    37.38985816688069
+                ]
+            },
+            "raw_trip": {
+                "$oid": "63969ea5b10cfb28033e5383"
+            },
+            "start_ts": 1567276450.217073,
+            "start_local_dt": {
+                "year": 2019,
+                "month": 8,
+                "day": 31,
+                "hour": 11,
+                "minute": 34,
+                "second": 10,
+                "weekday": 5,
+                "timezone": "America/Los_Angeles"
+            },
+            "start_fmt_time": "2019-08-31T11:34:10.217073-07:00",
+            "start_loc": {
+                "type": "Point",
+                "coordinates": [
+                    -122.11356651049304,
+                    37.38087864130491
+                ]
+            },
+            "duration": 1189.707347869873,
+            "distance": 3527.570130551171,
+            "start_place": {
+                "$oid": "63969f37b10cfb28033e8aaf"
+            },
+            "end_place": {
+                "$oid": "63969f37b10cfb28033e8ab0"
+            },
+            "cleaned_trip": {
+                "$oid": "63969f0fb10cfb28033e6b66"
+            },
+            "inferred_labels": [],
+            "inferred_trip": {
+                "$oid": "63969f43b10cfb28033e8f16"
+            },
+            "expectation": {
+                "to_label": true
+            },
+            "confidence_threshold": 0.55,
+            "expected_trip": {
+                "$oid": "63969f44b10cfb28033e8fdc"
+            },
+            "user_input": {},
+            "write_ts": 1670815556.505023
+        }
+    }
+]

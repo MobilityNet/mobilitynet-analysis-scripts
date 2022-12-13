@@ -6,9 +6,11 @@ import time
 import arrow
 import argparse
 import sys; sys.path.append("..")
-from emeval.input.spec_details import ServerSpecDetails
-from emeval.input.phone_view import PhoneView
+import emeval.input.spec_details as eisd
+import emeval.input.phone_view as eipv
+import emeval.analysed.phone_view as eapv
 
+THIRTY_MIN = 30 * 60
 
 def dump_data_to_file(data, spec_id, user, key, start_ts, end_ts, out_dir):
     """
@@ -31,30 +33,101 @@ def dump_data_to_file(data, spec_id, user, key, start_ts, end_ts, out_dir):
     with open(out_file, "w") as f:
         json.dump(data, f, indent=4)
 
-
 def make_call_to_server(datastore_url, author_email, user, key, start_ts, end_ts):
     """
     Makes a direct call to the E-Mission Server instance based on the specified user/key/start_ts/end_ts.
     """
-    return ServerSpecDetails(datastore_url, author_email).retrieve_one_batch(user, [key], start_ts, end_ts)
+    return eisd.ServerSpecDetails(datastore_url, author_email).retrieve_one_batch(user, [key], start_ts, end_ts)
 
+def download_analysed(args):
+    fsd = eisd.FileSpecDetails(args.raw_dir, args.author_email)
+    spec_ids = fsd.get_all_spec_ids()
+    if args.spec_id:
+        assert args.spec_id in spec_ids,\
+               f"spec_id `{args.spec_id}` not found within current datastore instance"
 
-def get_all_spec_ids(datastore_url, author_email):
-    """
-    Retrieves list of all spec_id's on E-Mission Server instance being used by script.
-    """
-    spec_data = make_call_to_server(
-        datastore_url,
-        author_email,
-        author_email,
-        "config/evaluation_spec",
-        0,
-        sys.maxsize)
+        spec_ids = [args.spec_id]
 
-    spec_ids = [s["data"]["label"]["id"] for s in spec_data]
+    print(f"download_analysed called with {args}")
+    retrieve_analysis_data(args.raw_dir, args.datastore_url, args.author_email, spec_ids, args.out_dir+"/"+args.analysis_tag)
 
-    return set(spec_ids)
+def retrieve_analysis_data(raw_dir, datastore_url, author_email, spec_ids, out_dir):
+    print(f"Pulling analysis results for {spec_ids[0] if len(spec_ids) == 1 else 'all specs in datastore'}...")
 
+    # collect ServerSpecDetails objects, dump specs
+    sds = []
+    for s_id in spec_ids:
+        sd = eisd.FileSpecDetails(raw_dir, author_email, s_id)
+        pv = eipv.PhoneView(sd)
+        asd = eisd.ServerSpecDetails(datastore_url, author_email)
+
+        ANALYSED_RESULT_KEYS=[
+            ("segmentation/raw_trip", "data.start_ts"),
+            ("segmentation/raw_section", "data.start_ts"),
+            ("segmentation/raw_untracked", "data.start_ts"),
+            ("analysis/cleaned_trip", "data.start_ts"),
+            ("analysis/cleaned_section", "data.start_ts"),
+            ("analysis/cleaned_untracked", "data.start_ts"),
+            ("analysis/inferred_section", "data.start_ts"),
+            ("analysis/confirmed_trip", "data.start_ts"),
+            ("analysis/recreated_location", "data.ts")]
+
+        for phone_os, phone_map in pv.map().items():
+            for phone_label, phone_detail_map in phone_map.items():
+                for ranges in [phone_detail_map["evaluation_ranges"], phone_detail_map["calibration_ranges"]]:
+                    for r in ranges:
+                        for key, key_time in ANALYSED_RESULT_KEYS:
+                            print(f"Dumping key {key} for key_time = {key_time} and phone {phone_label}")
+                            padded_start_ts = r["start_ts"] - THIRTY_MIN
+                            padded_end_ts = r["end_ts"] + THIRTY_MIN
+                            print(f"original range = {arrow.get(r['start_ts']).to(sd.eval_tz)} -> {arrow.get(r['end_ts']).to(sd.eval_tz)},"
+                                  f"padded range = {arrow.get(padded_start_ts).to(sd.eval_tz)} -> {arrow.get(padded_end_ts).to(sd.eval_tz)}")
+                            raw_data = asd.retrieve_data(phone_label, [key],
+                                padded_start_ts, padded_end_ts, key_time)
+                            dump_data_to_file(
+                                raw_data,
+                                sd.CURR_SPEC_ID,
+                                phone_label,
+                                key,
+                                padded_start_ts,
+                                padded_end_ts,
+                                out_dir)
+
+def download_raw_subset(args):
+    ssd = eisd.ServerSpecDetails(args.datastore_url, args.author_email)
+    spec_ids = ssd.get_all_spec_ids()
+    if args.spec_id:
+        assert args.spec_id in spec_ids,\
+               f"spec_id `{args.spec_id}` not found within current datastore instance"
+
+        spec_ids = [args.spec_id]
+    for s_id in spec_ids:
+        data = make_call_to_server(
+            args.datastore_url,
+            args.author_email,
+            args.user,
+            args.key,
+            args.start_ts,
+            args.end_ts)
+
+        dump_data_to_file(
+            data,
+            s_id,
+            args.user,
+            args.key,
+            args.start_ts,
+            args.end_ts,
+            args.out_dir)
+
+def download_raw(args):
+    ssd = eisd.ServerSpecDetails(args.datastore_url, args.author_email)
+    spec_ids = ssd.get_all_spec_ids()
+    if args.spec_id:
+        assert args.spec_id in spec_ids,\
+               f"spec_id `{args.spec_id}` not found within current datastore instance"
+
+        spec_ids = [args.spec_id]
+    retrieve_all_data(args.datastore_url, args.author_email, spec_ids, args.out_dir)
 
 def retrieve_all_data(datastore_url, author_email, spec_ids, out_dir):
     """
@@ -65,7 +138,7 @@ def retrieve_all_data(datastore_url, author_email, spec_ids, out_dir):
     # collect ServerSpecDetails objects, dump specs
     sds = []
     for s_id in spec_ids:
-        sd = ServerSpecDetails(datastore_url, author_email, s_id)
+        sd = eisd.ServerSpecDetails(datastore_url, author_email, s_id)
         sds.append(sd)
         dump_data_to_file(
             sd.curr_spec_entry,
@@ -78,10 +151,11 @@ def retrieve_all_data(datastore_url, author_email, spec_ids, out_dir):
 
     # build and dump phone view maps
     for sd in sds:
-        pv = PhoneView(sd)
+        pv = eipv.PhoneView(sd)
         for phone_os, phone_map in pv.map().items():
             for phone_label, phone_detail_map in phone_map.items():
                 for key in [k for k in phone_detail_map.keys() if "/" in k]:
+                    print(f"Dumping top level key {key}")
                     dump_data_to_file(
                         phone_detail_map[key],
                         sd.CURR_SPEC_ID,
@@ -93,6 +167,7 @@ def retrieve_all_data(datastore_url, author_email, spec_ids, out_dir):
                 for ranges in [phone_detail_map["evaluation_ranges"], phone_detail_map["calibration_ranges"]]:
                     for r in ranges:
                         for key in [k for k in r.keys() if "/" in k]:
+                            print(f"Dumping key {key} for range with keys {r.keys()} and phone {phone_label}")
                             dump_data_to_file(
                                 r[key],
                                 sd.CURR_SPEC_ID,
@@ -101,7 +176,6 @@ def retrieve_all_data(datastore_url, author_email, spec_ids, out_dir):
                                 r["start_ts"],
                                 r["end_ts"],
                                 out_dir)
-
 
 def parse_args():
     """
@@ -137,70 +211,57 @@ def parse_args():
                              "If not specified, data will be retrieved for all specs "
                              "on the specified datastore instance.")
 
-    # if one of these arguments is specified, the others in this group must also be specified
-    parser.add_argument("--key",
+    subparsers = parser.add_subparsers(required=True, dest="download_type")
+    parser_raw = subparsers.add_parser('raw', help='Download raw data')
+    parser_raw.set_defaults(func=download_raw)
+
+    parser_raw_subset = subparsers.add_parser('raw_subset', help='Download a subset of the raw data')
+    parser_raw_subset.add_argument("--key",
                         type=str,
+                        required=True,
                         help="The time series key to be used if a single call "
                              "to the E-Mission Server instance is to be made. "
                              "--user, --start-ts, and --end-ts must also be specified.")
     
-    parser.add_argument("--user",
+    parser_raw_subset.add_argument("--user",
                         type=str,
+                        required=True,
                         help="The user to be used if a single call to the E-Mission Server instance is to be made. "
                              "--key, --start-ts, and --end-ts must also be specified.")
     
-    parser.add_argument("--start-ts",
+    parser_raw_subset.add_argument("--start-ts",
                         type=float,
+                        required=True,
                         help="The starting timestamp from which to pull data if a single call "
                              "to the E-Mission Server instance is to be made. "
                              "--key, --user, and --end-ts must also be specified.")
     
-    parser.add_argument("--end-ts",
+    parser_raw_subset.add_argument("--end-ts",
                         type=float,
+                        required=True,
                         help="The ending timestamp from which to pull data if a single call "
                              "to the E-Mission Server instance is to be made. "
                              "--key, --user, and --start-ts must also be specified.")
-    
+    parser_raw_subset.set_defaults(func=download_raw_subset)
+
+    parser_analysed = subparsers.add_parser('analysed', help='Download analysed data')
+    parser_analysed.add_argument("analysis_tag",
+                        type=str,
+                        help="Tag the analysed data as being for the specified branch/algorithm."
+                             "Required to avoid inadvertent overwrites"
+                             "Will be appended to out_dir before data is stored")
+    parser_analysed.add_argument("--raw_dir",
+                        type=str,
+                        default="data",
+                        help="Location where the raw data has already been downloaded."
+                             "This is needed to get the transitions and download the matching analysed data"
+                             "[default: data]")
+    parser_analysed.set_defaults(func=download_analysed)
     return parser.parse_args()
 
 
 if __name__ == "__main__":
     args = parse_args()
 
-    # enforce that --key, --user, --start-ts, and --end-ts are all specifed if one of these arguments is specified
-    cond_req_args = ["--key", "--user", "--start-ts", "--end-ts"]
-    for arg in cond_req_args:
-        if arg in sys.argv:
-            assert set(a for a in cond_req_args if a != arg) <= set(sys.argv),\
-                   "all of --key --user, --start-ts, and --end-ts must be specified"
-
     # verify spec_id is valid if specified
-    spec_ids = get_all_spec_ids(args.datastore_url, args.author_email)
-    if args.spec_id:
-        assert args.spec_id in spec_ids,\
-               f"spec_id `{args.spec_id}` not found within current datastore instance"
-        
-        spec_ids = [args.spec_id]
-
-    # if --key, etc are specified, just call retrieve_data from an anonymous ServerSpecDetails instance
-    if args.key:
-        for s_id in spec_ids:
-            data = make_call_to_server(
-                args.datastore_url,
-                args.author_email,
-                args.user,
-                args.key,
-                args.start_ts,
-                args.end_ts)
-            
-            dump_data_to_file(
-                data,
-                s_id,
-                args.user,
-                args.key,
-                args.start_ts,
-                args.end_ts,
-                args.out_dir)
-    
-    else:
-        retrieve_all_data(args.datastore_url, args.author_email, spec_ids, args.out_dir)
+    args.func(args)
