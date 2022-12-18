@@ -1,0 +1,152 @@
+[
+    {
+        "_id": {
+            "$oid": "639f6790bbac4681affd9f9b"
+        },
+        "user_id": {
+            "$uuid": "ccc6a6753e084077b0159ac27cd7eea6"
+        },
+        "metadata": {
+            "key": "segmentation/raw_trip",
+            "platform": "server",
+            "write_ts": 1671391120.3923259,
+            "time_zone": "America/Los_Angeles",
+            "write_local_dt": {
+                "year": 2022,
+                "month": 12,
+                "day": 18,
+                "hour": 11,
+                "minute": 18,
+                "second": 40,
+                "weekday": 6,
+                "timezone": "America/Los_Angeles"
+            },
+            "write_fmt_time": "2022-12-18T11:18:40.392326-08:00"
+        },
+        "data": {
+            "source": "DwellSegmentationDistFilter",
+            "start_ts": 1581006195.894629,
+            "start_local_dt": {
+                "year": 2020,
+                "month": 2,
+                "day": 6,
+                "hour": 8,
+                "minute": 23,
+                "second": 15,
+                "weekday": 3,
+                "timezone": "America/Los_Angeles"
+            },
+            "start_fmt_time": "2020-02-06T08:23:15.894629-08:00",
+            "start_place": {
+                "$oid": "639f6791bbac4681affd9f9e"
+            },
+            "start_loc": {
+                "type": "Point",
+                "coordinates": [
+                    -122.07737548736802,
+                    37.392280719537624
+                ]
+            },
+            "end_ts": 1581008256.177141,
+            "end_local_dt": {
+                "year": 2020,
+                "month": 2,
+                "day": 6,
+                "hour": 8,
+                "minute": 57,
+                "second": 36,
+                "weekday": 3,
+                "timezone": "America/Los_Angeles"
+            },
+            "end_fmt_time": "2020-02-06T08:57:36.177141-08:00",
+            "end_place": {
+                "$oid": "639f6790bbac4681affd9f9c"
+            },
+            "end_loc": {
+                "type": "Point",
+                "coordinates": [
+                    -122.24889975234049,
+                    37.49776880558509
+                ]
+            },
+            "duration": 2060.282511949539,
+            "distance": 19154.134133655927,
+            "write_ts": 1671391120.3923259
+        }
+    },
+    {
+        "_id": {
+            "$oid": "639f6791bbac4681affd9f9f"
+        },
+        "user_id": {
+            "$uuid": "ccc6a6753e084077b0159ac27cd7eea6"
+        },
+        "metadata": {
+            "key": "segmentation/raw_trip",
+            "platform": "server",
+            "write_ts": 1671391121.035485,
+            "time_zone": "America/Los_Angeles",
+            "write_local_dt": {
+                "year": 2022,
+                "month": 12,
+                "day": 18,
+                "hour": 11,
+                "minute": 18,
+                "second": 41,
+                "weekday": 6,
+                "timezone": "America/Los_Angeles"
+            },
+            "write_fmt_time": "2022-12-18T11:18:41.035485-08:00"
+        },
+        "data": {
+            "source": "DwellSegmentationDistFilter",
+            "start_ts": 1581043346.341399,
+            "start_local_dt": {
+                "year": 2020,
+                "month": 2,
+                "day": 6,
+                "hour": 18,
+                "minute": 42,
+                "second": 26,
+                "weekday": 3,
+                "timezone": "America/Los_Angeles"
+            },
+            "start_fmt_time": "2020-02-06T18:42:26.341399-08:00",
+            "start_place": {
+                "$oid": "639f6791bbac4681affd9fa2"
+            },
+            "start_loc": {
+                "type": "Point",
+                "coordinates": [
+                    -122.17338693925828,
+                    37.44813920702659
+                ]
+            },
+            "end_ts": 1581045587.315187,
+            "end_local_dt": {
+                "year": 2020,
+                "month": 2,
+                "day": 6,
+                "hour": 19,
+                "minute": 19,
+                "second": 47,
+                "weekday": 3,
+                "timezone": "America/Los_Angeles"
+            },
+            "end_fmt_time": "2020-02-06T19:19:47.315187-08:00",
+            "end_place": {
+                "$oid": "639f6791bbac4681affd9fa0"
+            },
+            "end_loc": {
+                "type": "Point",
+                "coordinates": [
+                    -122.0833282869662,
+                    37.38988682455415
+                ]
+            },
+            "duration": 2240.973788022995,
+            "distance": 10257.255578657272,
+            "write_ts": 1671391121.035485
+        }
+    }
+]
