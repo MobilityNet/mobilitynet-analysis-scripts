@@ -1,7 +1,7 @@
 [
     {
         "_id": {
-            "$oid": "639f70ca1426b02a03d34258"
+            "$oid": "639fdcdaa0edd0ab691a117d"
         },
         "user_id": {
             "$uuid": "7ed804906853433d9d20838fe4d3d71b"
@@ -9,19 +9,19 @@
         "metadata": {
             "key": "analysis/confirmed_trip",
             "platform": "server",
-            "write_ts": 1671393481.707021,
+            "write_ts": 1671421145.414075,
             "time_zone": "America/Los_Angeles",
             "write_local_dt": {
                 "year": 2022,
                 "month": 12,
                 "day": 18,
-                "hour": 11,
-                "minute": 58,
-                "second": 1,
+                "hour": 19,
+                "minute": 39,
+                "second": 5,
                 "weekday": 6,
                 "timezone": "America/Los_Angeles"
             },
-            "write_fmt_time": "2022-12-18T11:58:01.707021-08:00"
+            "write_fmt_time": "2022-12-18T19:39:05.414075-08:00"
         },
         "data": {
             "source": "DwellSegmentationDistFilter",
@@ -45,7 +45,7 @@
                 ]
             },
             "raw_trip": {
-                "$oid": "639f68c71426b02a03d30988"
+                "$oid": "639fda1ba0edd0ab6919d8ad"
             },
             "start_ts": 1564279305.4815264,
             "start_local_dt": {
@@ -69,27 +69,27 @@
             "duration": 1191.9463357925415,
             "distance": 3707.2304373499933,
             "start_place": {
-                "$oid": "639f694f1426b02a03d33e16"
+                "$oid": "639fdaa0a0edd0ab691a0d3b"
             },
             "end_place": {
-                "$oid": "639f694f1426b02a03d33e18"
+                "$oid": "639fdaa1a0edd0ab691a0d3d"
             },
             "cleaned_trip": {
-                "$oid": "639f69271426b02a03d31afd"
+                "$oid": "639fda7aa0edd0ab6919ea22"
             },
             "inferred_labels": [],
             "inferred_trip": {
-                "$oid": "639f70c81426b02a03d3410e"
+                "$oid": "639fdcd8a0edd0ab691a1033"
             },
             "expectation": {
                 "to_label": true
             },
             "confidence_threshold": 0.55,
             "expected_trip": {
-                "$oid": "639f70c91426b02a03d341f3"
+                "$oid": "639fdcd9a0edd0ab691a1118"
             },
             "user_input": {},
-            "write_ts": 1671393481.707021
+            "write_ts": 1671421145.414075
         }
     }
 ]
