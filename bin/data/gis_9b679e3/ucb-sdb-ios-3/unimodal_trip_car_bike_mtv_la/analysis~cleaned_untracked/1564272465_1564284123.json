@@ -1,0 +1,77 @@
+[
+    {
+        "_id": {
+            "$oid": "639fda7aa0edd0ab6919ea4d"
+        },
+        "user_id": {
+            "$uuid": "7ed804906853433d9d20838fe4d3d71b"
+        },
+        "metadata": {
+            "key": "analysis/cleaned_untracked",
+            "platform": "server",
+            "write_ts": 1671420538.372927,
+            "time_zone": "America/Los_Angeles",
+            "write_local_dt": {
+                "year": 2022,
+                "month": 12,
+                "day": 18,
+                "hour": 19,
+                "minute": 28,
+                "second": 58,
+                "weekday": 6,
+                "timezone": "America/Los_Angeles"
+            },
+            "write_fmt_time": "2022-12-18T19:28:58.372927-08:00"
+        },
+        "data": {
+            "source": "DwellSegmentationDistFilter",
+            "start_ts": 1564280502.4278622,
+            "start_local_dt": {
+                "year": 2019,
+                "month": 7,
+                "day": 27,
+                "hour": 19,
+                "minute": 21,
+                "second": 37,
+                "weekday": 5,
+                "timezone": "America/Los_Angeles"
+            },
+            "start_fmt_time": "2019-07-27T19:21:37.427862-07:00",
+            "start_loc": {
+                "type": "Point",
+                "coordinates": [
+                    -122.08372039576801,
+                    37.390345769893756
+                ]
+            },
+            "end_ts": 1564334593.94751,
+            "end_local_dt": {
+                "year": 2019,
+                "month": 7,
+                "day": 28,
+                "hour": 10,
+                "minute": 23,
+                "second": 13,
+                "weekday": 6,
+                "timezone": "America/Los_Angeles"
+            },
+            "end_fmt_time": "2019-07-28T10:23:13.947510-07:00",
+            "end_loc": {
+                "type": "Point",
+                "coordinates": [
+                    -122.08870417069453,
+                    37.38819616594391
+                ]
+            },
+            "duration": 54091.519647836685,
+            "distance": 500.9997286212014,
+            "start_place": {
+                "$oid": "639fdaa1a0edd0ab691a0d3d"
+            },
+            "end_place": {
+                "$oid": "639fdaa1a0edd0ab691a0d3e"
+            },
+            "write_ts": 1671420538.372927
+        }
+    }
+]
