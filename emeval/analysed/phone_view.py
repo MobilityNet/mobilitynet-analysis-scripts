@@ -62,7 +62,7 @@ def create_analysed_view(input_view, analysis_spec, location_key, trip_key, sect
                     # Since we are not guaranteed to have a 1:1 mapping between
                     # ground truth and sensed ranges, we store the ranges in
                     # the enclosing entry and implement the matching as part of
-                    # the valuation. So the list of trips is in the range
+                    # the evaluation. So the list of trips is in the range
                     # (already there, don't need to copy) and the list of
                     # sections is in the trip.
                     _copy_subset_range(r, tr, "sensed_section_ranges", THIRTY_MIN)

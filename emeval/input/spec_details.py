@@ -103,7 +103,7 @@ class SpecDetails(ABC):
                             within_ts = [x for x in ll[key]
                                          if start_ts >= x["properties"]["valid_start_ts"]
                                          and end_ts <= x["properties"]["valid_end_ts"]]
-                            assert len(within_ts) == 1, f"Invalid amount of {key} info for {leg['id']} between timestamps {start_ts} -> {end_ts}"
+                            assert len(within_ts) == 1, f"Invalid amount of {key} info for {ll['id']} between timestamps {start_ts} -> {end_ts}"
                             ll[key] = within_ts[0]
                     return ll
 
