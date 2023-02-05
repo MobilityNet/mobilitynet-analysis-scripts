@@ -1,1 +1,24 @@
-[]
+[
+    {
+        "_id": {
+            "$oid": "5d09ac93b88f219ca05cb0cc"
+        },
+        "metadata": {
+            "key": "statemachine/transition",
+            "platform": "android",
+            "read_ts": 0,
+            "time_zone": "America/Los_Angeles",
+            "type": "message",
+            "write_ts": 1560872227.212
+        },
+        "user_id": {
+            "$uuid": "1377b14507144a139a1edbc0dcd6fafe"
+        },
+        "data": {
+            "currState": "local.state.tracking_stopped",
+            "transition": "local.transition.start_tracking",
+            "ts": 1560872227.21,
+            "write_ts": 1560872227.212
+        }
+    }
+]
