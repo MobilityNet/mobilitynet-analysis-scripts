@@ -16,7 +16,7 @@ jobs:
   # This workflow contains a single job called "build"
   build:
     env: 
-      EXP_CONDA_VER: 4.7.12
+      EXP_CONDA_VER: 23.1.0
     # The type of runner that the job will run on
     runs-on: ${{ matrix.os }}
     strategy:
@@ -25,13 +25,13 @@ jobs:
         include:
         - os: macos-latest
           PLATFORM: MacOSX-x86_64
-          SOURCE_SCRIPT: /Users/runner/miniconda-4.7.12/etc/profile.d/conda.sh
+          SOURCE_SCRIPT: /Users/runner/miniconda-23.1.0/etc/profile.d/conda.sh
         - os: ubuntu-18.04
           PLATFORM: Linux-x86_64
-          SOURCE_SCRIPT: /home/runner/miniconda-4.7.12/etc/profile.d/conda.sh
+          SOURCE_SCRIPT: /home/runner/miniconda-23.1.0/etc/profile.d/conda.sh
         - os: ubuntu-latest
           PLATFORM: Linux-x86_64
-          SOURCE_SCRIPT: /home/runner/miniconda-4.7.12/etc/profile.d/conda.sh
+          SOURCE_SCRIPT: /home/runner/miniconda-23.1.0/etc/profile.d/conda.sh
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:

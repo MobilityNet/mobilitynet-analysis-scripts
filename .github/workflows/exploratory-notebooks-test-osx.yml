@@ -16,8 +16,8 @@ jobs:
   # This workflow contains a single job called "build"
   test:
     env: 
-      EXP_CONDA_VER: 4.7.12
-      SOURCE_SCRIPT: /Users/runner/miniconda-4.7.12/etc/profile.d/conda.sh
+      EXP_CONDA_VER: 23.1.0
+      SOURCE_SCRIPT: /Users/runner/miniconda-23.1.0/etc/profile.d/conda.sh
       PLATFORM: MacOSX-x86_64
     # We run only on macos here since the repo2docker tests will run on ubuntu
     runs-on: macos-latest
