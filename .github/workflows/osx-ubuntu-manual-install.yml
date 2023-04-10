@@ -21,15 +21,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-18.04, ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest]
         include:
         - os: macos-latest
           PLATFORM: MacOSX-x86_64
           SOURCE_SCRIPT: /Users/runner/miniconda-23.1.0/etc/profile.d/conda.sh
-        - os: ubuntu-18.04
-          PLATFORM: Linux-x86_64
-          SOURCE_SCRIPT: /home/runner/miniconda-23.1.0/etc/profile.d/conda.sh
-        - os: ubuntu-latest
           PLATFORM: Linux-x86_64
           SOURCE_SCRIPT: /home/runner/miniconda-23.1.0/etc/profile.d/conda.sh
 
