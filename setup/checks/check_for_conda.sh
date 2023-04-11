@@ -1,5 +1,5 @@
 CURR_CONDA_VER=`conda --version | cut -d " " -f 2`
-EXP_CONDA_VER=4.7.12
+EXP_CONDA_VER=23.1.0
 
 if [ $CURR_CONDA_VER == $EXP_CONDA_VER ]; then
     echo "For conda, found $CURR_CONDA_VER, expected $EXP_CONDA_VER, all is good!"
