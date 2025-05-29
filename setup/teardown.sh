@@ -1,2 +1,1 @@
-conda activate base
-conda env remove --name emissioneval
+conda deactivate && conda env remove --name emissioneval
