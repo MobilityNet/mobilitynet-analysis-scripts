@@ -6,6 +6,7 @@ import math
 import arrow
 import pandas as pd
 import functools
+import traceback
 
 import emeval.metrics.dist_calculations as emd
 import emeval.input.spec_details as eisd
@@ -275,7 +276,84 @@ def collapse_outer_join_dist_so_far(loc_row, more_details_fn = None):
 # BEGIN: Combining into actual reference constructions
 ####
 
-def ref_ct_general(e, b_merge_fn, dist_threshold, tz="UTC"):
+def ref_ends(e, dist_threshold, tz="UTC"):
+    # This is only called from ref_ct_general and ref_gt_general, so 
+    # the emd filter method adds the `outside_polygon` field to the input dataframe.
+    # when we look for separate input and output polygons, we don't want to
+    # mess up the other `outside_polygon` fields, so let's make copies
+    # everywhere
+
+    utm_gt_linestring = e["ground_truth"]["utm_linestring"]
+    section_gt_shapes = e["ground_truth"]["gt_shapes"]
+
+    def _get_filtered_loc(gt_key):
+        unfiltered_loc_a_df = emd.to_geo_df(e["temporal_control"]["android"]["location_df"]).copy()
+        emd.filter_geo_df(unfiltered_loc_a_df, section_gt_shapes.filter([gt_key]))
+        loc_df_a = unfiltered_loc_a_df.query("outside_polygons==False")
+
+        unfiltered_loc_b_df = emd.to_geo_df(e["temporal_control"]["ios"]["location_df"]).copy()
+        emd.filter_geo_df(unfiltered_loc_b_df, section_gt_shapes.filter([gt_key]))
+        loc_df_b = unfiltered_loc_b_df.query("outside_polygons==False")
+
+        print(f"START_END: for threshold {dist_threshold}, before merging, for key {gt_key}, android: {len(unfiltered_loc_a_df)=} -> {len(loc_df_a)=}, ios: {len(unfiltered_loc_b_df)=} -> {len(loc_df_b)=}")
+
+        return (loc_df_a, loc_df_b)
+
+    start_loc_df_a, start_loc_df_b = _get_filtered_loc("start_loc")
+    end_loc_df_a, end_loc_df_b = _get_filtered_loc("end_loc")
+        
+    merge_fn = functools.partial(collapse_inner_join, b_merge_fn=b_merge_midpoint)
+
+    def _match_single_to_gt(filtered_loc_df, dist_threshold):
+        new_location_df = get_int_aligned_trajectory(filtered_loc_df, tz)
+
+        new_location_df_u = emd.to_utm_df(new_location_df)
+
+        add_gt_error_projection(new_location_df_u, utm_gt_linestring)
+
+        new_location_df["gt_distance"] = new_location_df_u.gt_distance
+        new_location_df["gt_projection"] = new_location_df_u.gt_projection
+
+        filtered_location_df = new_location_df.query("gt_distance < @dist_threshold")
+        filtered_location_df['source'] = ['match_gt'] * len(filtered_location_df)
+        # filtered_location_df.drop(columns=["gt_distance", "])
+        return gpd.GeoDataFrame(filtered_location_df)
+
+    def _align_and_merge(loc_df_a, loc_df_b, dist_threshold):
+        # if this is exactly one, 
+        # bus trip with e-scooter access city_escooter 3 and include_ends=True
+        # fails with
+        # x and y arrays must have at least 2 entries
+        if len(loc_df_a) > 1 and len(loc_df_b) > 1:
+            new_location_df_a = get_int_aligned_trajectory(loc_df_a, tz)
+            new_location_df_i = get_int_aligned_trajectory(loc_df_b, tz)
+
+            merged_df = pd.merge(new_location_df_a, new_location_df_i, on="ts",
+                how="inner", suffixes=("_a", "_i")).sort_values(by="ts", axis="index")
+            merged_df["t_distance"] = emd.to_utm_series(gpd.GeoSeries(merged_df.geometry_a)).distance(emd.to_utm_series(gpd.GeoSeries(merged_df.geometry_i)))
+            filtered_merged_df = merged_df.query("t_distance < @dist_threshold")
+            print("START_END: After filtering the merged dataframe, retained %d of %d (%s)" %
+                  (len(filtered_merged_df), max(len(new_location_df_a), len(new_location_df_i)),
+                    (len(filtered_merged_df)/max(len(new_location_df_a), len(new_location_df_i)))))
+            ret_val = gpd.GeoDataFrame(list(filtered_merged_df.apply(merge_fn, axis=1)))
+            if len(filtered_merged_df) == 0:
+                print(f"CHECKME: {len(merged_df)=}, {len(filtered_merged_df)=}, START_END: after merging, {merged_df.head()=}")
+                return gpd.GeoDataFrame([])
+            else:
+                return ret_val
+#         elif len(loc_df_a) > 0 and len(loc_df_b) == 0:
+#             return _match_single_to_gt(loc_df_a, dist_threshold)
+#         elif len(loc_df_a) == 0 and len(loc_df_b) > 0:
+#             return _match_single_to_gt(loc_df_b, dist_threshold)
+        else:
+            return gpd.GeoDataFrame([])
+
+    start_initial_ends_gpdf = _align_and_merge(start_loc_df_a, start_loc_df_b, dist_threshold)
+    end_initial_ends_gpdf = _align_and_merge(end_loc_df_a, end_loc_df_b, dist_threshold)
+
+    return [start_initial_ends_gpdf, end_initial_ends_gpdf]
+
+def ref_ct_general(e, b_merge_fn, dist_threshold, tz="UTC", include_ends=False):
     fill_gt_linestring(e)
     section_gt_shapes = e["ground_truth"]["gt_shapes"]
     # print("In ref_ct_general, %s" % section_gt_shapes.filter(items=["start_loc","end_loc"]))
@@ -285,6 +363,7 @@ def ref_ct_general(e, b_merge_fn, dist_threshold, tz="UTC"):
     filtered_loc_df_b = emd.filter_geo_df(
         emd.to_geo_df(e["temporal_control"]["ios"]["location_df"]),
         section_gt_shapes.filter(["start_loc","end_loc"]))
+    print(f"MATCH TRAJECTORY: {len(filtered_loc_df_a)=}, {len(filtered_loc_df_b)=}")
     new_location_df_a = get_int_aligned_trajectory(filtered_loc_df_a, tz)
     new_location_df_i = get_int_aligned_trajectory(filtered_loc_df_b, tz)
     merged_df = pd.merge(new_location_df_a, new_location_df_i, on="ts",
@@ -294,9 +373,17 @@ def ref_ct_general(e, b_merge_fn, dist_threshold, tz="UTC"):
     print("After filtering, retained %d of %d (%s)" %
           (len(filtered_merged_df), max(len(new_location_df_a), len(new_location_df_i)),
             (len(filtered_merged_df)/max(len(new_location_df_a), len(new_location_df_i)))))
+
     merge_fn = functools.partial(collapse_inner_join, b_merge_fn=b_merge_fn)
     initial_reference_gpdf = gpd.GeoDataFrame(list(filtered_merged_df.apply(merge_fn, axis=1)))
+    if include_ends:
+        [start_initial_ends_gpdf, end_initial_ends_gpdf] = ref_ends(e, dist_threshold, tz)
+        print(f"CONCAT: {include_ends=}, before concatenating {len(start_initial_ends_gpdf)=}, {len(initial_reference_gpdf)=}, {len(end_initial_ends_gpdf)=}")
+        initial_reference_gpdf = pd.concat([start_initial_ends_gpdf, initial_reference_gpdf, end_initial_ends_gpdf], axis=0).sort_values(by="ts").reset_index(drop=True)
+        print(f"CONCAT: {include_ends=}, after concatenating {len(initial_reference_gpdf)=}")
+    # print(end_initial_ends_gpdf)
     # print(initial_reference_gpdf.columns)
+    # print(initial_reference_gpdf[initial_reference_gpdf.ts.isna()])
     if len(initial_reference_gpdf.columns) > 1:
         initial_reference_gpdf["fmt_time"] = initial_reference_gpdf.ts.apply(lambda ts: arrow.get(ts).to(tz))
         assert len(initial_reference_gpdf[initial_reference_gpdf.latitude.isnull()]) == 0, "Found %d null entries out of %d total" % (len(initial_reference_gpdf.latitude.isnull()), len(initial_reference_gpdf))
@@ -305,7 +392,7 @@ def ref_ct_general(e, b_merge_fn, dist_threshold, tz="UTC"):
     else:
         return gpd.GeoDataFrame()
 
-def ref_gt_general(e, b_merge_fn, dist_threshold, tz="UTC"):
+def ref_gt_general(e, b_merge_fn, dist_threshold, tz="UTC", include_ends=False):
     fill_gt_linestring(e)
     utm_gt_linestring = e["ground_truth"]["utm_linestring"]
     section_gt_shapes = e["ground_truth"]["gt_shapes"]
@@ -339,6 +426,9 @@ def ref_gt_general(e, b_merge_fn, dist_threshold, tz="UTC"):
         how="outer", suffixes=("_a", "_i")).sort_values(by="ts", axis="index")
     merge_fn = functools.partial(collapse_outer_join_stateless, b_merge_fn=b_merge_fn)
     initial_reference_gpdf = gpd.GeoDataFrame(list(merged_df.apply(merge_fn, axis=1)))
+    if include_ends:
+        [start_initial_ends_gpdf, end_initial_ends_gpdf] = ref_ends(e, dist_threshold, tz)
+        initial_reference_gpdf = pd.concat([start_initial_ends_gpdf, initial_reference_gpdf, end_initial_ends_gpdf], axis=0).sort_values(by="ts").reset_index(drop=True)
     if len(initial_reference_gpdf.columns) > 1:
         initial_reference_gpdf["fmt_time"] = initial_reference_gpdf.ts.apply(lambda ts: arrow.get(ts).to(tz))
         print("After merging, found %d of android %d (%s), ios %d (%s)" %
@@ -349,18 +439,20 @@ def ref_gt_general(e, b_merge_fn, dist_threshold, tz="UTC"):
     else:
         return gpd.GeoDataFrame()
 
-def ref_travel_forward(e, dist_threshold, tz="UTC"):
+def ref_travel_forward(e, dist_threshold, tz="UTC", include_ends=False):
     # This function needs a global variable
     global distance_so_far
     distance_so_far = 0
     fill_gt_linestring(e)
     section_gt_shapes = e["ground_truth"]["gt_shapes"]
+    # print(f"GEO_DF: before filtering, {len(e['temporal_control']['android']['location_df'])=} and {len(e['temporal_control']['ios']['location_df'])=}")
     filtered_utm_loc_df_a = emd.filter_geo_df(
         emd.to_geo_df(e["temporal_control"]["android"]["location_df"]),
         section_gt_shapes.filter(["start_loc","end_loc"]))
     filtered_utm_loc_df_b = emd.filter_geo_df(
         emd.to_geo_df(e["temporal_control"]["ios"]["location_df"]),
         section_gt_shapes.filter(["start_loc","end_loc"]))
+    # print(f"GEO_DF: after filtering, {len(filtered_utm_loc_df_a)=} and {len(filtered_utm_loc_df_b)=}")
     new_location_df_a = get_int_aligned_trajectory(filtered_utm_loc_df_a, tz)
     new_location_df_i = get_int_aligned_trajectory(filtered_utm_loc_df_b, tz)
 
@@ -390,6 +482,11 @@ def ref_travel_forward(e, dist_threshold, tz="UTC"):
         how="outer", suffixes=("_a", "_i")).sort_values(by="ts", axis="index")
     merge_fn = functools.partial(collapse_outer_join_dist_so_far, more_details_fn = None)
     initial_reference_gpdf = gpd.GeoDataFrame(list(merged_df.apply(merge_fn, axis=1)))
+    if include_ends:
+        [start_initial_ends_gpdf, end_initial_ends_gpdf] = ref_ends(e, dist_threshold, tz)
+        print(f"CONCAT: {include_ends=}, before concatenating {len(start_initial_ends_gpdf)=}, {len(initial_reference_gpdf)=}, {len(end_initial_ends_gpdf)=}")
+        initial_reference_gpdf = pd.concat([start_initial_ends_gpdf, initial_reference_gpdf, end_initial_ends_gpdf], axis=0).sort_values(by="ts").reset_index(drop=True)
+        print(f"CONCAT: {include_ends=}, after concatenating {len(initial_reference_gpdf)=}")
     if len(initial_reference_gpdf.columns) > 1:
         initial_reference_gpdf["fmt_time"] = initial_reference_gpdf.ts.apply(lambda ts: arrow.get(ts).to(tz))
         reference_gpdf = initial_reference_gpdf[initial_reference_gpdf.latitude.notnull()]
@@ -419,21 +516,44 @@ coverage_density = lambda df, sr: len(df)/(sr["end_ts"] - sr["start_ts"])
 coverage_time = lambda df, sr: (df.ts.iloc[-1] - df.ts.iloc[0])/(sr["end_ts"] - sr["start_ts"])
 coverage_max_gap = lambda df, sr: df.ts.diff().max()/(sr["end_ts"] - sr["start_ts"])
 
-def final_ref_ensemble(e, dist_threshold=25, tz="UTC"):
+def final_ref_ensemble(e, dist_threshold=25, tz="UTC", include_ends=False):
     fill_gt_linestring(e)
     gt_linestring = e["ground_truth"]["linestring"]
-    tf_ref_df = ref_travel_forward(e, dist_threshold, tz)
-    ct_ref_df = ref_ct_general(e, b_merge_midpoint, dist_threshold, tz)
-    tf_stats = {
-        "coverage_density": coverage_density(tf_ref_df, e),
-        "coverage_time": coverage_time(tf_ref_df, e),
-        "coverage_max_gap": coverage_max_gap(tf_ref_df, e)
-    }
-    ct_stats = {
-        "coverage_density": coverage_density(ct_ref_df, e),
-        "coverage_time": coverage_time(ct_ref_df, e),
-        "coverage_max_gap": coverage_max_gap(ct_ref_df, e)
-    }
+    try:
+        tf_ref_df = ref_travel_forward(e, dist_threshold, tz, include_ends)
+        tf_stats = {
+            "coverage_density": coverage_density(tf_ref_df, e),
+            "coverage_time": coverage_time(tf_ref_df, e),
+            "coverage_max_gap": coverage_max_gap(tf_ref_df, e)
+        }
+        print("Validated tf, stats are %s" % tf_stats)
+    except Exception as exp_tf:
+        print("Found exception %s while computing tf_ref_df, skipping" % exp_tf)
+        traceback.print_exc()
+        tf_stats = None
+
+    try:
+        ct_ref_df = ref_ct_general(e, b_merge_midpoint, dist_threshold, tz, include_ends)
+        ct_stats = {
+            "coverage_density": coverage_density(ct_ref_df, e),
+            "coverage_time": coverage_time(ct_ref_df, e),
+            "coverage_max_gap": coverage_max_gap(ct_ref_df, e)
+        }
+        print("Validated ct, stats are %s" % ct_stats)
+    except Exception as exp_ct:
+        print("Found exception %s while computing ct_ref_df, skipping" % exp_ct)
+        traceback.print_exc()
+        ct_stats = None
+
+    if tf_stats is None and ct_stats is None:
+        assert False, "Neither method works!"
+    elif tf_stats is None and ct_stats is not None:
+        return ("ct", ct_ref_df)
+    elif tf_stats is not None and ct_stats is None:
+        return ("tf", tf_ref_df)
+
+    assert tf_stats is not None and ct_stats is not None
+
     if tf_stats["coverage_max_gap"] > ct_stats["coverage_max_gap"] and\
         tf_stats["coverage_density"] < ct_stats["coverage_density"]:
         print("max_gap for tf = %s > ct = %s and density %s < %s, returning ct len = %d not tf len = %d" %
