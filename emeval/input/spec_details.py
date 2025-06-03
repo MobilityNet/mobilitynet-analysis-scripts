@@ -92,21 +92,32 @@ class SpecDetails(ABC):
             properties={"modes": modes_list})
 
     def get_ground_truth_for_leg(self, trip_id, leg_id, start_ts, end_ts):
+        # print(f"GT_FOR_LEG: Called `get_ground_truth_for_leg` with {trip_id}, {leg_id}, {start_ts}, {end_ts}")
         for t in self.curr_spec_entry["data"]["label"]["evaluation_trips"]:
             if t["id"] == trip_id:
                 ll = [l for l in t["legs"] if l["id"] == leg_id]
-                # print(leg_id, len(ll), [l["id"] for l in ll])
+                # print("GT_FOR_LEG:", leg_id, len(ll), [l["id"] for l in ll])
                 if len(ll) == 1:
-                    ll = ll[0]
+                    sel_leg = ll[0]
+                    ret_leg = sel_leg.copy()
+                    # print(f"GT_FOR_LEG: {sel_leg['id']=}")
                     for key in ["loc", "start_loc", "end_loc", "route_coords"]:
-                        if key in ll and isinstance(ll[key], list):
-                            within_ts = [x for x in ll[key]
+                        # print(f"GT_FOR_LEG: Checking {key=} in object {sel_leg.keys()=} = {key in sel_leg}")
+                        # if key in sel_leg:
+                        #     print(f"GT_FOR_LEG: Checking key type = {isinstance(sel_leg[key], list)}")
+                        if key in sel_leg and isinstance(sel_leg[key], list):
+                            # print(f"GT_FOR_LEG: Found matching list of size {len(sel_leg[key])} for {key} in {sel_leg['id']}")
+                            within_ts = [x for x in sel_leg[key]
                                          if start_ts >= x["properties"]["valid_start_ts"]
                                          and end_ts <= x["properties"]["valid_end_ts"]]
-                            assert len(within_ts) == 1, f"Invalid amount of {key} info for {ll['id']} between timestamps {start_ts} -> {end_ts}"
-                            ll[key] = within_ts[0]
-                    return ll
-
+                            assert len(within_ts) == 1, f"Invalid amount of {key} info for {sel_leg['id']} between timestamps {start_ts} -> {end_ts}"
+                            # we want to copy before returning because
+                            # otherwise the first call to this function
+                            # overwrites the ground truth in the full spec and
+                            # makes it a entry instead of a list.
+                            # we can never get the second ground truth in that case
+                            ret_leg[key] = within_ts[0]
+                    return ret_leg
 
     @staticmethod
     def get_shapes_for_leg(gt_leg):
