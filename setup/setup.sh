@@ -5,10 +5,7 @@
 # - on OSX: /Users/<user>/miniconda3/bin/conda
 # - on Windows: C:/Users/<user>/Miniconda3/Scripts/conda
 
-set -e
-
 source setup/checks/check_for_conda.sh
 
-conda create -n emissioneval
+echo "Installing using conda now"
 conda env update --name emissioneval --file setup/environment.yml
-conda activate emissioneval
