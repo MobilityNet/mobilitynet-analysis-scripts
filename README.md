@@ -38,8 +38,10 @@ There are many potential ways to interact with the notebooks here. At one extrem
 1. **Interactive, UI-only:** Launch the repo in binder and clone one of the example notebooks
 1. **Interactive, CLI only:**
     1. Fork + clone the repo
+    1. Run `setup/setup_conda.sh <platform>` to download the correct conda version if it's not already installed
+    1. Run `~/miniconda-23.1.0/bin/conda init <shell-name>`
     1. Run `setup/setup.sh` to set up the local environment
-        1. you may need to install the correct version of miniconda per instructions
+    1. Run `setup/activate_conda.sh` in each terminal 
     1. Start a local notebook server (`juypter notebook`)
 
 ## Contributing ##
